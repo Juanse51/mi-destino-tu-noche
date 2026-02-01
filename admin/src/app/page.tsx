@@ -16,13 +16,33 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    // Demo: admin@demo.com / admin123
-    if (email === 'admin@demo.com' && password === 'admin123') {
-      localStorage.setItem('admin_token', 'demo_token_123')
-      localStorage.setItem('admin_user', JSON.stringify({ nombre: 'Administrador', email, rol: 'admin' }))
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
+      const res = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Error al iniciar sesión')
+        setLoading(false)
+        return
+      }
+
+      if (data.usuario.rol !== 'admin' && data.usuario.rol !== 'superadmin') {
+        setError('No tienes permisos de administrador')
+        setLoading(false)
+        return
+      }
+
+      localStorage.setItem('admin_token', data.accessToken)
+      localStorage.setItem('admin_user', JSON.stringify(data.usuario))
       router.push('/dashboard')
-    } else {
-      setError('Credenciales incorrectas. Usa: admin@demo.com / admin123')
+    } catch (err) {
+      setError('Error de conexión con el servidor')
     }
     setLoading(false)
   }
@@ -45,7 +65,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   className="input pl-10"
-                  placeholder="admin@demo.com"
+                  placeholder="admin@midestinotunoche.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -82,7 +102,7 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 bg-dark rounded-lg">
             <p className="text-sm text-gray-400 text-center">
-              <strong>Demo:</strong> admin@demo.com / admin123
+              Ingresa con tus credenciales de administrador
             </p>
           </div>
         </div>
