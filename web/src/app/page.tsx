@@ -8,84 +8,13 @@ import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
 
-// Datos de ejemplo (en producción vendrían del API)
-const establecimientosDestacados = [
-  {
-    id: '1',
-    nombre: 'Andrés Carne de Res',
-    slug: 'andres-carne-de-res',
-    imagen_principal: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-    tipo_nombre: 'Restaurante',
-    tipo_icono: '🍽️',
-    tipo_color: '#FF6B35',
-    ciudad_nombre: 'Bogotá',
-    valoracion_promedio: 4.8,
-    total_valoraciones: 1250,
-    rango_precios: 3,
-    descripcion_corta: 'El restaurante más emblemático de Colombia',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }, { nombre: 'Terraza', icono: '🌿' }]
-  },
-  {
-    id: '2',
-    nombre: 'Carmen',
-    slug: 'carmen-medellin',
-    imagen_principal: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800',
-    tipo_nombre: 'Restaurante',
-    tipo_icono: '🍽️',
-    tipo_color: '#FF6B35',
-    ciudad_nombre: 'Medellín',
-    valoracion_promedio: 4.9,
-    total_valoraciones: 890,
-    rango_precios: 4,
-    descripcion_corta: 'Alta cocina colombiana con toques internacionales',
-    etiquetas: [{ nombre: 'Romántico', icono: '💕' }, { nombre: 'Vista panorámica', icono: '🌄' }]
-  },
-  {
-    id: '3',
-    nombre: 'La Octava',
-    slug: 'la-octava',
-    imagen_principal: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800',
-    tipo_nombre: 'Bar',
-    tipo_icono: '🍺',
-    tipo_color: '#9B59B6',
-    ciudad_nombre: 'Cali',
-    valoracion_promedio: 4.6,
-    total_valoraciones: 567,
-    rango_precios: 2,
-    descripcion_corta: 'El mejor ambiente salsero de la ciudad',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }, { nombre: 'Baile', icono: '💃' }]
-  },
-  {
-    id: '4',
-    nombre: 'Café Velvet',
-    slug: 'cafe-velvet',
-    imagen_principal: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800',
-    tipo_nombre: 'Café',
-    tipo_icono: '☕',
-    tipo_color: '#8B4513',
-    ciudad_nombre: 'Armenia',
-    valoracion_promedio: 4.7,
-    total_valoraciones: 342,
-    rango_precios: 2,
-    descripcion_corta: 'Café de origen con vista al Quindío',
-    etiquetas: [{ nombre: 'WiFi', icono: '📶' }, { nombre: 'Terraza', icono: '🌿' }]
-  },
-]
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
 const categoriasEspeciales = [
   { nombre: 'Círculo Gastro', slug: 'circulo-gastro', icono: '⭐', color: '#FFD700', descripcion: 'Los mejores restaurantes', total: 150 },
   { nombre: 'Cámara de la Diversidad', slug: 'camara-diversidad', icono: '🏳️‍🌈', color: '#FF69B4', descripcion: 'Espacios inclusivos LGBTIQ+', total: 85 },
   { nombre: 'Pet Friendly', slug: 'pet-friendly', icono: '🐕', color: '#4CAF50', descripcion: 'Mascotas bienvenidas', total: 230 },
   { nombre: 'Tardeo', slug: 'tardeo', icono: '🌅', color: '#FF8C00', descripcion: 'Disfruta desde temprano', total: 120 },
-]
-
-const ciudades = [
-  { nombre: 'Bogotá', slug: 'bogota', imagen: 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400', total: 850 },
-  { nombre: 'Medellín', slug: 'medellin', imagen: 'https://images.unsplash.com/photo-1599413987323-b2b8c0d7d9c8?w=400', total: 620 },
-  { nombre: 'Cali', slug: 'cali', imagen: 'https://images.unsplash.com/photo-1583531172005-523bb5ab6a6e?w=400', total: 480 },
-  { nombre: 'Cartagena', slug: 'cartagena', imagen: 'https://images.unsplash.com/photo-1583531172131-d35a1e9e1a96?w=400', total: 390 },
-  { nombre: 'Barranquilla', slug: 'barranquilla', imagen: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400', total: 280 },
-  { nombre: 'Pereira', slug: 'pereira', imagen: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', total: 190 },
 ]
 
 const tipos = [
@@ -97,6 +26,39 @@ const tipos = [
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [establecimientosDestacados, setDestacados] = useState<any[]>([])
+  const [ciudades, setCiudades] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [estRes, ciudRes] = await Promise.all([
+          fetch(`${API_URL}/establecimientos?limite=8`).catch(() => null),
+          fetch(`${API_URL}/ciudades`).catch(() => null),
+        ])
+        
+        if (estRes?.ok) {
+          const estData = await estRes.json()
+          setDestacados(estData.establecimientos || [])
+        }
+        
+        if (ciudRes?.ok) {
+          const ciudData = await ciudRes.json()
+          const ciudadesConImagen = (ciudData || []).slice(0, 6).map((c: any) => ({
+            ...c,
+            imagen: c.imagen_url || `https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400`,
+            total: c.total_establecimientos || 0
+          }))
+          setCiudades(ciudadesConImagen)
+        }
+      } catch (err) {
+        console.error('Error cargando datos:', err)
+      }
+      setLoading(false)
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className="animate-fadeIn">

@@ -1,60 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Search, SlidersHorizontal, X, MapPin, Star } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 
-// Datos de ejemplo
-const todosEstablecimientos = [
-  {
-    id: '1', nombre: 'Andrés Carne de Res', slug: 'andres-carne-de-res',
-    imagen_principal: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-    tipo_nombre: 'Restaurante', tipo_icono: '🍽️', tipo_color: '#FF6B35',
-    ciudad_nombre: 'Bogotá', valoracion_promedio: 4.8, total_valoraciones: 1250, rango_precios: 3,
-    descripcion_corta: 'El restaurante más emblemático de Colombia',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }]
-  },
-  {
-    id: '2', nombre: 'Carmen', slug: 'carmen-medellin',
-    imagen_principal: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800',
-    tipo_nombre: 'Restaurante', tipo_icono: '🍽️', tipo_color: '#FF6B35',
-    ciudad_nombre: 'Medellín', valoracion_promedio: 4.9, total_valoraciones: 890, rango_precios: 4,
-    descripcion_corta: 'Alta cocina colombiana',
-    etiquetas: [{ nombre: 'Romántico', icono: '💕' }]
-  },
-  {
-    id: '3', nombre: 'La Octava', slug: 'la-octava',
-    imagen_principal: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800',
-    tipo_nombre: 'Bar', tipo_icono: '🍺', tipo_color: '#9B59B6',
-    ciudad_nombre: 'Cali', valoracion_promedio: 4.6, total_valoraciones: 567, rango_precios: 2,
-    descripcion_corta: 'El mejor ambiente salsero',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }]
-  },
-  {
-    id: '4', nombre: 'Café Velvet', slug: 'cafe-velvet',
-    imagen_principal: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800',
-    tipo_nombre: 'Café', tipo_icono: '☕', tipo_color: '#8B4513',
-    ciudad_nombre: 'Armenia', valoracion_promedio: 4.7, total_valoraciones: 342, rango_precios: 2,
-    descripcion_corta: 'Café de origen con vista al Quindío',
-    etiquetas: [{ nombre: 'WiFi', icono: '📶' }]
-  },
-  {
-    id: '5', nombre: 'Theatron', slug: 'theatron',
-    imagen_principal: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=800',
-    tipo_nombre: 'Discoteca', tipo_icono: '🎉', tipo_color: '#E91E63',
-    ciudad_nombre: 'Bogotá', valoracion_promedio: 4.5, total_valoraciones: 2100, rango_precios: 3,
-    descripcion_corta: 'La discoteca más grande de Latinoamérica',
-    etiquetas: [{ nombre: 'LGBTIQ+', icono: '🏳️‍🌈' }]
-  },
-  {
-    id: '6', nombre: 'El Cielo', slug: 'el-cielo',
-    imagen_principal: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800',
-    tipo_nombre: 'Restaurante', tipo_icono: '🍽️', tipo_color: '#FF6B35',
-    ciudad_nombre: 'Bogotá', valoracion_promedio: 4.9, total_valoraciones: 780, rango_precios: 4,
-    descripcion_corta: 'Experiencia gastronómica única',
-    etiquetas: [{ nombre: 'Premium', icono: '⭐' }]
-  },
-]
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
 const tipos = [
   { nombre: 'Todos', slug: '' },
@@ -67,18 +18,40 @@ const tipos = [
 const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira']
 
 export default function BuscarPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [tipoSeleccionado, setTipoSeleccionado] = useState('')
+  const searchParams = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(searchParams.get('tipo') || '')
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('Todas')
   const [showFilters, setShowFilters] = useState(false)
+  const [establecimientos, setEstablecimientos] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalResults, setTotalResults] = useState(0)
 
-  // Filtrar establecimientos
-  const filtrados = todosEstablecimientos.filter(est => {
-    const matchBusqueda = est.nombre.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchTipo = !tipoSeleccionado || est.tipo_nombre.toLowerCase() === tipoSeleccionado
-    const matchCiudad = ciudadSeleccionada === 'Todas' || est.ciudad_nombre === ciudadSeleccionada
-    return matchBusqueda && matchTipo && matchCiudad
-  })
+  useEffect(() => {
+    const fetchEstablecimientos = async () => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams()
+        if (searchQuery) params.append('buscar', searchQuery)
+        if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
+        if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') params.append('ciudad', ciudadSeleccionada.toLowerCase())
+        params.append('limite', '20')
+        
+        const res = await fetch(`${API_URL}/establecimientos?${params.toString()}`)
+        if (res.ok) {
+          const data = await res.json()
+          setEstablecimientos(data.establecimientos || [])
+          setTotalResults(data.paginacion?.total || 0)
+        }
+      } catch (err) {
+        console.error('Error buscando:', err)
+      }
+      setLoading(false)
+    }
+    fetchEstablecimientos()
+  }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
+
+  const filtrados = establecimientos
 
   return (
     <div className="min-h-screen pt-20">
