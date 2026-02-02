@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Search, Plus, Edit, Trash2, Filter, X, RefreshCw } from 'lucide-react'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
 interface Establecimiento {
   id: string
@@ -28,7 +28,7 @@ const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia
 const estados = ['Todos', 'activo', 'inactivo']
 
 function getToken() {
-  if (typeof window !== 'undefined') return localStorage.getItem('token')
+  if (typeof window !== 'undefined') return localStorage.getItem('admin_token')
   return null
 }
 
