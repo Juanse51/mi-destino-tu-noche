@@ -606,7 +606,7 @@ router.put('/:id', verificarToken, async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado } = req.body;
+    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, imagen_principal } = req.body;
 
     // Obtener tipo_id si se envió tipo
     let tipoId = null;
@@ -636,10 +636,11 @@ router.put('/:id', verificarToken, async (req, res) => {
         activo = COALESCE($10, activo),
         verificado = COALESCE($11, verificado),
         destacado = COALESCE($12, destacado),
+        imagen_principal = COALESCE($13, imagen_principal),
         updated_at = NOW()
-       WHERE id = $13
+       WHERE id = $14
        RETURNING id, nombre, slug, activo, verificado, destacado`,
-      [nombre || null, slug || null, tipoId, ciudadId, direccion || null, descripcion || null, telefono || null, whatsapp || null, instagram || null, activo, verificado, destacado, id]
+      [nombre || null, slug || null, tipoId, ciudadId, direccion || null, descripcion || null, telefono || null, whatsapp || null, instagram || null, activo, verificado, destacado, imagen_principal || null, id]
     );
 
     if (result.rows.length === 0) {
