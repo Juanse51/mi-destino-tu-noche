@@ -5,7 +5,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1';
 
 export const api = axios.create({
   baseURL: API_URL,
