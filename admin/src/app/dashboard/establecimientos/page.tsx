@@ -75,7 +75,7 @@ export default function EstablecimientosPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const res = await apiCall('/api/v1/establecimientos?limite=100')
+      const res = await apiCall('/establecimientos?limite=100')
       if (res.ok) {
         const json = await res.json()
         setData(json.establecimientos || [])
@@ -140,9 +140,9 @@ export default function EstablecimientosPage() {
     try {
       let res
       if (editingId) {
-        res = await apiCall(`/api/v1/establecimientos/${editingId}`, { method: 'PUT', body: JSON.stringify(body) })
+        res = await apiCall(`/establecimientos/${editingId}`, { method: 'PUT', body: JSON.stringify(body) })
       } else {
-        res = await apiCall('/api/v1/establecimientos', { method: 'POST', body: JSON.stringify(body) })
+        res = await apiCall('/establecimientos', { method: 'POST', body: JSON.stringify(body) })
       }
 
       if (res.ok) {
@@ -161,7 +161,7 @@ export default function EstablecimientosPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await apiCall(`/api/v1/establecimientos/${id}`, { method: 'DELETE' })
+      const res = await apiCall(`/establecimientos/${id}`, { method: 'DELETE' })
       if (res.ok) { fetchData() }
     } catch (err) {
       console.error('Error eliminando:', err)
