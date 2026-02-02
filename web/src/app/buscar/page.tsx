@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Search, SlidersHorizontal, X, MapPin, Star } from 'lucide-react'
+import { Search, SlidersHorizontal, X } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
 const tipos = [
-  { nombre: 'Todos', slug: '' },
+  { nombre: 'Todos', slug: '', icono: '' },
   { nombre: 'Restaurantes', slug: 'restaurante', icono: '🍽️' },
   { nombre: 'Bares', slug: 'bar', icono: '🍺' },
   { nombre: 'Cafés', slug: 'cafe', icono: '☕' },
@@ -17,7 +17,7 @@ const tipos = [
 
 const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira']
 
-export default function BuscarPage() {
+function BuscarContent() {
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
   const [tipoSeleccionado, setTipoSeleccionado] = useState(searchParams.get('tipo') || '')
@@ -25,7 +25,6 @@ export default function BuscarPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [totalResults, setTotalResults] = useState(0)
 
   useEffect(() => {
     const fetchEstablecimientos = async () => {
@@ -41,7 +40,6 @@ export default function BuscarPage() {
         if (res.ok) {
           const data = await res.json()
           setEstablecimientos(data.establecimientos || [])
-          setTotalResults(data.paginacion?.total || 0)
         }
       } catch (err) {
         console.error('Error buscando:', err)
@@ -51,15 +49,11 @@ export default function BuscarPage() {
     fetchEstablecimientos()
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
 
-  const filtrados = establecimientos
-
   return (
     <div className="min-h-screen pt-20">
-      {/* Search Header */}
       <div className="bg-dark-lighter border-b border-gray-800 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            {/* Search Input */}
             <div className="flex-1 flex items-center bg-dark rounded-xl px-4 py-3 border border-gray-700">
               <Search className="w-5 h-5 text-gray-400 mr-3" />
               <input
@@ -75,8 +69,6 @@ export default function BuscarPage() {
                 </button>
               )}
             </div>
-
-            {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-colors ${
@@ -87,12 +79,9 @@ export default function BuscarPage() {
               <span className="hidden sm:inline">Filtros</span>
             </button>
           </div>
-
-          {/* Filters */}
           {showFilters && (
             <div className="mt-4 pt-4 border-t border-gray-800">
               <div className="flex flex-wrap gap-4">
-                {/* Tipo */}
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Tipo</label>
                   <div className="flex flex-wrap gap-2">
@@ -112,8 +101,6 @@ export default function BuscarPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Ciudad */}
                 <div>
                   <label className="text-sm text-gray-400 mb-2 block">Ciudad</label>
                   <select
@@ -131,18 +118,20 @@ export default function BuscarPage() {
           )}
         </div>
       </div>
-
-      {/* Results */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <p className="text-gray-400">
-            {filtrados.length} {filtrados.length === 1 ? 'resultado' : 'resultados'} encontrados
+            {establecimientos.length} {establecimientos.length === 1 ? 'resultado' : 'resultados'} encontrados
           </p>
         </div>
-
-        {filtrados.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="text-4xl mb-4 animate-spin">⏳</div>
+            <p className="text-gray-400">Buscando...</p>
+          </div>
+        ) : establecimientos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtrados.map((est) => (
+            {establecimientos.map((est) => (
               <EstablecimientoCard key={est.id} establecimiento={est} />
             ))}
           </div>
@@ -155,5 +144,13 @@ export default function BuscarPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function BuscarPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-20 text-center py-20">Cargando...</div>}>
+      <BuscarContent />
+    </Suspense>
   )
 }
