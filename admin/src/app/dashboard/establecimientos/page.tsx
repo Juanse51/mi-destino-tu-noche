@@ -21,6 +21,8 @@ interface Establecimiento {
   telefono?: string
   whatsapp?: string
   instagram?: string
+  latitud?: string
+  longitud?: string
 }
 
 const tipos = ['Todos', 'Restaurante', 'Bar', 'Café', 'Discoteca']
@@ -94,6 +96,8 @@ export default function EstablecimientosPage() {
   const [formActivo, setFormActivo] = useState(true)
   const [formVerificado, setFormVerificado] = useState(false)
   const [formDestacado, setFormDestacado] = useState(false)
+  const [formLatitud, setFormLatitud] = useState('')
+  const [formLongitud, setFormLongitud] = useState('')
 
   // Photo state
   const [uploading, setUploading] = useState(false)
@@ -133,6 +137,7 @@ export default function EstablecimientosPage() {
     setEditingId(null); setFormNombre(''); setFormSlug(''); setFormTipo('Restaurante'); setFormCiudad('Armenia')
     setFormDireccion(''); setFormDescripcion(''); setFormTelefono(''); setFormWhatsapp(''); setFormInstagram('')
     setFormActivo(true); setFormVerificado(false); setFormDestacado(false)
+    setFormLatitud(''); setFormLongitud('')
     setFotos([]); setActiveTab('info'); setSaveError(''); setShowModal(true)
   }
 
@@ -142,6 +147,7 @@ export default function EstablecimientosPage() {
     setFormDireccion(est.direccion || ''); setFormDescripcion(est.descripcion || '')
     setFormTelefono(est.telefono || ''); setFormWhatsapp(est.whatsapp || ''); setFormInstagram(est.instagram || '')
     setFormActivo(est.activo); setFormVerificado(est.verificado); setFormDestacado(est.destacado)
+    setFormLatitud(est.latitud || ''); setFormLongitud(est.longitud || '')
     setFotos(est.imagen_principal ? [{ url: est.imagen_principal, url_thumbnail: est.imagen_principal }] : [])
     setActiveTab('info'); setSaveError(''); setShowModal(true)
   }
@@ -185,6 +191,8 @@ export default function EstablecimientosPage() {
       activo: formActivo,
       verificado: formVerificado,
       destacado: formDestacado,
+      latitud: formLatitud ? parseFloat(formLatitud) : null,
+      longitud: formLongitud ? parseFloat(formLongitud) : null,
     }
 
     if (fotos.length > 0) {
@@ -345,6 +353,11 @@ export default function EstablecimientosPage() {
                     <div><label className="block text-sm text-gray-400 mb-2">WhatsApp</label><input type="text" className="input" placeholder="573001234567" value={formWhatsapp} onChange={(e) => setFormWhatsapp(e.target.value)} /></div>
                     <div><label className="block text-sm text-gray-400 mb-2">Instagram</label><input type="text" className="input" placeholder="@usuario" value={formInstagram} onChange={(e) => setFormInstagram(e.target.value)} /></div>
                   </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><label className="block text-sm text-gray-400 mb-2">Latitud</label><input type="text" className="input" placeholder="4.5339" value={formLatitud} onChange={(e) => setFormLatitud(e.target.value)} /></div>
+                    <div><label className="block text-sm text-gray-400 mb-2">Longitud</label><input type="text" className="input" placeholder="-75.6811" value={formLongitud} onChange={(e) => setFormLongitud(e.target.value)} /></div>
+                  </div>
+                  <p className="text-xs text-gray-500">💡 Para obtener las coordenadas: abre Google Maps, busca el lugar, clic derecho → copiar las coordenadas.</p>
                   <div className="grid grid-cols-3 gap-4">
                     <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={formActivo} onChange={(e) => setFormActivo(e.target.checked)} /><span className="text-sm">Activo</span></label>
                     <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={formVerificado} onChange={(e) => setFormVerificado(e.target.checked)} /><span className="text-sm">Verificado</span></label>
