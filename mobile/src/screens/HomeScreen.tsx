@@ -87,6 +87,15 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF6B35" />
         }
       >
+        {/* Logo */}
+        <View style={styles.logoContainer}>
+          <Image 
+            source={{ uri: 'https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png' }}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+        </View>
+
         {/* Header */}
         <View style={styles.header}>
           <View>
@@ -202,7 +211,7 @@ export default function HomeScreen() {
                   <View style={styles.establecimientoMeta}>
                     <View style={styles.ratingBadge}>
                       <Text style={styles.ratingStar}>⭐</Text>
-                      <Text style={styles.ratingText}>{item.valoracion_promedio?.toFixed(1) || 'Nuevo'}</Text>
+                      <Text style={styles.ratingText}>{Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : 'Nuevo'}</Text>
                     </View>
                     <Text style={styles.establecimientoPrecio}>
                       {'$'.repeat(item.rango_precios || 2)}
@@ -268,9 +277,9 @@ export default function HomeScreen() {
                   <Text style={styles.cercaNombre} numberOfLines={1}>{item.nombre}</Text>
                   <Text style={styles.cercaTipo}>{item.tipo_nombre}</Text>
                   <View style={styles.cercaMeta}>
-                    <Text style={styles.cercaRating}>⭐ {item.valoracion_promedio?.toFixed(1) || '-'}</Text>
+                    <Text style={styles.cercaRating}>⭐ {Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : '-'}</Text>
                     <Text style={styles.cercaDistancia}>
-                      • {(item.distancia / 1000).toFixed(1)} km
+                      • {(Number(item.distancia) / 1000).toFixed(1)} km
                     </Text>
                   </View>
                 </View>
@@ -281,6 +290,23 @@ export default function HomeScreen() {
             ))}
           </View>
         )}
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Image 
+            source={{ uri: 'https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png' }}
+            style={styles.footerLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.footerCopyright}>
+            © {new Date().getFullYear()} Mi Destino Tu Noche
+          </Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.vamosarayar.com')}>
+            <Text style={styles.footerDev}>
+              Desarrollado por <Text style={styles.footerDevLink}>Rayar!</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
@@ -411,4 +437,38 @@ const styles = StyleSheet.create({
   cercaPrecio: { justifyContent: 'center', paddingRight: 16 },
   cercaPrecioText: { fontSize: 14, color: '#10B981', fontWeight: 'bold' },
   bottomSpacer: { height: 30 },
+  logoContainer: { 
+    alignItems: 'center', 
+    paddingTop: 10, 
+    paddingBottom: 5 
+  },
+  logoImage: { 
+    width: 180, 
+    height: 50 
+  },
+  footer: { 
+    alignItems: 'center', 
+    paddingVertical: 30, 
+    marginTop: 20, 
+    borderTopWidth: 1, 
+    borderTopColor: '#1A1A2E',
+    marginHorizontal: 20
+  },
+  footerLogo: { 
+    width: 150, 
+    height: 60, 
+    marginBottom: 15 
+  },
+  footerCopyright: { 
+    fontSize: 12, 
+    color: '#6B7280', 
+    marginBottom: 8 
+  },
+  footerDev: { 
+    fontSize: 12, 
+    color: '#6B7280' 
+  },
+  footerDevLink: { 
+    color: '#FF6B35' 
+  },
 });

@@ -61,7 +61,7 @@ export default function EstablecimientoScreen() {
           <View style={styles.metaRow}>
             <View style={styles.ratingBadge}>
               <Text style={styles.ratingStar}>⭐</Text>
-              <Text style={styles.ratingText}>{est.valoracion_promedio?.toFixed(1) || 'Nuevo'}</Text>
+              <Text style={styles.ratingText}>{Number(est.valoracion_promedio) ? Number(est.valoracion_promedio).toFixed(1) : 'Nuevo'}</Text>
               <Text style={styles.ratingCount}>({est.total_valoraciones})</Text>
             </View>
             <Text style={styles.precio}>{'$'.repeat(est.rango_precios || 2)}</Text>

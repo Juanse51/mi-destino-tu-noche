@@ -14,8 +14,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">🌙</span>
-            <span className="font-bold text-lg hidden sm:block">Mi Destino Tu Noche</span>
+            <img 
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png" 
+              alt="Mi Destino Tu Noche" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Nav */}

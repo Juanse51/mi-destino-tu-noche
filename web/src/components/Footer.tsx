@@ -9,8 +9,11 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <span className="text-3xl">🌙</span>
-              <span className="font-bold text-xl">Mi Destino Tu Noche</span>
+              <img 
+                src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png" 
+                alt="Mi Destino Tu Noche" 
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="text-gray-400 mb-6">
               Descubre los mejores restaurantes, bares y cafés de Colombia. Tu guía definitiva para la vida nocturna y gastronómica.
@@ -140,17 +143,43 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm">
-            © 2024 Mi Destino Tu Noche. Todos los derechos reservados.
-          </p>
-          <div className="flex gap-6 text-sm">
-            <Link href="/terminos" className="text-gray-500 hover:text-white transition-colors">
-              Términos y condiciones
-            </Link>
-            <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
-              Política de privacidad
-            </Link>
+        <div className="border-t border-gray-800 mt-12 pt-8">
+          {/* Asobares Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png" 
+              alt="Asobares" 
+              className="h-16 w-auto"
+            />
+          </div>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-500 text-sm">
+              © {new Date().getFullYear()} Mi Destino Tu Noche. Todos los derechos reservados.
+            </p>
+            <div className="flex gap-6 text-sm">
+              <Link href="/terminos" className="text-gray-500 hover:text-white transition-colors">
+                Términos y condiciones
+              </Link>
+              <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
+                Política de privacidad
+              </Link>
+            </div>
+          </div>
+          
+          {/* Desarrollado por */}
+          <div className="text-center mt-6 pt-6 border-t border-gray-800">
+            <p className="text-gray-500 text-sm">
+              Desarrollado por{' '}
+              <a 
+                href="https://www.vamosarayar.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary-light transition-colors"
+              >
+                Rayar!
+              </a>
+            </p>
           </div>
         </div>
       </div>

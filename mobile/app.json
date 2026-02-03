@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#1a1a2e"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.asobares.midestinotunoche",
@@ -35,30 +37,33 @@
         }
       },
       "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ],
-      "googleServicesFile": "./google-services.json"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-location",
-      "expo-notifications",
       "expo-secure-store",
       [
         "expo-image-picker",
         {
           "photosPermission": "Permite acceder a tus fotos para subir imágenes"
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ],
+    "scheme": "midestinotunoche",
     "extra": {
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "8f0002b2-a049-4fd3-8cb2-3dd9b50f1618"
       }
-    },
-    "scheme": "midestinotunoche"
+    }
   }
 }
