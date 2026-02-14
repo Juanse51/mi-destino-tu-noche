@@ -156,8 +156,8 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
                 <MessageCircle className="w-5 h-5" /><span>WhatsApp</span>
               </a>
             )}
-            {(est.latitud && est.longitud) && (
-              <a href={`https://www.google.com/maps/dir/?api=1&destination=${est.latitud},${est.longitud}`} target="_blank" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-medium transition-colors">
+            {(est.direccion || (est.latitud && est.longitud)) && (
+  <a href={`https://www.google.com/maps/dir/?api=1&destination=${est.direccion ? encodeURIComponent(est.direccion + ', ' + (est.ciudad_nombre || 'Colombia')) : est.latitud + ',' + est.longitud}`} target="_blank" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-medium transition-colors">
                 <Navigation className="w-5 h-5" /><span>Cómo llegar</span>
               </a>
             )}
