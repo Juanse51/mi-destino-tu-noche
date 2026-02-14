@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, MapPin, Search, SlidersHorizontal } from 'lucide-react'
+import { ChevronLeft, MapPin, Search } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
@@ -22,13 +22,13 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
         if (ciudadRes.ok) {
           const ciudadData = await ciudadRes.json()
           setCiudad(ciudadData)
+        }
 
-          // Fetch establishments for this city
-          const estRes = await fetch(`${API_URL}/establecimientos?ciudad_id=${ciudadData.id}&limite=50`)
-          if (estRes.ok) {
-            const estData = await estRes.json()
-            setEstablecimientos(estData.establecimientos || [])
-          }
+        // Fetch establishments filtered by city slug
+        const estRes = await fetch(`${API_URL}/establecimientos?ciudad=${params.slug}&limite=50`)
+        if (estRes.ok) {
+          const estData = await estRes.json()
+          setEstablecimientos(estData.establecimientos || [])
         }
       } catch (err) {
         console.error('Error cargando ciudad:', err)
