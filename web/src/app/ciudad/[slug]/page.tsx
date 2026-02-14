@@ -44,7 +44,7 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
     return matchSearch && matchTipo
   })
 
-  const tipos = [...new Set(establecimientos.map(e => e.tipo_nombre).filter(Boolean))]
+  const tipos = Array.from(new Set(establecimientos.map((e: any) => e.tipo_nombre).filter(Boolean)))
 
   if (loading) {
     return (
