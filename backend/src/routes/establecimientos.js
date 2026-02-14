@@ -45,8 +45,13 @@ router.get('/', tokenOpcional, async (req, res) => {
     }
     
     if (tipo) {
-      whereClause += ` AND te.slug = $${paramIndex}`;
-      params.push(tipo);
+      if (tipo === 'restaurante') {
+        whereClause += ` AND te.slug = ANY($${paramIndex})`;
+        params.push(['restaurante', 'gastrobar']);
+      } else {
+        whereClause += ` AND te.slug = $${paramIndex}`;
+        params.push(tipo);
+      }
       paramIndex++;
     }
     
