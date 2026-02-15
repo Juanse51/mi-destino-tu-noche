@@ -41,11 +41,11 @@ export default function EstablecimientoCard({ establecimiento }: { establecimien
         <div className={`relative h-48 overflow-hidden ${isLogo ? 'bg-[#1a1a2e]' : ''}`}>
           {isLogo ? (
             /* Logo: mostrar centrado con fondo oscuro */
-            <div className="w-full h-full flex items-center justify-center bg-[#1a1a2e] p-6">
+            <div className="w-full h-full flex items-center justify-center bg-[#1a1a2e] p-3">
               <img
                 src={imagen_principal}
                 alt={nombre}
-                className="max-w-[75%] max-h-[85%] object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg"
+                className="max-w-[95%] max-h-[95%] object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg"
               />
             </div>
           ) : (

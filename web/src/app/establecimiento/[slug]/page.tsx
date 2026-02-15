@@ -159,11 +159,11 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
           {/* Centered logo + tipo */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             {est.imagen_principal && (
-              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-[#1a1a2e] border-4 border-white/10 flex items-center justify-center mb-4 shadow-2xl overflow-hidden">
+              <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-[#1a1a2e] border-4 border-white/10 flex items-center justify-center mb-4 shadow-2xl overflow-hidden">
                 <img
                   src={est.imagen_principal}
                   alt={est.nombre}
-                  className="max-w-[80%] max-h-[80%] object-contain drop-shadow-lg"
+                  className="max-w-[85%] max-h-[85%] object-contain drop-shadow-lg"
                 />
               </div>
             )}
