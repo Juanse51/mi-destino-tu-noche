@@ -26,18 +26,37 @@ export default function EstablecimientoCard({ establecimiento }: { establecimien
 
   const rating = Number(valoracion_promedio) || 0
   const defaultImage = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
+  
+  // Detectar si es un logo/PNG (de Supabase) vs una foto real
+  const isLogo = imagen_principal && (
+    imagen_principal.includes('.png') || 
+    imagen_principal.includes('supabase')
+  )
+  const hasImage = !!imagen_principal
 
   return (
     <Link href={`/establecimiento/${slug}`} className="group">
       <div className="bg-dark-lighter rounded-2xl overflow-hidden card-hover">
         {/* Image */}
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={imagen_principal || defaultImage}
-            alt={nombre}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent" />
+        <div className={`relative h-48 overflow-hidden ${isLogo ? 'bg-[#1a1a2e]' : ''}`}>
+          {isLogo ? (
+            /* Logo: mostrar centrado con fondo oscuro */
+            <div className="w-full h-full flex items-center justify-center bg-[#1a1a2e] p-6">
+              <img
+                src={imagen_principal}
+                alt={nombre}
+                className="max-w-[75%] max-h-[85%] object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg"
+              />
+            </div>
+          ) : (
+            /* Foto real o default */
+            <img
+              src={imagen_principal || defaultImage}
+              alt={nombre}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent pointer-events-none" />
           
           {/* Type badge */}
           <div 

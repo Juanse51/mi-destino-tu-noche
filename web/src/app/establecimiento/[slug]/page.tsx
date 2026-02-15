@@ -9,6 +9,14 @@ import {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
+const TIPO_CONFIG: Record<string, { icono: string; color: string; gradient: string }> = {
+  'Restaurante': { icono: '🍽️', color: '#FF6B35', gradient: 'from-orange-900/80 to-dark' },
+  'Bar': { icono: '🍺', color: '#3B82F6', gradient: 'from-blue-900/80 to-dark' },
+  'Discoteca': { icono: '🪩', color: '#A855F7', gradient: 'from-purple-900/80 to-dark' },
+  'Gastrobar': { icono: '🍸', color: '#EC4899', gradient: 'from-pink-900/80 to-dark' },
+  'Café': { icono: '☕', color: '#F59E0B', gradient: 'from-amber-900/80 to-dark' },
+}
+
 export default function EstablecimientoPage({ params }: { params: { slug: string } }) {
   const [est, setEst] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -36,7 +44,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
     return (
       <div className="min-h-screen pt-16 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-4 animate-spin">⏳</div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Cargando establecimiento...</p>
         </div>
       </div>
@@ -58,60 +66,147 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
     )
   }
 
-  const defaultImage = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200'
   const rating = Number(est.valoracion_promedio) || 0
   const totalResenas = Number(est.total_valoraciones) || 0
   const rangoPrecio = Number(est.rango_precios) || 2
   const cupones = est.cupones || []
   const valoraciones = est.valoraciones_recientes || []
 
+  // Detectar si la imagen es un logo (PNG de Supabase) vs foto real
+  const isLogo = est.imagen_principal && (
+    est.imagen_principal.includes('.png') || 
+    est.imagen_principal.includes('supabase')
+  )
+  const hasRealPhoto = est.imagen_principal && !isLogo
+  const tipoConfig = TIPO_CONFIG[est.tipo_nombre] || { icono: '📍', color: '#FF6B35', gradient: 'from-gray-900/80 to-dark' }
+  
+  // Fotos adicionales del establecimiento (galería)
+  const fotos = est.fotos || est.galeria || []
+
   return (
     <div className="min-h-screen pt-16">
-      {/* Hero Image */}
-      <div className="relative h-[50vh] md:h-[60vh] bg-dark-lighter">
-        <img
-          src={est.imagen_principal || defaultImage}
-          alt={est.nombre}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-dark/30" />
+      {/* Hero - Adaptable */}
+      {hasRealPhoto ? (
+        /* Si tiene foto real, mostrarla grande en el hero */
+        <div className="relative h-[50vh] md:h-[60vh] bg-dark-lighter">
+          <img
+            src={est.imagen_principal}
+            alt={est.nombre}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-dark/30" />
 
-        {/* Back button */}
-        <Link href="/" className="absolute top-4 left-4 p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
+          {/* Back button */}
+          <Link href="/" className="absolute top-4 left-4 p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
 
-        {/* Actions */}
-        <div className="absolute top-4 right-4 flex gap-2">
-          <button
-            onClick={() => setIsFavorite(!isFavorite)}
-            className={`p-3 rounded-full backdrop-blur transition-colors ${
-              isFavorite ? 'bg-red-500' : 'bg-dark/50 hover:bg-dark/70'
-            }`}
+          {/* Actions */}
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button
+              onClick={() => setIsFavorite(!isFavorite)}
+              className={`p-3 rounded-full backdrop-blur transition-colors ${
+                isFavorite ? 'bg-red-500' : 'bg-dark/50 hover:bg-dark/70'
+              }`}
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-white' : ''}`} />
+            </button>
+            <button className="p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors">
+              <Share2 className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Type badge */}
+          <div 
+            className="absolute bottom-4 left-4 px-4 py-2 rounded-full font-semibold flex items-center gap-2"
+            style={{ backgroundColor: tipoConfig.color }}
           >
-            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-white' : ''}`} />
-          </button>
-          <button className="p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors">
-            <Share2 className="w-5 h-5" />
-          </button>
+            <span>{tipoConfig.icono}</span>
+            <span>{est.tipo_nombre || 'Establecimiento'}</span>
+          </div>
         </div>
+      ) : (
+        /* Si es logo o no tiene imagen, usar hero con gradiente */
+        <div className={`relative h-[35vh] md:h-[40vh] bg-gradient-to-b ${tipoConfig.gradient}`}>
+          {/* Decorative background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+              backgroundSize: '40px 40px'
+            }} />
+          </div>
 
-        {/* Type badge */}
-        <div className="absolute bottom-4 left-4 px-4 py-2 rounded-full font-semibold flex items-center gap-2 bg-primary">
-          <span>{est.tipo_nombre || 'Establecimiento'}</span>
+          {/* Back button */}
+          <Link href="/" className="absolute top-4 left-4 p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors z-10">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+
+          {/* Actions */}
+          <div className="absolute top-4 right-4 flex gap-2 z-10">
+            <button
+              onClick={() => setIsFavorite(!isFavorite)}
+              className={`p-3 rounded-full backdrop-blur transition-colors ${
+                isFavorite ? 'bg-red-500' : 'bg-dark/50 hover:bg-dark/70'
+              }`}
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-white' : ''}`} />
+            </button>
+            <button className="p-3 bg-dark/50 backdrop-blur rounded-full hover:bg-dark/70 transition-colors">
+              <Share2 className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Centered logo + tipo */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            {est.imagen_principal && (
+              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-[#1a1a2e] border-4 border-white/10 flex items-center justify-center mb-4 shadow-2xl overflow-hidden">
+                <img
+                  src={est.imagen_principal}
+                  alt={est.nombre}
+                  className="max-w-[80%] max-h-[80%] object-contain drop-shadow-lg"
+                />
+              </div>
+            )}
+            <div 
+              className="px-4 py-2 rounded-full font-semibold flex items-center gap-2"
+              style={{ backgroundColor: tipoConfig.color }}
+            >
+              <span>{tipoConfig.icono}</span>
+              <span>{est.tipo_nombre || 'Establecimiento'}</span>
+            </div>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent" />
         </div>
-      </div>
+      )}
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
         <div className="bg-dark-lighter rounded-2xl p-6 md:p-8">
-          {/* Header */}
+          {/* Header con logo circular (cuando hay logo y se usó hero con foto o gradiente) */}
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{est.nombre}</h1>
-              <div className="flex items-center gap-2 text-gray-400 mt-2">
-                <MapPin className="w-4 h-4" />
-                <span>{est.ciudad_nombre}{est.direccion ? ` • ${est.direccion}` : ''}</span>
+            <div className="flex items-start gap-4">
+              {/* Logo circular al lado del nombre (solo si es logo y se mostró en hero con gradiente) */}
+              {isLogo && est.imagen_principal && (
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#1a1a2e] border-2 border-gray-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  <img
+                    src={est.imagen_principal}
+                    alt={est.nombre}
+                    className="max-w-[80%] max-h-[80%] object-contain"
+                  />
+                </div>
+              )}
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">{est.nombre}</h1>
+                <div className="flex items-center gap-2 text-gray-400 mt-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{est.ciudad_nombre}{est.direccion ? ` • ${est.direccion}` : ''}</span>
+                </div>
+                {est.genero_musical && (
+                  <div className="flex items-center gap-2 text-gray-400 mt-1">
+                    <span className="text-sm">🎵 {est.genero_musical}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -157,7 +252,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
               </a>
             )}
             {(est.direccion || (est.latitud && est.longitud)) && (
-  <a href={`https://www.google.com/maps/dir/?api=1&destination=${est.direccion ? encodeURIComponent(est.direccion + ', ' + (est.ciudad_nombre || 'Colombia')) : est.latitud + ',' + est.longitud}`} target="_blank" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-medium transition-colors">
+              <a href={`https://www.google.com/maps/dir/?api=1&destination=${est.direccion ? encodeURIComponent(est.direccion + ', ' + (est.ciudad_nombre || 'Colombia')) : est.latitud + ',' + est.longitud}`} target="_blank" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-medium transition-colors">
                 <Navigation className="w-5 h-5" /><span>Cómo llegar</span>
               </a>
             )}
@@ -198,22 +293,28 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
                 <div className="space-y-3">
                   {est.direccion && (
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-primary" />
+                      <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
                       <span>{est.direccion}</span>
                     </div>
                   )}
                   {est.telefono && (
                     <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-primary" />
+                      <Phone className="w-5 h-5 text-primary flex-shrink-0" />
                       <span>{est.telefono}</span>
                     </div>
                   )}
                   {est.instagram && (
                     <div className="flex items-center gap-3">
-                      <Instagram className="w-5 h-5 text-primary" />
-                      <a href={`https://instagram.com/${est.instagram}`} target="_blank" className="hover:text-primary">
+                      <Instagram className="w-5 h-5 text-primary flex-shrink-0" />
+                      <a href={`https://instagram.com/${est.instagram}`} target="_blank" className="hover:text-primary transition-colors">
                         @{est.instagram}
                       </a>
+                    </div>
+                  )}
+                  {est.genero_musical && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">🎵</span>
+                      <span>Género musical: <span className="text-white font-medium">{est.genero_musical}</span></span>
                     </div>
                   )}
                 </div>
