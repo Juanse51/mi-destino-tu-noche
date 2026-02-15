@@ -64,7 +64,7 @@ export default function EstablecimientosPage() {
       let hasMore = true
 
       while (hasMore) {
-        const res = await authFetch(`${API_URL}/establecimientos?limite=100&pagina=${page}`)
+        const res = await authFetch(`${API_URL}/establecimientos?limite=100&pagina=${page}&todos=true`)
         if (res.ok) {
           const json = await res.json()
           const items = json.establecimientos || []
