@@ -185,6 +185,7 @@ router.get('/', tokenOpcional, async (req, res) => {
         e.destacado,
         e.verificado,
         e.activo,
+        e.genero_musical,
         te.nombre as tipo_nombre,
         te.slug as tipo_slug,
         te.icono as tipo_icono,
@@ -571,7 +572,7 @@ router.post('/', verificarToken, async (req, res) => {
       return res.status(403).json({ error: 'No tienes permisos' });
     }
 
-    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado } = req.body;
+    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, genero_musical } = req.body;
 
     if (!nombre || !tipo || !ciudad || !direccion) {
       return res.status(400).json({ error: 'Nombre, tipo, ciudad y dirección son requeridos' });
@@ -592,10 +593,10 @@ router.post('/', verificarToken, async (req, res) => {
     }
 
     const result = await query(
-      `INSERT INTO establecimientos (nombre, slug, tipo_id, ciudad_id, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, latitud, longitud)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 4.533, -75.681)
-       RETURNING id, nombre, slug, activo, verificado, destacado`,
-      [nombre, finalSlug, tipoResult.rows[0].id, ciudadResult.rows[0].id, direccion, descripcion || '', telefono || '', whatsapp || '', instagram || '', activo !== false, verificado || false, destacado || false]
+      `INSERT INTO establecimientos (nombre, slug, tipo_id, ciudad_id, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, genero_musical, latitud, longitud)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 4.533, -75.681)
+       RETURNING id, nombre, slug, activo, verificado, destacado, genero_musical`,
+      [nombre, finalSlug, tipoResult.rows[0].id, ciudadResult.rows[0].id, direccion, descripcion || '', telefono || '', whatsapp || '', instagram || '', activo !== false, verificado || false, destacado || false, genero_musical || null]
     );
 
     res.status(201).json(result.rows[0]);
@@ -618,7 +619,7 @@ router.put('/:id', verificarToken, async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, imagen_principal, latitud, longitud } = req.body;
+    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, imagen_principal, latitud, longitud, genero_musical } = req.body;
 
     // Obtener tipo_id si se envió tipo
     let tipoId = null;
@@ -651,10 +652,11 @@ router.put('/:id', verificarToken, async (req, res) => {
         imagen_principal = COALESCE($13, imagen_principal),
         latitud = COALESCE($14, latitud),
         longitud = COALESCE($15, longitud),
+        genero_musical = COALESCE($16, genero_musical),
         updated_at = NOW()
-       WHERE id = $16
-       RETURNING id, nombre, slug, activo, verificado, destacado`,
-      [nombre || null, slug || null, tipoId, ciudadId, direccion || null, descripcion || null, telefono || null, whatsapp || null, instagram || null, activo, verificado, destacado, imagen_principal || null, latitud || null, longitud || null, id]
+       WHERE id = $17
+       RETURNING id, nombre, slug, activo, verificado, destacado, genero_musical`,
+      [nombre || null, slug || null, tipoId, ciudadId, direccion || null, descripcion || null, telefono || null, whatsapp || null, instagram || null, activo, verificado, destacado, imagen_principal || null, latitud || null, longitud || null, genero_musical || null, id]
     );
 
     if (result.rows.length === 0) {

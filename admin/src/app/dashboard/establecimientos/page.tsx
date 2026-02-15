@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Search, Plus, Edit, Trash2, Filter, X, RefreshCw } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Search, Plus, Edit, Trash2, Filter, X, RefreshCw, Upload, Music } from 'lucide-react'
 import { authFetch } from '@/lib/auth'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
+const SUPABASE_URL = 'https://xzvfwxlgrwzcpofdubmg.supabase.co'
 
 interface Establecimiento {
   id: string
@@ -22,10 +23,16 @@ interface Establecimiento {
   telefono?: string
   whatsapp?: string
   instagram?: string
+  genero_musical?: string
 }
 
 const tipos = ['Todos', 'Restaurante', 'Bar', 'Café', 'Discoteca', 'Gastrobar']
 const estados = ['Todos', 'activo', 'inactivo']
+const generosMusicales = [
+  '', 'Crossover', 'Salsa', 'Reggaeton', 'Vallenato', 'Rock', 'Electrónica',
+  'Pop', 'Merengue', 'Bachata', 'Tropical', 'Ranchera', 'Hip Hop', 'Jazz',
+  'Blues', 'Cumbia', 'Champeta', 'Reggae', 'Latin', 'Baladas', 'Popular'
+]
 
 export default function EstablecimientosPage() {
   const [data, setData] = useState<Establecimiento[]>([])
@@ -52,10 +59,13 @@ export default function EstablecimientosPage() {
   const [formWhatsapp, setFormWhatsapp] = useState('')
   const [formInstagram, setFormInstagram] = useState('')
   const [formActivo, setFormActivo] = useState(true)
-  const [formVerificado, setFormVerificado] = useState(false)
   const [formDestacado, setFormDestacado] = useState(false)
+  const [formGeneroMusical, setFormGeneroMusical] = useState('')
+  const [formImagenPreview, setFormImagenPreview] = useState('')
+  const [formImagenFile, setFormImagenFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Cargar TODOS los establecimientos con paginación
   const fetchData = async () => {
     setLoading(true)
     try {
@@ -69,35 +79,18 @@ export default function EstablecimientosPage() {
           const json = await res.json()
           const items = json.establecimientos || []
           allData = [...allData, ...items]
-          
-          // Parar si recibimos menos de 100 o ya tenemos el total
           const total = json.total || json.paginacion?.total || 0
-          if (items.length < 100 || allData.length >= total) {
-            hasMore = false
-          } else {
-            page++
-          }
-        } else {
-          hasMore = false
-        }
+          if (items.length < 100 || allData.length >= total) { hasMore = false } else { page++ }
+        } else { hasMore = false }
       }
 
-      // Deduplicar por ID
       const seen = new Set()
-      allData = allData.filter(e => {
-        if (seen.has(e.id)) return false
-        seen.add(e.id)
-        return true
-      })
-
+      allData = allData.filter(e => { if (seen.has(e.id)) return false; seen.add(e.id); return true })
       setData(allData)
 
-      // Extraer ciudades dinámicamente
       const ciudades = Array.from(new Set(allData.map((e: Establecimiento) => e.ciudad_nombre).filter(Boolean))).sort() as string[]
       setCiudadesDisponibles(['Todas', ...ciudades])
-    } catch (err) {
-      console.error('Error cargando establecimientos:', err)
-    }
+    } catch (err) { console.error('Error cargando establecimientos:', err) }
     setLoading(false)
   }
 
@@ -109,9 +102,8 @@ export default function EstablecimientosPage() {
       est.slug?.toLowerCase().includes(search.toLowerCase())
     const matchTipo = tipoFilter === 'Todos' || est.tipo_nombre === tipoFilter
     const matchCiudad = ciudadFilter === 'Todas' || est.ciudad_nombre === ciudadFilter
-    const matchEstado = estadoFilter === 'Todos' || 
-      (estadoFilter === 'activo' && est.activo) || 
-      (estadoFilter === 'inactivo' && !est.activo)
+    const matchEstado = estadoFilter === 'Todos' ||
+      (estadoFilter === 'activo' && est.activo) || (estadoFilter === 'inactivo' && !est.activo)
     return matchSearch && matchTipo && matchCiudad && matchEstado
   })
 
@@ -120,7 +112,8 @@ export default function EstablecimientosPage() {
   const openNew = () => {
     setEditingId(null); setFormNombre(''); setFormSlug(''); setFormTipo('Restaurante'); setFormCiudad('Armenia')
     setFormDireccion(''); setFormDescripcion(''); setFormTelefono(''); setFormWhatsapp(''); setFormInstagram('')
-    setFormActivo(true); setFormVerificado(false); setFormDestacado(false)
+    setFormActivo(true); setFormDestacado(false); setFormGeneroMusical('')
+    setFormImagenPreview(''); setFormImagenFile(null)
     setSaveError(''); setShowModal(true)
   }
 
@@ -129,40 +122,90 @@ export default function EstablecimientosPage() {
     setFormTipo(est.tipo_nombre || 'Restaurante'); setFormCiudad(est.ciudad_nombre || 'Armenia')
     setFormDireccion(est.direccion || ''); setFormDescripcion(est.descripcion || '')
     setFormTelefono(est.telefono || ''); setFormWhatsapp(est.whatsapp || ''); setFormInstagram(est.instagram || '')
-    setFormActivo(est.activo); setFormVerificado(est.verificado); setFormDestacado(est.destacado)
+    setFormActivo(est.activo); setFormDestacado(est.destacado)
+    setFormGeneroMusical(est.genero_musical || '')
+    setFormImagenPreview(est.imagen_principal || ''); setFormImagenFile(null)
     setSaveError(''); setShowModal(true)
+  }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFormImagenFile(file)
+      const reader = new FileReader()
+      reader.onload = (ev) => setFormImagenPreview(ev.target?.result as string)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const uploadImage = async (estId: string): Promise<string | null> => {
+    if (!formImagenFile) return null
+    setUploading(true)
+    try {
+      const ext = formImagenFile.name.split('.').pop() || 'jpg'
+      const filePath = `establecimientos/${estId}/principal.${ext}`
+      const arrayBuffer = await formImagenFile.arrayBuffer()
+
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/imagenes/${filePath}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6dmZ3eGxncnd6Y3BvZmR1Ym1nIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTg5MDg1NCwiZXhwIjoyMDg1NDY2ODU0fQ.PpCuYVXpPpKqRSvJVwlWJlyVZnf_Xk9zaXUzIPCNiag',
+          'Content-Type': formImagenFile.type,
+          'x-upsert': 'true',
+        },
+        body: arrayBuffer
+      })
+
+      if (res.ok) {
+        return `${SUPABASE_URL}/storage/v1/object/public/imagenes/${filePath}`
+      }
+      console.error('Upload error:', await res.text())
+      return null
+    } catch (err) {
+      console.error('Upload error:', err)
+      return null
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSave = async () => {
     if (!formNombre.trim() || !formDireccion.trim()) {
-      setSaveError('Nombre y dirección son requeridos')
-      return
+      setSaveError('Nombre y dirección son requeridos'); return
     }
 
-    const body = {
+    const body: any = {
       nombre: formNombre,
       slug: formSlug || generateSlug(formNombre),
-      tipo: formTipo,
-      ciudad: formCiudad,
-      direccion: formDireccion,
-      descripcion: formDescripcion,
-      telefono: formTelefono,
-      whatsapp: formWhatsapp,
-      instagram: formInstagram,
-      activo: formActivo,
-      verificado: formVerificado,
-      destacado: formDestacado
+      tipo: formTipo, ciudad: formCiudad, direccion: formDireccion,
+      descripcion: formDescripcion, telefono: formTelefono,
+      whatsapp: formWhatsapp, instagram: formInstagram,
+      activo: formActivo, verificado: true, destacado: formDestacado,
+      genero_musical: formGeneroMusical || null
     }
 
     try {
       let res
       if (editingId) {
+        if (formImagenFile) {
+          const imageUrl = await uploadImage(editingId)
+          if (imageUrl) body.imagen_principal = imageUrl
+        }
         res = await authFetch(`${API_URL}/establecimientos/${editingId}`, { method: 'PUT', body: JSON.stringify(body) })
       } else {
         res = await authFetch(`${API_URL}/establecimientos`, { method: 'POST', body: JSON.stringify(body) })
       }
 
       if (res.ok) {
+        const result = await res.json()
+        if (!editingId && formImagenFile && result.id) {
+          const imageUrl = await uploadImage(result.id)
+          if (imageUrl) {
+            await authFetch(`${API_URL}/establecimientos/${result.id}`, {
+              method: 'PUT', body: JSON.stringify({ imagen_principal: imageUrl })
+            })
+          }
+        }
         setSaveSuccess(true); setSaveError('')
         setTimeout(() => { setSaveSuccess(false); setShowModal(false) }, 800)
         fetchData()
@@ -174,18 +217,12 @@ export default function EstablecimientosPage() {
   }
 
   const handleDelete = async (id: string) => {
-    try {
-      await authFetch(`${API_URL}/establecimientos/${id}`, { method: 'DELETE' })
-      fetchData()
-    } catch (err) { console.error(err) }
+    try { await authFetch(`${API_URL}/establecimientos/${id}`, { method: 'DELETE' }); fetchData() } catch (err) { console.error(err) }
     setShowDeleteConfirm(null)
   }
 
-  // Agrupar por ciudad para el resumen
   const ciudadCounts = data.reduce((acc: Record<string, number>, e) => {
-    const c = e.ciudad_nombre || 'Sin ciudad'
-    acc[c] = (acc[c] || 0) + 1
-    return acc
+    const c = e.ciudad_nombre || 'Sin ciudad'; acc[c] = (acc[c] || 0) + 1; return acc
   }, {})
 
   return (
@@ -199,40 +236,22 @@ export default function EstablecimientosPage() {
           <button onClick={fetchData} className="p-2 border border-gray-700 rounded-lg hover:bg-dark">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
-          <button onClick={openNew} className="btn-primary flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Nuevo
-          </button>
+          <button onClick={openNew} className="btn-primary flex items-center gap-2"><Plus className="w-4 h-4" /> Nuevo</button>
         </div>
       </div>
 
-      {/* Resumen por ciudad */}
       <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => setCiudadFilter('Todas')}
-          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-            ciudadFilter === 'Todas'
-              ? 'bg-primary text-white'
-              : 'bg-dark-lighter text-gray-400 hover:text-white border border-gray-700'
-          }`}
-        >
+        <button onClick={() => setCiudadFilter('Todas')} className={`px-3 py-1.5 rounded-full text-sm transition-colors ${ciudadFilter === 'Todas' ? 'bg-primary text-white' : 'bg-dark-lighter text-gray-400 hover:text-white border border-gray-700'}`}>
           Todos ({data.length})
         </button>
         {Object.entries(ciudadCounts).sort((a, b) => b[1] - a[1]).map(([ciudad, count]) => (
-          <button
-            key={ciudad}
-            onClick={() => setCiudadFilter(ciudadFilter === ciudad ? 'Todas' : ciudad)}
-            className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-              ciudadFilter === ciudad
-                ? 'bg-primary text-white'
-                : 'bg-dark-lighter text-gray-400 hover:text-white border border-gray-700'
-            }`}
-          >
+          <button key={ciudad} onClick={() => setCiudadFilter(ciudadFilter === ciudad ? 'Todas' : ciudad)}
+            className={`px-3 py-1.5 rounded-full text-sm transition-colors ${ciudadFilter === ciudad ? 'bg-primary text-white' : 'bg-dark-lighter text-gray-400 hover:text-white border border-gray-700'}`}>
             {ciudad} ({count})
           </button>
         ))}
       </div>
 
-      {/* Search & Filters */}
       <div className="card">
         <div className="flex gap-4">
           <div className="flex-1 relative">
@@ -245,35 +264,16 @@ export default function EstablecimientosPage() {
         </div>
         {showFilters && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-800">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Tipo</label>
-              <select className="input" value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
-                {tipos.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Ciudad</label>
-              <select className="input" value={ciudadFilter} onChange={(e) => setCiudadFilter(e.target.value)}>
-                {ciudadesDisponibles.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Estado</label>
-              <select className="input" value={estadoFilter} onChange={(e) => setEstadoFilter(e.target.value)}>
-                {estados.map(e => <option key={e} value={e}>{e}</option>)}
-              </select>
-            </div>
+            <div><label className="block text-sm text-gray-400 mb-2">Tipo</label><select className="input" value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>{tipos.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+            <div><label className="block text-sm text-gray-400 mb-2">Ciudad</label><select className="input" value={ciudadFilter} onChange={(e) => setCiudadFilter(e.target.value)}>{ciudadesDisponibles.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+            <div><label className="block text-sm text-gray-400 mb-2">Estado</label><select className="input" value={estadoFilter} onChange={(e) => setEstadoFilter(e.target.value)}>{estados.map(e => <option key={e} value={e}>{e}</option>)}</select></div>
           </div>
         )}
       </div>
 
-      {/* Table */}
       <div className="card overflow-x-auto">
         {loading ? (
-          <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-gray-500 mb-3" />
-            <p className="text-gray-400">Cargando establecimientos...</p>
-          </div>
+          <div className="text-center py-12"><RefreshCw className="w-8 h-8 animate-spin mx-auto text-gray-500 mb-3" /><p className="text-gray-400">Cargando...</p></div>
         ) : (
           <table className="w-full">
             <thead>
@@ -281,7 +281,7 @@ export default function EstablecimientosPage() {
                 <th className="pb-3 font-medium">Establecimiento</th>
                 <th className="pb-3 font-medium">Ciudad</th>
                 <th className="pb-3 font-medium">Tipo</th>
-                <th className="pb-3 font-medium">Valoración</th>
+                <th className="pb-3 font-medium">Música</th>
                 <th className="pb-3 font-medium">Estado</th>
                 <th className="pb-3 font-medium">Acciones</th>
               </tr>
@@ -295,7 +295,6 @@ export default function EstablecimientosPage() {
                       <div>
                         <p className="font-medium flex items-center gap-2">
                           {est.nombre}
-                          {est.verificado && <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">✓</span>}
                           {est.destacado && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-1.5 py-0.5 rounded">⭐</span>}
                         </p>
                         <p className="text-sm text-gray-500">/{est.slug}</p>
@@ -304,7 +303,7 @@ export default function EstablecimientosPage() {
                   </td>
                   <td className="py-4 text-gray-300">{est.ciudad_nombre}</td>
                   <td className="py-4 text-gray-300">{est.tipo_nombre}</td>
-                  <td className="py-4"><span className="flex items-center gap-1"><span className="text-yellow-400">⭐</span>{Number(est.valoracion_promedio || 0).toFixed(1)}</span></td>
+                  <td className="py-4 text-gray-400 text-sm">{est.genero_musical || '—'}</td>
                   <td className="py-4">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${est.activo ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                       {est.activo ? 'activo' : 'inactivo'}
@@ -312,8 +311,8 @@ export default function EstablecimientosPage() {
                   </td>
                   <td className="py-4">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => openEdit(est)} className="p-2 hover:bg-dark rounded-lg" title="Editar"><Edit className="w-4 h-4 text-gray-400" /></button>
-                      <button onClick={() => setShowDeleteConfirm(est.id)} className="p-2 hover:bg-dark rounded-lg" title="Eliminar"><Trash2 className="w-4 h-4 text-red-400" /></button>
+                      <button onClick={() => openEdit(est)} className="p-2 hover:bg-dark rounded-lg"><Edit className="w-4 h-4 text-gray-400" /></button>
+                      <button onClick={() => setShowDeleteConfirm(est.id)} className="p-2 hover:bg-dark rounded-lg"><Trash2 className="w-4 h-4 text-red-400" /></button>
                     </div>
                   </td>
                 </tr>
@@ -324,7 +323,6 @@ export default function EstablecimientosPage() {
         {!loading && filteredData.length === 0 && <div className="text-center py-12"><p className="text-gray-400">No se encontraron establecimientos</p></div>}
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
           <div className="bg-dark-lighter rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
@@ -334,11 +332,32 @@ export default function EstablecimientosPage() {
             </div>
             <div className="flex-1 overflow-y-auto p-6">
               <div className="space-y-4">
+                {/* Imagen */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Logo / Imagen</label>
+                  <div className="flex items-center gap-4">
+                    <div onClick={() => fileInputRef.current?.click()}
+                      className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-600 hover:border-primary flex items-center justify-center cursor-pointer overflow-hidden bg-dark transition-colors">
+                      {formImagenPreview ? (
+                        <img src={formImagenPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <Upload className="w-8 h-8 text-gray-500" />
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      <p>Haz clic para subir imagen</p>
+                      <p className="text-xs text-gray-500">PNG, JPG, WEBP (máx 5MB)</p>
+                      {formImagenFile && <p className="text-green-400 mt-1">✓ {formImagenFile.name}</p>}
+                    </div>
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-gray-400 mb-2">Nombre *</label><input type="text" className="input" placeholder="Nombre del establecimiento" value={formNombre} onChange={(e) => { setFormNombre(e.target.value); if (!editingId) setFormSlug(generateSlug(e.target.value)) }} /></div>
                   <div><label className="block text-sm text-gray-400 mb-2">Slug</label><input type="text" className="input" placeholder="nombre-del-establecimiento" value={formSlug} onChange={(e) => setFormSlug(e.target.value)} /></div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">Tipo *</label>
                     <select className="input" value={formTipo} onChange={(e) => setFormTipo(e.target.value)}>
@@ -351,6 +370,13 @@ export default function EstablecimientosPage() {
                       {ciudadesDisponibles.filter(c => c !== 'Todas').map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Género Musical</label>
+                    <select className="input" value={formGeneroMusical} onChange={(e) => setFormGeneroMusical(e.target.value)}>
+                      <option value="">Sin definir</option>
+                      {generosMusicales.filter(g => g).map(g => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  </div>
                 </div>
                 <div><label className="block text-sm text-gray-400 mb-2">Dirección *</label><input type="text" className="input" placeholder="Dirección completa" value={formDireccion} onChange={(e) => setFormDireccion(e.target.value)} /></div>
                 <div><label className="block text-sm text-gray-400 mb-2">Descripción</label><textarea className="input min-h-[100px]" placeholder="Descripción del establecimiento" value={formDescripcion} onChange={(e) => setFormDescripcion(e.target.value)} /></div>
@@ -359,21 +385,21 @@ export default function EstablecimientosPage() {
                   <div><label className="block text-sm text-gray-400 mb-2">WhatsApp</label><input type="text" className="input" placeholder="573001234567" value={formWhatsapp} onChange={(e) => setFormWhatsapp(e.target.value)} /></div>
                   <div><label className="block text-sm text-gray-400 mb-2">Instagram</label><input type="text" className="input" placeholder="@usuario" value={formInstagram} onChange={(e) => setFormInstagram(e.target.value)} /></div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={formActivo} onChange={(e) => setFormActivo(e.target.checked)} /><span className="text-sm">Activo</span></label>
-                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={formVerificado} onChange={(e) => setFormVerificado(e.target.checked)} /><span className="text-sm">Verificado</span></label>
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 accent-primary" checked={formDestacado} onChange={(e) => setFormDestacado(e.target.checked)} /><span className="text-sm">Destacado</span></label>
                 </div>
               </div>
             </div>
             <div className="flex justify-between items-center gap-3 p-6 border-t border-gray-800 shrink-0">
               <div>
-                {saveSuccess && <span className="text-green-400 text-sm flex items-center gap-1">✅ Guardado correctamente</span>}
+                {saveSuccess && <span className="text-green-400 text-sm">✅ Guardado</span>}
                 {saveError && <span className="text-red-400 text-sm">{saveError}</span>}
+                {uploading && <span className="text-yellow-400 text-sm">Subiendo imagen...</span>}
               </div>
               <div className="flex gap-3">
                 <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 border border-gray-700 rounded-lg hover:bg-dark">Cancelar</button>
-                <button type="button" onClick={handleSave} className="btn-primary">{editingId ? 'Guardar Cambios' : 'Crear Establecimiento'}</button>
+                <button type="button" onClick={handleSave} className="btn-primary" disabled={uploading}>{editingId ? 'Guardar Cambios' : 'Crear Establecimiento'}</button>
               </div>
             </div>
           </div>
