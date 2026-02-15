@@ -37,6 +37,12 @@ router.get('/', tokenOpcional, async (req, res) => {
     
     let whereClause = 'WHERE e.activo = true';
     
+    // Admin puede ver todos (activos e inactivos)
+    const { todos } = req.query;
+    if (todos === 'true') {
+      whereClause = 'WHERE 1=1';
+    }
+    
     // Filtros
     if (ciudad) {
       whereClause += ` AND c.slug = $${paramIndex}`;
@@ -178,6 +184,7 @@ router.get('/', tokenOpcional, async (req, res) => {
         e.longitud,
         e.destacado,
         e.verificado,
+        e.activo,
         te.nombre as tipo_nombre,
         te.slug as tipo_slug,
         te.icono as tipo_icono,
