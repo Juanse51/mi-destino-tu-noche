@@ -64,17 +64,31 @@ export default function EstablecimientosPage() {
       let hasMore = true
 
       while (hasMore) {
-        const res = await authFetch(`${API_URL}/establecimientos?limite=100&pagina=${page}&todos=true`)
+        const res = await authFetch(`${API_URL}/establecimientos?limite=100&pagina=${page}&todos=true&ordenar=nombre`)
         if (res.ok) {
           const json = await res.json()
           const items = json.establecimientos || []
           allData = [...allData, ...items]
-          hasMore = items.length >= 100
-          page++
+          
+          // Parar si recibimos menos de 100 o ya tenemos el total
+          const total = json.total || json.paginacion?.total || 0
+          if (items.length < 100 || allData.length >= total) {
+            hasMore = false
+          } else {
+            page++
+          }
         } else {
           hasMore = false
         }
       }
+
+      // Deduplicar por ID
+      const seen = new Set()
+      allData = allData.filter(e => {
+        if (seen.has(e.id)) return false
+        seen.add(e.id)
+        return true
+      })
 
       setData(allData)
 
@@ -193,6 +207,16 @@ export default function EstablecimientosPage() {
 
       {/* Resumen por ciudad */}
       <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setCiudadFilter('Todas')}
+          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+            ciudadFilter === 'Todas'
+              ? 'bg-primary text-white'
+              : 'bg-dark-lighter text-gray-400 hover:text-white border border-gray-700'
+          }`}
+        >
+          Todos ({data.length})
+        </button>
         {Object.entries(ciudadCounts).sort((a, b) => b[1] - a[1]).map(([ciudad, count]) => (
           <button
             key={ciudad}
@@ -206,11 +230,6 @@ export default function EstablecimientosPage() {
             {ciudad} ({count})
           </button>
         ))}
-        {ciudadFilter !== 'Todas' && (
-          <button onClick={() => setCiudadFilter('Todas')} className="px-3 py-1.5 rounded-full text-sm bg-gray-700 text-white flex items-center gap-1">
-            <X className="w-3 h-3" /> Limpiar
-          </button>
-        )}
       </div>
 
       {/* Search & Filters */}
