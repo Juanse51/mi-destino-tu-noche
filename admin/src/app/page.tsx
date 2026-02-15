@@ -38,8 +38,15 @@ export default function LoginPage() {
         return
       }
 
+      // Guardar tokens
       localStorage.setItem('admin_token', data.accessToken)
       localStorage.setItem('admin_user', JSON.stringify(data.usuario))
+      
+      // Guardar refresh token para auto-renovación
+      if (data.refreshToken) {
+        localStorage.setItem('admin_refresh_token', data.refreshToken)
+      }
+
       router.push('/dashboard')
     } catch (err) {
       setError('Error de conexión con el servidor')

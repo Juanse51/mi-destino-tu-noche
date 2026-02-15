@@ -7,6 +7,7 @@ import {
   LayoutDashboard, Store, Users, Star, Image, MapPin, 
   Tags, LogOut, Menu, X, Bell, Settings, Ticket
 } from 'lucide-react'
+import { logout } from '@/lib/auth'
 
 const menuItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -34,12 +35,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setUser(JSON.parse(userData))
     }
   }, [router])
-
-  const handleLogout = () => {
-    localStorage.removeItem('admin_token')
-    localStorage.removeItem('admin_user')
-    router.push('/')
-  }
 
   return (
     <div className="min-h-screen flex">
@@ -81,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="flex items-center gap-3 px-4 py-3 w-full text-gray-400 hover:bg-dark hover:text-white rounded-lg transition-colors"
           >
             <LogOut className="w-5 h-5" />
