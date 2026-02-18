@@ -1,11 +1,10 @@
 // =====================================================
 // Cliente API (Axios)
 // =====================================================
-
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -29,7 +28,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401 && error.response?.data?.code === 'TOKEN_EXPIRED') {
-      // Intentar refresh token
       try {
         const refreshToken = await SecureStore.getItemAsync('refreshToken');
         if (refreshToken) {
@@ -39,12 +37,10 @@ api.interceptors.response.use(
           await SecureStore.setItemAsync('accessToken', newToken);
           await SecureStore.setItemAsync('refreshToken', newRefresh);
           
-          // Reintentar request original
           error.config.headers.Authorization = `Bearer ${newToken}`;
           return api.request(error.config);
         }
       } catch (refreshError) {
-        // Falló el refresh, logout
         await SecureStore.deleteItemAsync('accessToken');
         await SecureStore.deleteItemAsync('refreshToken');
       }
@@ -56,7 +52,6 @@ api.interceptors.response.use(
 // =====================================================
 // API Endpoints
 // =====================================================
-
 export const establecimientosApi = {
   getAll: (params?: any) => api.get('/establecimientos', { params }),
   getDestacados: (params?: any) => api.get('/establecimientos/destacados', { params }),
