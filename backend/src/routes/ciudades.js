@@ -1,18 +1,18 @@
 // =====================================================
 // Rutas de Ciudades
 // =====================================================
-
 const express = require('express');
 const router = express.Router();
 const { query } = require('../config/database');
 const { verificarToken } = require('../middleware/auth');
 
-// Obtener todas las ciudades (incluye inactivas para admin)
+// Obtener todas las ciudades
 router.get('/', async (req, res) => {
   try {
     const { todas } = req.query;
+
     const whereClause = todas === 'true' ? '' : 'WHERE c.activo = true';
-    
+
     const result = await query(`
       SELECT 
         c.id, c.nombre, c.slug, c.imagen_url, c.descripcion, c.latitud, c.longitud, c.activo,
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
       ${whereClause}
       ORDER BY c.orden ASC, c.nombre ASC
     `);
-    
+
     res.json(result.rows);
   } catch (error) {
     console.error('Error obteniendo ciudades:', error);
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     const result = await query(`
       SELECT 
         c.*, d.nombre as departamento_nombre,
@@ -44,11 +44,11 @@ router.get('/:slug', async (req, res) => {
       LEFT JOIN departamentos d ON d.id = c.departamento_id
       WHERE c.slug = $1 AND c.activo = true
     `, [slug]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Ciudad no encontrada' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error obteniendo ciudad:', error);
@@ -63,29 +63,34 @@ router.post('/', verificarToken, async (req, res) => {
       return res.status(403).json({ error: 'No tienes permisos' });
     }
 
-    const { nombre, slug, departamento, descripcion, latitud, longitud, activo } = req.body;
+    const { nombre, departamento, descripcion, imagen_url, activo } = req.body;
 
-    if (!nombre) return res.status(400).json({ error: 'Nombre es requerido' });
+    if (!nombre) {
+      return res.status(400).json({ error: 'Nombre es requerido' });
+    }
 
-    const finalSlug = slug || nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const slug = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
-    // Buscar departamento_id si se envió
+    // Buscar departamento_id
     let departamentoId = null;
     if (departamento) {
-      const depResult = await query('SELECT id FROM departamentos WHERE nombre ILIKE $1 LIMIT 1', [departamento]);
-      if (depResult.rows.length > 0) departamentoId = depResult.rows[0].id;
+      const depRes = await query('SELECT id FROM departamentos WHERE nombre ILIKE $1 LIMIT 1', [departamento]);
+      if (depRes.rows.length > 0) departamentoId = depRes.rows[0].id;
     }
 
     const result = await query(
-      `INSERT INTO ciudades (nombre, slug, departamento_id, descripcion, latitud, longitud, activo)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [nombre, finalSlug, departamentoId, descripcion || null, latitud || null, longitud || null, activo !== false]
+      `INSERT INTO ciudades (nombre, slug, departamento_id, descripcion, imagen_url, activo)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [nombre, slug, departamentoId, descripcion || null, imagen_url || null, activo !== false]
     );
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creando ciudad:', error);
-    if (error.code === '23505') return res.status(400).json({ error: 'Ya existe una ciudad con ese nombre o slug' });
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Ya existe una ciudad con ese nombre' });
+    }
     res.status(500).json({ error: 'Error al crear ciudad' });
   }
 });
@@ -98,28 +103,31 @@ router.put('/:id', verificarToken, async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, slug, departamento, descripcion, latitud, longitud, activo } = req.body;
+    const { nombre, departamento, descripcion, imagen_url, activo } = req.body;
 
+    // Buscar departamento_id
     let departamentoId = undefined;
     if (departamento) {
-      const depResult = await query('SELECT id FROM departamentos WHERE nombre ILIKE $1 LIMIT 1', [departamento]);
-      if (depResult.rows.length > 0) departamentoId = depResult.rows[0].id;
+      const depRes = await query('SELECT id FROM departamentos WHERE nombre ILIKE $1 LIMIT 1', [departamento]);
+      if (depRes.rows.length > 0) departamentoId = depRes.rows[0].id;
     }
 
     const result = await query(
       `UPDATE ciudades SET
         nombre = COALESCE($1, nombre),
-        slug = COALESCE($2, slug),
-        departamento_id = COALESCE($3, departamento_id),
-        descripcion = COALESCE($4, descripcion),
-        latitud = COALESCE($5, latitud),
-        longitud = COALESCE($6, longitud),
-        activo = COALESCE($7, activo)
-       WHERE id = $8 RETURNING *`,
-      [nombre || null, slug || null, departamentoId || null, descripcion || null, latitud || null, longitud || null, activo, id]
+        descripcion = COALESCE($2, descripcion),
+        imagen_url = COALESCE($3, imagen_url),
+        activo = COALESCE($4, activo),
+        departamento_id = COALESCE($5, departamento_id)
+       WHERE id = $6
+       RETURNING *`,
+      [nombre || null, descripcion || null, imagen_url || null, activo, departamentoId !== undefined ? departamentoId : null, id]
     );
 
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Ciudad no encontrada' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Ciudad no encontrada' });
+    }
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error actualizando ciudad:', error);
@@ -136,7 +144,9 @@ router.delete('/:id', verificarToken, async (req, res) => {
 
     const { id } = req.params;
     const result = await query('DELETE FROM ciudades WHERE id = $1 RETURNING id', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Ciudad no encontrada' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Ciudad no encontrada' });
+    }
     res.json({ mensaje: 'Ciudad eliminada' });
   } catch (error) {
     console.error('Error eliminando ciudad:', error);
