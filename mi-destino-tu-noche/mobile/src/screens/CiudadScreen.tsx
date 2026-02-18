@@ -23,7 +23,7 @@ export default function CiudadScreen() {
         <View style={{ width: 40 }} />
       </View>
       <FlatList
-        data={data?.data?.establecimientos || []}
+        data={data?.establecimientos || []}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.list}

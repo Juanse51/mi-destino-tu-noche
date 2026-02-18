@@ -46,7 +46,7 @@ export default function SearchScreen() {
 
       {/* Filtros rápidos */}
       <View style={styles.filtrosContainer}>
-        {tipos?.data?.map((tipo: any) => (
+        {tipos?.map((tipo: any) => (
           <TouchableOpacity
             key={tipo.id}
             style={[styles.filtroChip, filtros.tipo === tipo.slug && styles.filtroChipActive]}
@@ -62,7 +62,7 @@ export default function SearchScreen() {
 
       {/* Resultados */}
       <FlatList
-        data={resultados?.data?.establecimientos || []}
+        data={resultados?.establecimientos || []}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.resultados}
         renderItem={({ item }) => (

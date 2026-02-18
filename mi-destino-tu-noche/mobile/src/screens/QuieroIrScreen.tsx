@@ -20,7 +20,7 @@ export default function QuieroIrScreen() {
         <View style={{ width: 40 }} />
       </View>
       <FlatList
-        data={data?.data || []}
+        data={data || []}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (

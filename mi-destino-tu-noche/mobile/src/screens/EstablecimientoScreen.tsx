@@ -21,7 +21,7 @@ export default function EstablecimientoScreen() {
   });
 
   const toggleFavorito = useMutation({
-    mutationFn: () => favoritosApi.toggle(data?.data?.id),
+    mutationFn: () => favoritosApi.toggle(data?.id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['establecimiento', slug] }),
   });
 

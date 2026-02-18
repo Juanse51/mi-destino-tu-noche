@@ -23,14 +23,14 @@ export default function CategoriaScreen() {
         <View style={{ width: 40 }} />
       </View>
       
-      {data?.data?.categoria && (
+      {data?.categoria && (
         <View style={styles.categoriaInfo}>
           <Text style={styles.categoriaDesc}>{data.data.categoria.descripcion}</Text>
         </View>
       )}
       
       <FlatList
-        data={data?.data?.establecimientos || []}
+        data={data?.establecimientos || []}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
