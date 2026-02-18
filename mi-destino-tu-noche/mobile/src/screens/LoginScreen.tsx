@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontSize: 16, color: '#FFF' },
   errorText: { color: '#EF4444', textAlign: 'center' },
   loginButton: {
-    backgroundColor: '#FF6B35', paddingVertical: 16,
+    backgroundColor: '#0073FF', paddingVertical: 16,
     borderRadius: 12, alignItems: 'center', marginTop: 8
   },
   loginButtonDisabled: { opacity: 0.7 },
@@ -202,5 +202,5 @@ const styles = StyleSheet.create({
     marginTop: 32 
   },
   registerText: { color: '#9CA3AF', fontSize: 15 },
-  registerLink: { color: '#FF6B35', fontSize: 15, fontWeight: '600' },
+  registerLink: { color: '#0073FF', fontSize: 15, fontWeight: '600' },
 });

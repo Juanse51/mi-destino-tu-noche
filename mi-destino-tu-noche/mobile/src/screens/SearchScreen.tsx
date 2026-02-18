@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A1A2E', paddingHorizontal: 12,
     paddingVertical: 8, borderRadius: 20
   },
-  filtroChipActive: { backgroundColor: '#FF6B35' },
+  filtroChipActive: { backgroundColor: '#0073FF' },
   filtroIcon: { fontSize: 14, marginRight: 4 },
   filtroText: { fontSize: 13, color: '#9CA3AF' },
   filtroTextActive: { color: '#FFF' },
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   resultadoImage: { width: 100, height: 100 },
   resultadoInfo: { flex: 1, padding: 12, justifyContent: 'center' },
   resultadoNombre: { fontSize: 16, fontWeight: 'bold', color: '#FFF' },
-  resultadoTipo: { fontSize: 13, color: '#FF6B35', marginTop: 4 },
+  resultadoTipo: { fontSize: 13, color: '#0073FF', marginTop: 4 },
   resultadoMeta: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
   resultadoRating: { fontSize: 13, color: '#FFF' },
   resultadoPrecio: { fontSize: 13, color: '#10B981', fontWeight: 'bold' },

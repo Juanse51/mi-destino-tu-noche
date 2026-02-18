@@ -50,7 +50,7 @@ function MainTabs() {
         headerShown: false,
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#FF6B35',
+        tabBarActiveTintColor: '#0073FF',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: styles.tabLabel,
       }}
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabIconFocused: {
-    backgroundColor: 'rgba(255, 107, 53, 0.15)',
+    backgroundColor: 'rgba(0, 115, 255, 0.15)',
   },
   tabEmoji: {
     fontSize: 22,

@@ -48,7 +48,7 @@ export default function EstablecimientoScreen() {
             </View>
           </SafeAreaView>
           <View style={styles.badgesContainer}>
-            <View style={[styles.tipoBadge, { backgroundColor: est.tipo_color || '#FF6B35' }]}>
+            <View style={[styles.tipoBadge, { backgroundColor: est.tipo_color || '#0073FF' }]}>
               <Text style={styles.tipoBadgeText}>{est.tipo_icono} {est.tipo_nombre}</Text>
             </View>
           </View>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   tipoBadgeText: { color: '#FFF', fontSize: 12, fontWeight: 'bold' },
   mainInfo: { padding: 20 },
   nombre: { fontSize: 26, fontWeight: 'bold', color: '#FFF' },
-  tipoComida: { fontSize: 15, color: '#FF6B35', marginTop: 4 },
+  tipoComida: { fontSize: 15, color: '#0073FF', marginTop: 4 },
   metaRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 },
   ratingBadge: { flexDirection: 'row', alignItems: 'center' },
   ratingStar: { fontSize: 16 },
@@ -176,15 +176,15 @@ const styles = StyleSheet.create({
   categoriaEspecialText: { fontSize: 12, fontWeight: '600' },
   actions: { flexDirection: 'row', paddingHorizontal: 20, gap: 10 },
   actionBtn: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 12 },
-  actionBtnPrimary: { backgroundColor: '#FF6B35' },
+  actionBtnPrimary: { backgroundColor: '#0073FF' },
   actionBtnWhatsApp: { backgroundColor: '#25D366' },
   actionBtnMaps: { backgroundColor: '#4285F4' },
   actionText: { fontSize: 13, fontWeight: 'bold', color: '#FFF' },
   tabs: { flexDirection: 'row', marginTop: 20, borderBottomWidth: 1, borderBottomColor: '#1A1A2E' },
   tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: '#FF6B35' },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: '#0073FF' },
   tabText: { fontSize: 14, color: '#6B7280' },
-  tabTextActive: { color: '#FF6B35', fontWeight: '600' },
+  tabTextActive: { color: '#0073FF', fontWeight: '600' },
   tabContent: { padding: 20 },
   descripcion: { fontSize: 14, color: '#D1D5DB', lineHeight: 22 },
   infoCard: { backgroundColor: '#1A1A2E', borderRadius: 12, padding: 16, marginTop: 16 },

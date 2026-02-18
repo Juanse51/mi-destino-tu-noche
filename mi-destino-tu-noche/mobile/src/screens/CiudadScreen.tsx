@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   image: { width: '100%', height: 120 },
   info: { padding: 10 },
   nombre: { fontSize: 14, fontWeight: 'bold', color: '#FFF' },
-  tipo: { fontSize: 12, color: '#FF6B35', marginTop: 2 },
+  tipo: { fontSize: 12, color: '#0073FF', marginTop: 2 },
   rating: { fontSize: 12, color: '#FFF', marginTop: 4 },
   empty: { alignItems: 'center', paddingTop: 60 },
   emptyIcon: { fontSize: 60 },

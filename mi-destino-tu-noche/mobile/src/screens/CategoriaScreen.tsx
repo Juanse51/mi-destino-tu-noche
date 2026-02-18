@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   image: { width: 100, height: 100 },
   info: { flex: 1, padding: 12, justifyContent: 'center' },
   nombre: { fontSize: 16, fontWeight: 'bold', color: '#FFF' },
-  tipo: { fontSize: 13, color: '#FF6B35', marginTop: 4 },
+  tipo: { fontSize: 13, color: '#0073FF', marginTop: 4 },
   meta: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
   rating: { fontSize: 13, color: '#FFF' },
   precio: { fontSize: 13, color: '#10B981', fontWeight: 'bold' },

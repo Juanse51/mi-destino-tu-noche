@@ -84,17 +84,16 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF6B35" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0073FF" />
         }
       >
-        {/* Header */}
+        {/* Header con Logo */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>{saludo()} 👋</Text>
-            <Text style={styles.title}>
-              {isAuthenticated ? usuario?.nombre : '¿A dónde vamos?'}
-            </Text>
-          </View>
+          <Image 
+            source={{ uri: 'https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png' }}
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
           <TouchableOpacity 
             style={styles.notifButton}
             onPress={() => isAuthenticated ? navigation.navigate('Notificaciones') : navigation.navigate('Login')}
@@ -187,7 +186,7 @@ export default function HomeScreen() {
               >
                 <Image source={{ uri: item.imagen_principal }} style={styles.establecimientoImage} />
                 <View style={styles.establecimientoOverlay} />
-                <View style={[styles.tipoBadge, { backgroundColor: item.tipo_color || '#FF6B35' }]}>
+                <View style={[styles.tipoBadge, { backgroundColor: item.tipo_color || '#0073FF' }]}>
                   <Text style={styles.tipoIcon}>{item.tipo_icono}</Text>
                   <Text style={styles.tipoText}>{item.tipo_nombre}</Text>
                 </View>
@@ -300,6 +299,7 @@ const styles = StyleSheet.create({
   },
   greeting: { fontSize: 14, color: '#9CA3AF' },
   title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', marginTop: 2 },
+  headerLogo: { height: 45, width: 180 },
   notifButton: { 
     width: 44, height: 44, borderRadius: 22, 
     backgroundColor: '#1A1A2E', justifyContent: 'center', alignItems: 'center' 
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 
   },
   sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' },
-  seeAll: { fontSize: 14, color: '#FF6B35', fontWeight: '600' },
+  seeAll: { fontSize: 14, color: '#0073FF', fontWeight: '600' },
   listContent: { paddingLeft: 20 },
   categoryCard: { 
     padding: 16, borderRadius: 16, marginLeft: 20, 
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   cercaImage: { width: 100, height: 100 },
   cercaInfo: { flex: 1, padding: 12, justifyContent: 'center' },
   cercaNombre: { fontSize: 16, fontWeight: 'bold', color: '#FFF' },
-  cercaTipo: { fontSize: 13, color: '#FF6B35', marginTop: 2 },
+  cercaTipo: { fontSize: 13, color: '#0073FF', marginTop: 2 },
   cercaMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
   cercaRating: { fontSize: 13, color: '#FFF', fontWeight: '500' },
   cercaDistancia: { fontSize: 13, color: '#9CA3AF', marginLeft: 4 },

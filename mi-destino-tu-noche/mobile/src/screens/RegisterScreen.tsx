@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
   inputIcon: { fontSize: 20, marginRight: 12 },
   input: { flex: 1, fontSize: 16, color: '#FFF' },
   errorText: { color: '#EF4444', textAlign: 'center' },
-  registerButton: { backgroundColor: '#FF6B35', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
+  registerButton: { backgroundColor: '#0073FF', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
   buttonDisabled: { opacity: 0.7 },
   registerButtonText: { fontSize: 16, fontWeight: 'bold', color: '#FFF' },
   loginContainer: { flexDirection: 'row', justifyContent: 'center', marginTop: 32 },
   loginText: { color: '#9CA3AF', fontSize: 15 },
-  loginLink: { color: '#FF6B35', fontSize: 15, fontWeight: '600' },
+  loginLink: { color: '#0073FF', fontSize: 15, fontWeight: '600' },
 });

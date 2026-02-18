@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   image: { width: 80, height: 80 },
   info: { flex: 1, padding: 12, justifyContent: 'center' },
   nombre: { fontSize: 16, fontWeight: 'bold', color: '#FFF' },
-  tipo: { fontSize: 13, color: '#FF6B35', marginTop: 4 },
+  tipo: { fontSize: 13, color: '#0073FF', marginTop: 4 },
   empty: { alignItems: 'center', paddingTop: 60 },
   emptyIcon: { fontSize: 60 },
   emptyText: { fontSize: 16, color: '#6B7280', marginTop: 16 },
