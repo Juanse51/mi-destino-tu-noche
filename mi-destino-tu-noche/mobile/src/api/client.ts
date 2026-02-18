@@ -23,9 +23,9 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Interceptor para manejar errores
+// Interceptor para extraer data y manejar errores
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   async (error) => {
     if (error.response?.status === 401 && error.response?.data?.code === 'TOKEN_EXPIRED') {
       try {

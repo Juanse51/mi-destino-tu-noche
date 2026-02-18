@@ -113,14 +113,14 @@ export default function HomeScreen() {
         </TouchableOpacity>
 
         {/* Banners */}
-        {banners?.data && banners.data.length > 0 && (
+        {banners && Array.isArray(banners) && banners.length > 0 && (
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
             style={styles.bannersContainer}
             contentContainerStyle={styles.bannersContent}
           >
-            {banners.data.map((banner: any) => (
+            {banners.map((banner: any) => (
               <TouchableOpacity
                 key={banner.id}
                 style={styles.banner}
@@ -145,11 +145,11 @@ export default function HomeScreen() {
         )}
 
         {/* Categorías Especiales */}
-        {categoriasEspeciales?.data && (
+        {categoriasEspeciales && Array.isArray(categoriasEspeciales) && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Explora</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {categoriasEspeciales.data.map((cat: any) => (
+              {categoriasEspeciales.map((cat: any) => (
                 <TouchableOpacity
                   key={cat.id}
                   style={[styles.categoryCard, { backgroundColor: cat.color + '20' }]}
@@ -173,7 +173,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={destacados?.data || []}
+            data={destacados?.establecimientos || destacados || []}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.id}
@@ -225,7 +225,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {(ciudades?.data || []).slice(0, 8).map((ciudad: any) => (
+            {(ciudades || []).slice(0, 8).map((ciudad: any) => (
               <TouchableOpacity
                 key={ciudad.id}
                 style={styles.ciudadCard}
@@ -248,7 +248,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Cerca de ti */}
-        {cercanos?.data && cercanos.data.length > 0 && (
+        {cercanos && Array.isArray(cercanos) && cercanos.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Cerca de ti 📍</Text>
@@ -256,7 +256,7 @@ export default function HomeScreen() {
                 <Text style={styles.seeAll}>Ver mapa</Text>
               </TouchableOpacity>
             </View>
-            {cercanos.data.slice(0, 5).map((item: any) => (
+            {cercanos.slice(0, 5).map((item: any) => (
               <TouchableOpacity
                 key={item.id}
                 style={styles.cercaCard}
