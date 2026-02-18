@@ -47,7 +47,7 @@ export default function HomeScreen() {
     queryKey: ['cercanos', ubicacion],
     queryFn: () => ubicacion 
       ? establecimientosApi.getCercanos({ ...ubicacion, radio: 5000 })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve([]),
     enabled: !!ubicacion,
   });
 
@@ -173,7 +173,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={destacados?.establecimientos || destacados || []}
+            data={Array.isArray(destacados?.establecimientos) ? destacados.establecimientos : Array.isArray(destacados) ? destacados : []}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.id}
@@ -201,7 +201,7 @@ export default function HomeScreen() {
                   <View style={styles.establecimientoMeta}>
                     <View style={styles.ratingBadge}>
                       <Text style={styles.ratingStar}>⭐</Text>
-                      <Text style={styles.ratingText}>{item.valoracion_promedio?.toFixed(1) || 'Nuevo'}</Text>
+                      <Text style={styles.ratingText}>{Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || 'Nuevo'}</Text>
                     </View>
                     <Text style={styles.establecimientoPrecio}>
                       {'$'.repeat(item.rango_precios || 2)}
@@ -267,7 +267,7 @@ export default function HomeScreen() {
                   <Text style={styles.cercaNombre} numberOfLines={1}>{item.nombre}</Text>
                   <Text style={styles.cercaTipo}>{item.tipo_nombre}</Text>
                   <View style={styles.cercaMeta}>
-                    <Text style={styles.cercaRating}>⭐ {item.valoracion_promedio?.toFixed(1) || '-'}</Text>
+                    <Text style={styles.cercaRating}>⭐ {Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
                     <Text style={styles.cercaDistancia}>
                       • {(item.distancia / 1000).toFixed(1)} km
                     </Text>
