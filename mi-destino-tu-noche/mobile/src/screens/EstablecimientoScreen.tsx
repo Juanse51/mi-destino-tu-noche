@@ -25,7 +25,7 @@ export default function EstablecimientoScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['establecimiento', slug] }),
   });
 
-  const est = data?.data;
+  const est = data;
   const handleShare = async () => { await Share.share({ message: `¡Mira ${est?.nombre}! https://midestinotunoche.com/${est?.slug}` }); };
   const handleCall = () => est?.telefono && Linking.openURL(`tel:${est.telefono}`);
   const handleWhatsApp = () => est?.whatsapp && Linking.openURL(`https://wa.me/${est.whatsapp}`);
@@ -60,7 +60,7 @@ export default function EstablecimientoScreen() {
           <View style={styles.metaRow}>
             <View style={styles.ratingBadge}>
               <Text style={styles.ratingStar}>⭐</Text>
-              <Text style={styles.ratingText}>{est.valoracion_promedio?.toFixed(1) || 'Nuevo'}</Text>
+              <Text style={styles.ratingText}>{Number(est.valoracion_promedio) ? Number(est.valoracion_promedio).toFixed(1) : null || 'Nuevo'}</Text>
               <Text style={styles.ratingCount}>({est.total_valoraciones})</Text>
             </View>
             <Text style={styles.precio}>{'$'.repeat(est.rango_precios || 2)}</Text>
