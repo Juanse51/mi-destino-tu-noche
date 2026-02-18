@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, MapPin, Star, ChevronRight, Utensils, Wine, Coffee, Music } from 'lucide-react'
+import { Search, ChevronRight, Utensils, Wine, Coffee, Music } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
@@ -18,7 +18,7 @@ const categoriasEspeciales = [
 ]
 
 const tipos = [
-  { nombre: 'Restaurantes', icono: Utensils, color: '#FF6B35', slug: 'restaurante' },
+  { nombre: 'Restaurantes', icono: Utensils, color: '#0073FF', slug: 'restaurante' },
   { nombre: 'Bares', icono: Wine, color: '#9B59B6', slug: 'bar' },
   { nombre: 'Cafés', icono: Coffee, color: '#8B4513', slug: 'cafe' },
   { nombre: 'Discotecas', icono: Music, color: '#E91E63', slug: 'discoteca' },
@@ -37,12 +37,12 @@ export default function HomePage() {
           fetch(`${API_URL}/establecimientos?limite=8`).catch(() => null),
           fetch(`${API_URL}/ciudades`).catch(() => null),
         ])
-        
+
         if (estRes?.ok) {
           const estData = await estRes.json()
           setDestacados(estData.establecimientos || [])
         }
-        
+
         if (ciudRes?.ok) {
           const ciudData = await ciudRes.json()
           const ciudadesConImagen = (ciudData || []).slice(0, 6).map((c: any) => ({
@@ -78,11 +78,14 @@ export default function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="text-gradient">Mi Destino</span>
-            <br />
-            <span className="text-white">Tu Noche</span>
-          </h1>
+          {/* Logo grande en hero */}
+          <div className="mb-8">
+            <img
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png"
+              alt="Mi Destino Tu Noche"
+              className="h-28 md:h-40 w-auto mx-auto"
+            />
+          </div>
           <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
             Descubre los mejores restaurantes, bares y cafés de Colombia
           </p>
@@ -100,7 +103,7 @@ export default function HomePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Link 
+              <Link
                 href={`/buscar${searchQuery ? `?q=${searchQuery}` : ''}`}
                 className="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-semibold transition-colors"
               >
@@ -132,8 +135,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categorías Especiales */}
+      {/* Ciudades - ANTES de categorías */}
       <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold">Ciudades</h2>
+              <p className="text-gray-400 mt-2">Explora los mejores destinos de Colombia</p>
+            </div>
+            <Link
+              href="/ciudades"
+              className="flex items-center text-primary hover:text-primary-light transition-colors font-medium"
+            >
+              Ver todas <ChevronRight className="w-5 h-5 ml-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {ciudades.map((ciudad) => (
+              <CiudadCard key={ciudad.slug} ciudad={ciudad} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categorías Especiales */}
+      <section className="py-20 px-4 bg-dark-lighter/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-10">
             <div>
@@ -151,15 +178,15 @@ export default function HomePage() {
       </section>
 
       {/* Destacados */}
-      <section className="py-20 px-4 bg-dark-lighter/30">
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-10">
             <div>
               <h2 className="text-3xl font-bold">Destacados</h2>
               <p className="text-gray-400 mt-2">Los lugares más populares</p>
             </div>
-            <Link 
-              href="/buscar?destacados=true" 
+            <Link
+              href="/buscar?destacados=true"
               className="flex items-center text-primary hover:text-primary-light transition-colors font-medium"
             >
               Ver todos <ChevronRight className="w-5 h-5 ml-1" />
@@ -174,39 +201,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Ciudades */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-3xl font-bold">Ciudades</h2>
-              <p className="text-gray-400 mt-2">Explora los mejores destinos de Colombia</p>
-            </div>
-            <Link 
-              href="/ciudades" 
-              className="flex items-center text-primary hover:text-primary-light transition-colors font-medium"
-            >
-              Ver todas <ChevronRight className="w-5 h-5 ml-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {ciudades.map((ciudad) => (
-              <CiudadCard key={ciudad.slug} ciudad={ciudad} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Descargar App */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 bg-dark-lighter/30">
         <div className="max-w-5xl mx-auto">
           <div className="relative bg-gradient-to-r from-primary to-primary-dark rounded-3xl overflow-hidden">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-400 rounded-full blur-3xl" />
             </div>
-            
+
             <div className="relative z-10 p-12 md:p-16 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 📱 Descarga la App
@@ -215,7 +218,7 @@ export default function HomePage() {
                 Lleva Mi Destino Tu Noche en tu bolsillo. Encuentra lugares cercanos, guarda favoritos y más.
               </p>
               <div className="flex justify-center gap-4 flex-wrap">
-                <Link 
+                <Link
                   href="#"
                   className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-6 py-3 rounded-xl transition-colors"
                 >
@@ -225,7 +228,7 @@ export default function HomePage() {
                     <div className="font-semibold">Google Play</div>
                   </div>
                 </Link>
-                <Link 
+                <Link
                   href="#"
                   className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-6 py-3 rounded-xl transition-colors"
                 >
@@ -242,7 +245,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-20 px-4 bg-dark-lighter/30">
+      <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>

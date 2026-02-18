@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --primary: #FF6B35;
+  --primary: #0073FF;
   --dark: #0F0F1A;
   --dark-lighter: #1A1A2E;
 }
@@ -58,7 +58,7 @@ body {
 
 /* Gradientes */
 .gradient-primary {
-  background: linear-gradient(135deg, #FF6B35 0%, #FF8555 100%);
+  background: linear-gradient(135deg, #0073FF 0%, #3399FF 100%);
 }
 
 .gradient-dark {
@@ -67,7 +67,7 @@ body {
 
 /* Texto con gradiente */
 .text-gradient {
-  background: linear-gradient(135deg, #FF6B35, #FCD34D);
+  background: linear-gradient(135deg, #0073FF, #00C6FF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

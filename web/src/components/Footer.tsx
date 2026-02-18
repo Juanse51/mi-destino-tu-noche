@@ -1,5 +1,14 @@
 import Link from 'next/link'
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react'
+import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react'
+
+// X (formerly Twitter) icon component
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
 
 export default function Footer() {
   return (
@@ -9,9 +18,9 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <img 
-                src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png" 
-                alt="Mi Destino Tu Noche" 
+              <img
+                src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png"
+                alt="Mi Destino Tu Noche"
                 className="h-12 w-auto"
               />
             </Link>
@@ -19,17 +28,17 @@ export default function Footer() {
               Descubre los mejores restaurantes, bares y cafés de Colombia. Tu guía definitiva para la vida nocturna y gastronómica.
             </p>
             <div className="flex gap-4">
-              <a href="https://instagram.com/midestinotunoche" target="_blank" rel="noopener noreferrer" 
+              <a href="https://www.instagram.com/asobares.colombia/" target="_blank" rel="noopener noreferrer"
                 className="p-2 bg-dark hover:bg-primary/20 rounded-lg transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://facebook.com/midestinotunoche" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.facebook.com/Asobarescolombia" target="_blank" rel="noopener noreferrer"
                 className="p-2 bg-dark hover:bg-primary/20 rounded-lg transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://twitter.com/midestinotunoche" target="_blank" rel="noopener noreferrer"
+              <a href="https://x.com/Asobares" target="_blank" rel="noopener noreferrer"
                 className="p-2 bg-dark hover:bg-primary/20 rounded-lg transition-colors">
-                <Twitter className="w-5 h-5" />
+                <XIcon className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -64,8 +73,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/categoria/camara-diversidad" className="text-gray-400 hover:text-white transition-colors">
-                  Cámara de la Diversidad 🏳️‍🌈
+                <Link href="/que-es-mdtn" className="text-gray-400 hover:text-white transition-colors">
+                  ¿Qué es MDTN?
                 </Link>
               </li>
             </ul>
@@ -114,8 +123,8 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-gray-400">
                 <Mail className="w-5 h-5 text-primary" />
-                <a href="mailto:contacto@midestinotunoche.com" className="hover:text-white transition-colors">
-                  contacto@midestinotunoche.com
+                <a href="mailto:soporte@asobares.org" className="hover:text-white transition-colors">
+                  soporte@asobares.org
                 </a>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
@@ -132,7 +141,7 @@ export default function Footer() {
 
             <div className="mt-6 p-4 bg-dark rounded-xl">
               <div className="text-sm font-medium mb-2">¿Tienes un establecimiento?</div>
-              <Link 
+              <Link
                 href="/registro-negocio"
                 className="text-primary hover:text-primary-light text-sm transition-colors"
               >
@@ -146,13 +155,13 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-12 pt-8">
           {/* Asobares Logo */}
           <div className="flex justify-center mb-6">
-            <img 
-              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png" 
-              alt="Asobares" 
+            <img
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png"
+              alt="Asobares"
               className="h-16 w-auto"
             />
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm">
               © {new Date().getFullYear()} Mi Destino Tu Noche. Todos los derechos reservados.
@@ -166,14 +175,13 @@ export default function Footer() {
               </Link>
             </div>
           </div>
-          
-          {/* Desarrollado por */}
+
           <div className="text-center mt-6 pt-6 border-t border-gray-800">
             <p className="text-gray-500 text-sm">
               Desarrollado por{' '}
-              <a 
-                href="https://www.vamosarayar.com" 
-                target="_blank" 
+              <a
+                href="https://www.vamosarayar.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:text-primary-light transition-colors"
               >

@@ -1,23 +1,43 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, Menu, X, User, Heart, MapPin } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Search, Menu, X, User, Heart } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100)
+    }
+    window.addEventListener('scroll', handleScroll)
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // En home: logo visible solo después de scroll. En otras páginas: siempre visible
+  const showLogo = !isHome || scrolled
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-dark/90 backdrop-blur-lg border-b border-gray-800/50">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled || !isHome
+        ? 'bg-dark/95 backdrop-blur-lg border-b border-gray-800/50'
+        : 'bg-transparent'
+    }`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img 
-              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png" 
-              alt="Mi Destino Tu Noche" 
-              className="h-10 w-auto"
+            <img
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png"
+              alt="Mi Destino Tu Noche"
+              className={`h-10 w-auto transition-opacity duration-300 ${showLogo ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
           </Link>
 
@@ -35,18 +55,21 @@ export default function Header() {
             <Link href="/ciudades" className="text-gray-300 hover:text-white transition-colors">
               Ciudades
             </Link>
+            <Link href="/que-es-mdtn" className="text-gray-300 hover:text-white transition-colors">
+              ¿Qué es MDTN?
+            </Link>
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="p-2 hover:bg-dark-lighter rounded-lg transition-colors"
             >
               <Search className="w-5 h-5" />
             </button>
-            
-            <Link 
+
+            <Link
               href="/favoritos"
               className="p-2 hover:bg-dark-lighter rounded-lg transition-colors hidden sm:block"
             >
@@ -62,7 +85,7 @@ export default function Header() {
             </Link>
 
             {/* Mobile menu button */}
-            <button 
+            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 hover:bg-dark-lighter rounded-lg transition-colors md:hidden"
             >
@@ -76,47 +99,26 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden bg-dark-lighter border-t border-gray-800">
           <nav className="flex flex-col p-4 gap-2">
-            <Link 
-              href="/buscar" 
-              className="px-4 py-3 hover:bg-dark rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/buscar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               🔍 Explorar
             </Link>
-            <Link 
-              href="/buscar?tipo=restaurante" 
-              className="px-4 py-3 hover:bg-dark rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/buscar?tipo=restaurante" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               🍽️ Restaurantes
             </Link>
-            <Link 
-              href="/buscar?tipo=bar" 
-              className="px-4 py-3 hover:bg-dark rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/buscar?tipo=bar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               🍺 Bares
             </Link>
-            <Link 
-              href="/ciudades" 
-              className="px-4 py-3 hover:bg-dark rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/ciudades" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               🏙️ Ciudades
             </Link>
-            <Link 
-              href="/favoritos" 
-              className="px-4 py-3 hover:bg-dark rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/que-es-mdtn" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
+              ❓ ¿Qué es MDTN?
+            </Link>
+            <Link href="/favoritos" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               ❤️ Favoritos
             </Link>
             <hr className="border-gray-700 my-2" />
-            <Link 
-              href="/login" 
-              className="px-4 py-3 bg-primary hover:bg-primary-dark rounded-lg transition-colors text-center font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/login" className="px-4 py-3 bg-primary hover:bg-primary-dark rounded-lg transition-colors text-center font-medium" onClick={() => setIsMenuOpen(false)}>
               Iniciar Sesión
             </Link>
           </nav>
@@ -137,24 +139,19 @@ export default function Header() {
                   autoFocus
                 />
               </div>
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(false)}
                 className="p-3 hover:bg-dark-lighter rounded-xl transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-
-            {/* Quick suggestions */}
             <div className="text-sm text-gray-400 mb-4">Búsquedas populares</div>
             <div className="flex flex-wrap gap-2">
               {['Restaurantes Bogotá', 'Bares Medellín', 'Café Cartagena', 'Pizza', 'Sushi', 'Coctelería'].map((term) => (
-                <Link
-                  key={term}
-                  href={`/buscar?q=${encodeURIComponent(term)}`}
+                <Link key={term} href={`/buscar?q=${encodeURIComponent(term)}`}
                   className="px-4 py-2 bg-dark-lighter hover:bg-dark-card rounded-full text-sm transition-colors"
-                  onClick={() => setIsSearchOpen(false)}
-                >
+                  onClick={() => setIsSearchOpen(false)}>
                   {term}
                 </Link>
               ))}
