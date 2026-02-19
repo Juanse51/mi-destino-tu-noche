@@ -48,7 +48,7 @@ export default function FavoritesScreen() {
             <View style={styles.info}>
               <Text style={styles.nombre}>{item.nombre}</Text>
               <Text style={styles.tipo}>{item.tipo_nombre} • {item.ciudad_nombre}</Text>
-              <Text style={styles.rating}>⭐ {item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
+              <Text style={styles.rating}>⭐ {Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
             </View>
             <Text style={styles.heart}>❤️</Text>
           </TouchableOpacity>

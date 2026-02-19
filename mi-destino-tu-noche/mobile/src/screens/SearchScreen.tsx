@@ -75,7 +75,7 @@ export default function SearchScreen() {
               <Text style={styles.resultadoNombre}>{item.nombre}</Text>
               <Text style={styles.resultadoTipo}>{item.tipo_nombre} • {item.ciudad_nombre}</Text>
               <View style={styles.resultadoMeta}>
-                <Text style={styles.resultadoRating}>⭐ {Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
+                <Text style={styles.resultadoRating}>⭐ {Number(Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
                 <Text style={styles.resultadoPrecio}>{'$'.repeat(item.rango_precios || 2)}</Text>
               </View>
             </View>
