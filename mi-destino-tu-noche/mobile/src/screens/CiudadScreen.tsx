@@ -34,7 +34,7 @@ export default function CiudadScreen() {
             <View style={styles.info}>
               <Text style={styles.nombre} numberOfLines={1}>{item.nombre}</Text>
               <Text style={styles.tipo}>{item.tipo_nombre}</Text>
-              <Text style={styles.rating}>⭐ {Number(Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
+              <Text style={styles.rating}>⭐ {item.valoracion_promedio ? Number(item.valoracion_promedio).toFixed(1) : "-"}</Text>
             </View>
           </TouchableOpacity>
         )}

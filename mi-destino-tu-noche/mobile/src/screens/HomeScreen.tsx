@@ -201,7 +201,7 @@ export default function HomeScreen() {
                   <View style={styles.establecimientoMeta}>
                     <View style={styles.ratingBadge}>
                       <Text style={styles.ratingStar}>⭐</Text>
-                      <Text style={styles.ratingText}>{Number(Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || 'Nuevo'}</Text>
+                      <Text style={styles.ratingText}>{item.valoracion_promedio ? Number(item.valoracion_promedio).toFixed(1) : "Nuevo"}</Text>
                     </View>
                     <Text style={styles.establecimientoPrecio}>
                       {'$'.repeat(item.rango_precios || 2)}
@@ -267,7 +267,7 @@ export default function HomeScreen() {
                   <Text style={styles.cercaNombre} numberOfLines={1}>{item.nombre}</Text>
                   <Text style={styles.cercaTipo}>{item.tipo_nombre}</Text>
                   <View style={styles.cercaMeta}>
-                    <Text style={styles.cercaRating}>⭐ {Number(Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
+                    <Text style={styles.cercaRating}>⭐ {item.valoracion_promedio ? Number(item.valoracion_promedio).toFixed(1) : "-"}</Text>
                     <Text style={styles.cercaDistancia}>
                       • {(item.distancia / 1000).toFixed(1)} km
                     </Text>
