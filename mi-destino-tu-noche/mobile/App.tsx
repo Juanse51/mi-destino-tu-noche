@@ -74,7 +74,7 @@ function MainTabs() {
         name="MDTN"
         component={MDTNScreen}
         options={{
-          tabBarLabel: '¿Qué es?',
+          tabBarLabel: '¿Qué es MDTN?',
           tabBarIcon: ({ focused }) => <TabIcon emoji="ℹ️" focused={focused} />,
         }}
       />
