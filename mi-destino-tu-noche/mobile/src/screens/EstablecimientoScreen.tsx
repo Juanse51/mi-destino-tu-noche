@@ -27,34 +27,37 @@ export default function EstablecimientoScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['establecimiento', slug] }),
   });
 
-  const handleShare = async () => { await Share.share({ message: `¡Mira ${est?.nombre}! https://midestinotunoche.asobares.org/${est?.slug}` }); };
-  const handleCall = () => est?.telefono && Linking.openURL(`tel:${est.telefono}`);
-  const handleWhatsApp = () => est?.whatsapp && Linking.openURL(`https://wa.me/57${est.whatsapp}`);
+  const handleShare = async () => {
+    if (!est) return;
+    await Share.share({ message: '¡Mira ' + est.nombre + '! https://midestinotunoche.asobares.org/' + est.slug });
+  };
+  const handleCall = () => est?.telefono && Linking.openURL('tel:' + est.telefono);
+  const handleWhatsApp = () => est?.whatsapp && Linking.openURL('https://wa.me/57' + est.whatsapp);
   const handleMaps = () => {
     if (est?.direccion) {
       const query = encodeURIComponent(est.direccion + ', ' + (est.ciudad_nombre || 'Colombia'));
-      Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
+      Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + query);
     }
   };
   const handleInstagram = () => {
     if (est?.instagram) {
       const ig = est.instagram.replace('@', '').replace('https://www.instagram.com/', '').replace('https://instagram.com/', '').replace('/', '');
-      Linking.openURL(`https://www.instagram.com/${ig}`);
+      Linking.openURL('https://www.instagram.com/' + ig);
     }
   };
 
   if (isLoading || !est) return <SafeAreaView style={styles.container}><View style={styles.loading}><Text style={styles.loadingText}>Cargando...</Text></View></SafeAreaView>;
 
-  const hasLogo = est.logo_url || est.imagen_principal;
+  const logoImg = est.logo_url || est.imagen_principal;
 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header Image - Logo centrado sobre fondo oscuro */}
+        {/* Header - Logo centrado */}
         <View style={styles.imageContainer}>
           <View style={styles.headerBg} />
           <View style={styles.logoContainer}>
-            <Image source={{ uri: hasLogo }} style={styles.logoImage} resizeMode="contain" />
+            <Image source={{ uri: logoImg }} style={styles.logoImage} resizeMode="contain" />
           </View>
           <SafeAreaView style={styles.headerButtons}>
             <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
@@ -78,8 +81,8 @@ export default function EstablecimientoScreen() {
 
         <View style={styles.mainInfo}>
           <Text style={styles.nombre}>{est.nombre}</Text>
-          <Text style={styles.tipoComida}>{est.tipo_comida_nombre}</Text>
-          {est.ciudad_nombre && <Text style={styles.ciudad}>{est.ciudad_nombre} {est.departamento_nombre ? '• ' + est.departamento_nombre : ''}</Text>}
+          {est.tipo_comida_nombre ? <Text style={styles.tipoComida}>{est.tipo_comida_nombre}</Text> : null}
+          {est.ciudad_nombre ? <Text style={styles.ciudad}>{est.ciudad_nombre}{est.departamento_nombre ? ' • ' + est.departamento_nombre : ''}</Text> : null}
           <View style={styles.metaRow}>
             <View style={styles.ratingBadge}>
               <Text style={styles.ratingStar}>⭐</Text>
@@ -88,43 +91,43 @@ export default function EstablecimientoScreen() {
             </View>
             <Text style={styles.precio}>{'$'.repeat(est.rango_precios || 2)}</Text>
           </View>
-          {est.genero_musical && (
+          {est.genero_musical ? (
             <View style={styles.generoMusical}>
               <Text style={styles.generoText}>🎵 {est.genero_musical}</Text>
             </View>
-          )}
-          {est.etiquetas?.length > 0 && (
+          ) : null}
+          {est.etiquetas && est.etiquetas.length > 0 ? (
             <View style={styles.etiquetas}>
               {est.etiquetas.map((et: any, i: number) => (
                 <View key={i} style={styles.etiqueta}><Text style={styles.etiquetaText}>{et.icono} {et.nombre}</Text></View>
               ))}
             </View>
-          )}
+          ) : null}
         </View>
 
         {/* Action Buttons */}
         <View style={styles.actions}>
-          {est.telefono && (
+          {est.telefono ? (
             <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={handleCall}>
               <Text style={styles.actionText}>📞 Llamar</Text>
             </TouchableOpacity>
-          )}
-          {est.whatsapp && (
+          ) : null}
+          {est.whatsapp ? (
             <TouchableOpacity style={[styles.actionBtn, styles.actionBtnWhatsApp]} onPress={handleWhatsApp}>
               <Text style={styles.actionText}>💬 WhatsApp</Text>
             </TouchableOpacity>
-          )}
+          ) : null}
           <TouchableOpacity style={[styles.actionBtn, styles.actionBtnMaps]} onPress={handleMaps}>
             <Text style={styles.actionText}>🧭 Ir</Text>
           </TouchableOpacity>
         </View>
 
         {/* Instagram button */}
-        {est.instagram && (
+        {est.instagram ? (
           <TouchableOpacity style={styles.instagramBtn} onPress={handleInstagram}>
-            <Text style={styles.instagramText}>📷 Instagram: @{est.instagram.replace('@', '').replace('https://www.instagram.com/', '').replace('https://instagram.com/', '').replace('/', '')}</Text>
+            <Text style={styles.instagramText}>📷 Instagram</Text>
           </TouchableOpacity>
-        )}
+        ) : null}
 
         {/* Tabs */}
         <View style={styles.tabs}>
@@ -138,61 +141,60 @@ export default function EstablecimientoScreen() {
         </View>
 
         <View style={styles.tabContent}>
-          {activeTab === 'info' && (
+          {activeTab === 'info' ? (
             <View>
-              {est.descripcion && <Text style={styles.descripcion}>{est.descripcion}</Text>}
+              {est.descripcion ? <Text style={styles.descripcion}>{est.descripcion}</Text> : null}
               <View style={styles.infoCard}>
                 <View style={styles.infoItem}>
                   <Text style={styles.infoIcon}>📍</Text>
                   <View style={{flex:1}}><Text style={styles.infoLabel}>Dirección</Text><Text style={styles.infoValue}>{est.direccion}</Text></View>
                 </View>
-                {est.telefono && (
+                {est.telefono ? (
                   <View style={styles.infoItem}>
                     <Text style={styles.infoIcon}>📞</Text>
                     <View style={{flex:1}}><Text style={styles.infoLabel}>Teléfono</Text><Text style={styles.infoValue}>{est.telefono}</Text></View>
                   </View>
-                )}
-                {est.email && (
+                ) : null}
+                {est.email ? (
                   <View style={styles.infoItem}>
                     <Text style={styles.infoIcon}>📧</Text>
                     <View style={{flex:1}}><Text style={styles.infoLabel}>Email</Text><Text style={styles.infoValue}>{est.email}</Text></View>
                   </View>
-                )}
-                {est.horarios && (
+                ) : null}
+                {est.horarios ? (
                   <View style={styles.infoItem}>
                     <Text style={styles.infoIcon}>🕐</Text>
                     <View style={{flex:1}}><Text style={styles.infoLabel}>Horarios</Text><Text style={styles.infoValue}>{est.horarios}</Text></View>
                   </View>
-                )}
+                ) : null}
               </View>
-              {est.galeria?.length > 0 && (
+              {est.galeria && est.galeria.length > 0 ? (
                 <View style={styles.galeria}>
                   <Text style={styles.galeriaTitle}>Fotos</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {est.galeria.map((foto: any, i: number) => <Image key={i} source={{ uri: foto.url }} style={styles.galeriaImage} />)}
                   </ScrollView>
                 </View>
-              )}
+              ) : null}
             </View>
-          )}
-          {activeTab === 'menu' && (
+          ) : null}
+          {activeTab === 'menu' ? (
             <View style={styles.emptyTab}><Text style={styles.emptyIcon}>🍽️</Text><Text style={styles.emptyText}>Ver menú en el establecimiento</Text></View>
-          )}
-          {activeTab === 'resenas' && (
+          ) : null}
+          {activeTab === 'resenas' ? (
             <View>
-              {est.valoraciones_recientes?.length > 0 ? est.valoraciones_recientes.map((val: any, i: number) => (
+              {est.valoraciones_recientes && est.valoraciones_recientes.length > 0 ? est.valoraciones_recientes.map((val: any, i: number) => (
                 <View key={i} style={styles.resenaCard}>
                   <Text style={styles.resenaUserName}>{val.usuario_nombre} • {'⭐'.repeat(val.puntuacion)}</Text>
-                  {val.comentario && <Text style={styles.resenaComentario}>{val.comentario}</Text>}
+                  {val.comentario ? <Text style={styles.resenaComentario}>{val.comentario}</Text> : null}
                 </View>
               )) : (
                 <View style={styles.emptyTab}><Text style={styles.emptyIcon}>📝</Text><Text style={styles.emptyText}>Sin reseñas aún</Text></View>
               )}
             </View>
-          )}
+          ) : null}
         </View>
 
-        {/* Dev footer */}
         <TouchableOpacity style={styles.devBy} onPress={() => Linking.openURL('https://www.vamosarayar.com')}>
           <Text style={styles.devByText}>Desarrollado por Rayar!</Text>
         </TouchableOpacity>
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   loadingText: { color: '#FFF', fontSize: 16 },
   imageContainer: { height: 280, position: 'relative', backgroundColor: '#1A1A2E' },
   headerBg: { ...StyleSheet.absoluteFillObject, backgroundColor: '#1A1A2E' },
-  logoContainer: { 
+  logoContainer: {
     position: 'absolute', top: 60, left: 0, right: 0, bottom: 40,
     justifyContent: 'center', alignItems: 'center',
   },
@@ -241,9 +243,9 @@ const styles = StyleSheet.create({
   actionBtnWhatsApp: { backgroundColor: '#25D366' },
   actionBtnMaps: { backgroundColor: '#4285F4' },
   actionText: { fontSize: 13, fontWeight: 'bold', color: '#FFF' },
-  instagramBtn: { 
-    marginHorizontal: 20, marginTop: 10, paddingVertical: 12, 
-    backgroundColor: '#E1306C', borderRadius: 12, alignItems: 'center' 
+  instagramBtn: {
+    marginHorizontal: 20, marginTop: 10, paddingVertical: 12,
+    backgroundColor: '#E1306C', borderRadius: 12, alignItems: 'center'
   },
   instagramText: { color: '#FFF', fontSize: 13, fontWeight: 'bold' },
   tabs: { flexDirection: 'row', marginTop: 20, borderBottomWidth: 1, borderBottomColor: '#1A1A2E' },
