@@ -25,6 +25,7 @@ import QuieroIrScreen from './src/screens/QuieroIrScreen';
 import HistorialScreen from './src/screens/HistorialScreen';
 import CiudadScreen from './src/screens/CiudadScreen';
 import CategoriaScreen from './src/screens/CategoriaScreen';
+import MDTNScreen from './src/screens/MDTNScreen';
 
 // Store
 import { useAuthStore } from './src/store/authStore';
@@ -70,10 +71,11 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="Mapa"
-        component={MapScreen}
+        name="MDTN"
+        component={MDTNScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🗺️" focused={focused} />,
+          tabBarLabel: '¿Qué es?',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="ℹ️" focused={focused} />,
         }}
       />
       <Tab.Screen

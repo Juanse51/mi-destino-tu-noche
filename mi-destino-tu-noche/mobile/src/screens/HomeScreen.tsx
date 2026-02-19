@@ -225,7 +225,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {(ciudades || []).slice(0, 8).map((ciudad: any) => (
+            {(ciudades || []).map((ciudad: any) => (
               <TouchableOpacity
                 key={ciudad.id}
                 style={styles.ciudadCard}
@@ -281,6 +281,10 @@ export default function HomeScreen() {
           </View>
         )}
 
+        {/* Desarrollado por */}
+        <TouchableOpacity style={styles.devBy} onPress={() => Linking.openURL('https://www.vamosarayar.com')}>
+          <Text style={styles.devByText}>Desarrollado por Rayar!</Text>
+        </TouchableOpacity>
         <View style={styles.bottomSpacer} />
       </ScrollView>
     </SafeAreaView>
@@ -410,5 +414,7 @@ const styles = StyleSheet.create({
   cercaDistancia: { fontSize: 13, color: '#9CA3AF', marginLeft: 4 },
   cercaPrecio: { justifyContent: 'center', paddingRight: 16 },
   cercaPrecioText: { fontSize: 14, color: '#10B981', fontWeight: 'bold' },
+  devBy: { alignItems: 'center', marginTop: 20, paddingVertical: 10 },
+  devByText: { fontSize: 12, color: '#4B5563' },
   bottomSpacer: { height: 30 },
 });

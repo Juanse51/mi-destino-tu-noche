@@ -25,7 +25,7 @@ export default function CategoriaScreen() {
       
       {data?.categoria && (
         <View style={styles.categoriaInfo}>
-          <Text style={styles.categoriaDesc}>{data.data.categoria.descripcion}</Text>
+          <Text style={styles.categoriaDesc}>{data.categoria?.descripcion}</Text>
         </View>
       )}
       
@@ -40,7 +40,7 @@ export default function CategoriaScreen() {
               <Text style={styles.nombre} numberOfLines={1}>{item.nombre}</Text>
               <Text style={styles.tipo}>{item.tipo_nombre} • {item.ciudad_nombre}</Text>
               <View style={styles.meta}>
-                <Text style={styles.rating}>⭐ {item.valoracion_promedio?.toFixed(1) || '-'}</Text>
+                <Text style={styles.rating}>⭐ {Number(item.valoracion_promedio) ? Number(item.valoracion_promedio).toFixed(1) : null || '-'}</Text>
                 <Text style={styles.precio}>{'$'.repeat(item.rango_precios || 2)}</Text>
               </View>
             </View>
