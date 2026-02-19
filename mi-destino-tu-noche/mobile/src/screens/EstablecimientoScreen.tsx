@@ -161,7 +161,7 @@ export default function EstablecimientoScreen() {
                     <View style={{flex:1}}><Text style={styles.infoLabel}>Email</Text><Text style={styles.infoValue}>{est.email}</Text></View>
                   </View>
                 ) : null}
-                {est.horarios ? (
+                {est.horarios && typeof est.horarios === "string" ? (
                   <View style={styles.infoItem}>
                     <Text style={styles.infoIcon}>🕐</Text>
                     <View style={{flex:1}}><Text style={styles.infoLabel}>Horarios</Text><Text style={styles.infoValue}>{est.horarios}</Text></View>
