@@ -1,14 +1,6 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react'
-
-// X (formerly Twitter) icon component
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  )
-}
 
 export default function Footer() {
   return (
@@ -18,17 +10,29 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <img
+              <Image
                 src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png"
                 alt="Mi Destino Tu Noche"
+                width={180}
+                height={60}
                 className="h-12 w-auto"
               />
             </Link>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 mb-4">
               Descubre los mejores restaurantes, bares y cafés de Colombia. Tu guía definitiva para la vida nocturna y gastronómica.
             </p>
+            {/* Logo Asobares con link */}
+            <a href="https://asobares.org/" target="_blank" rel="noopener noreferrer" className="inline-block mb-6 hover:opacity-80 transition-opacity">
+              <Image
+                src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png"
+                alt="Asobares"
+                width={140}
+                height={45}
+                className="h-10 w-auto"
+              />
+            </a>
             <div className="flex gap-4">
-              <a href="https://www.instagram.com/asobares.colombia/" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.instagram.com/asobares.colombia/" target="_blank" rel="noopener noreferrer" 
                 className="p-2 bg-dark hover:bg-primary/20 rounded-lg transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
@@ -38,7 +42,9 @@ export default function Footer() {
               </a>
               <a href="https://x.com/Asobares" target="_blank" rel="noopener noreferrer"
                 className="p-2 bg-dark hover:bg-primary/20 rounded-lg transition-colors">
-                <XIcon className="w-5 h-5" />
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </a>
             </div>
           </div>
@@ -73,8 +79,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/que-es-mdtn" className="text-gray-400 hover:text-white transition-colors">
-                  ¿Qué es MDTN?
+                <Link href="/categoria/camara-diversidad" className="text-gray-400 hover:text-white transition-colors">
+                  Cámara de la Diversidad 🏳️‍🌈
                 </Link>
               </li>
             </ul>
@@ -141,53 +147,31 @@ export default function Footer() {
 
             <div className="mt-6 p-4 bg-dark rounded-xl">
               <div className="text-sm font-medium mb-2">¿Tienes un establecimiento?</div>
-              <Link
-                href="/registro-negocio"
+              <a 
+                href="mailto:soporte@asobares.org"
                 className="text-primary hover:text-primary-light text-sm transition-colors"
               >
                 Regístralo gratis →
-              </Link>
+              </a>
             </div>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
-          {/* Asobares Logo */}
-          <div className="flex justify-center mb-6">
-            <img
-              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/Nuevo%20logo%20Asobares%20-%20Blanco.png"
-              alt="Asobares"
-              className="h-16 w-auto"
-            />
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} Mi Destino Tu Noche. Todos los derechos reservados.
-            </p>
-            <div className="flex gap-6 text-sm">
-              <Link href="/terminos" className="text-gray-500 hover:text-white transition-colors">
-                Términos y condiciones
-              </Link>
-              <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
-                Política de privacidad
-              </Link>
-            </div>
-          </div>
-
-          <div className="text-center mt-6 pt-6 border-t border-gray-800">
-            <p className="text-gray-500 text-sm">
-              Desarrollado por{' '}
-              <a
-                href="https://www.vamosarayar.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:text-primary-light transition-colors"
-              >
-                Rayar!
-              </a>
-            </p>
+        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-500 text-sm">
+            © 2025 Mi Destino Tu Noche. Todos los derechos reservados.
+          </p>
+          <a href="https://www.vamosarayar.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-400 text-xs transition-colors">
+            Desarrollado por Rayar!
+          </a>
+          <div className="flex gap-6 text-sm">
+            <Link href="/terminos" className="text-gray-500 hover:text-white transition-colors">
+              Términos y condiciones
+            </Link>
+            <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
+              Política de privacidad
+            </Link>
           </div>
         </div>
       </div>
