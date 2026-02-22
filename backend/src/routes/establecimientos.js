@@ -37,6 +37,12 @@ router.get('/', tokenOpcional, async (req, res) => {
     
     let whereClause = 'WHERE e.activo = true';
     
+    // Por defecto ocultar sedes secundarias en listado general
+    // Si se filtra por ciudad, mostrar las sedes de esa ciudad
+    if (!ciudad && !busqueda) {
+      whereClause += ' AND e.sede_principal_id IS NULL';
+    }
+    
     // Filtros
     if (ciudad) {
       whereClause += ` AND c.slug = $${paramIndex}`;
@@ -173,6 +179,9 @@ router.get('/', tokenOpcional, async (req, res) => {
         e.longitud,
         e.destacado,
         e.verificado,
+        e.activo,
+        e.sede_principal_id,
+        e.genero_musical,
         te.nombre as tipo_nombre,
         te.slug as tipo_slug,
         te.icono as tipo_icono,
@@ -451,6 +460,40 @@ router.get('/:slug', tokenOpcional, async (req, res) => {
       WHERE ece.establecimiento_id = $1
     `, [establecimiento.id]);
     establecimiento.categorias_especiales = categoriasResult.rows;
+    
+    // Obtener sedes (si es sede principal)
+    const sedesResult = await query(`
+      SELECT 
+        e.id, e.nombre, e.slug, e.direccion, e.barrio, e.telefono, e.whatsapp,
+        e.instagram, e.horarios, e.latitud, e.longitud, e.imagen_principal, e.logo_url,
+        c.nombre as ciudad_nombre, c.slug as ciudad_slug
+      FROM establecimientos e
+      LEFT JOIN ciudades c ON c.id = e.ciudad_id
+      WHERE e.sede_principal_id = $1 AND e.activo = true
+      ORDER BY c.nombre ASC, e.nombre ASC
+    `, [establecimiento.id]);
+    establecimiento.sedes = sedesResult.rows;
+    
+    // Si es sede secundaria, obtener info de la sede principal y las hermanas
+    if (establecimiento.sede_principal_id) {
+      const principalResult = await query(`
+        SELECT e.id, e.nombre, e.slug, e.imagen_principal, e.logo_url
+        FROM establecimientos e WHERE e.id = $1
+      `, [establecimiento.sede_principal_id]);
+      establecimiento.sede_principal = principalResult.rows[0] || null;
+      
+      const hermanasResult = await query(`
+        SELECT 
+          e.id, e.nombre, e.slug, e.direccion, e.telefono, e.whatsapp,
+          e.imagen_principal, e.logo_url,
+          c.nombre as ciudad_nombre, c.slug as ciudad_slug
+        FROM establecimientos e
+        LEFT JOIN ciudades c ON c.id = e.ciudad_id
+        WHERE (e.sede_principal_id = $1 OR e.id = $1) AND e.id != $2 AND e.activo = true
+        ORDER BY c.nombre ASC, e.nombre ASC
+      `, [establecimiento.sede_principal_id, establecimiento.id]);
+      establecimiento.otras_sedes = hermanasResult.rows;
+    }
     
     // Obtener menú
     const menuResult = await query(`
