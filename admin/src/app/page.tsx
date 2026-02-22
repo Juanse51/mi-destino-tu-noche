@@ -16,40 +16,13 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
-      const res = await fetch(`${apiUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Error al iniciar sesión')
-        setLoading(false)
-        return
-      }
-
-      if (data.usuario.rol !== 'admin' && data.usuario.rol !== 'superadmin') {
-        setError('No tienes permisos de administrador')
-        setLoading(false)
-        return
-      }
-
-      // Guardar tokens
-      localStorage.setItem('admin_token', data.accessToken)
-      localStorage.setItem('admin_user', JSON.stringify(data.usuario))
-      
-      // Guardar refresh token para auto-renovación
-      if (data.refreshToken) {
-        localStorage.setItem('admin_refresh_token', data.refreshToken)
-      }
-
+    // Demo: admin@demo.com / admin123
+    if (email === 'admin@demo.com' && password === 'admin123') {
+      localStorage.setItem('admin_token', 'demo_token_123')
+      localStorage.setItem('admin_user', JSON.stringify({ nombre: 'Administrador', email, rol: 'admin' }))
       router.push('/dashboard')
-    } catch (err) {
-      setError('Error de conexión con el servidor')
+    } else {
+      setError('Credenciales incorrectas. Usa: admin@demo.com / admin123')
     }
     setLoading(false)
   }
@@ -72,7 +45,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   className="input pl-10"
-                  placeholder="admin@midestinotunoche.com"
+                  placeholder="admin@demo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -109,7 +82,7 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 bg-dark rounded-lg">
             <p className="text-sm text-gray-400 text-center">
-              Ingresa con tus credenciales de administrador
+              <strong>Demo:</strong> admin@demo.com / admin123
             </p>
           </div>
         </div>

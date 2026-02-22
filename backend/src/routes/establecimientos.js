@@ -37,12 +37,6 @@ router.get('/', tokenOpcional, async (req, res) => {
     
     let whereClause = 'WHERE e.activo = true';
     
-    // Admin puede ver todos (activos e inactivos)
-    const { todos } = req.query;
-    if (todos === 'true') {
-      whereClause = 'WHERE 1=1';
-    }
-    
     // Filtros
     if (ciudad) {
       whereClause += ` AND c.slug = $${paramIndex}`;
@@ -51,13 +45,8 @@ router.get('/', tokenOpcional, async (req, res) => {
     }
     
     if (tipo) {
-      if (tipo === 'restaurante') {
-        whereClause += ` AND te.slug = ANY($${paramIndex})`;
-        params.push(['restaurante', 'gastrobar']);
-      } else {
-        whereClause += ` AND te.slug = $${paramIndex}`;
-        params.push(tipo);
-      }
+      whereClause += ` AND te.slug = $${paramIndex}`;
+      params.push(tipo);
       paramIndex++;
     }
     
@@ -184,8 +173,6 @@ router.get('/', tokenOpcional, async (req, res) => {
         e.longitud,
         e.destacado,
         e.verificado,
-        e.activo,
-        e.genero_musical,
         te.nombre as tipo_nombre,
         te.slug as tipo_slug,
         te.icono as tipo_icono,
@@ -560,136 +547,6 @@ router.get('/:slug', tokenOpcional, async (req, res) => {
   } catch (error) {
     console.error('Error obteniendo establecimiento:', error);
     res.status(500).json({ error: 'Error al obtener establecimiento' });
-  }
-});
-
-// =====================================================
-// CREAR ESTABLECIMIENTO (Admin)
-// =====================================================
-router.post('/', verificarToken, async (req, res) => {
-  try {
-    if (!['admin', 'superadmin'].includes(req.usuario.rol)) {
-      return res.status(403).json({ error: 'No tienes permisos' });
-    }
-
-    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, genero_musical } = req.body;
-
-    if (!nombre || !tipo || !ciudad || !direccion) {
-      return res.status(400).json({ error: 'Nombre, tipo, ciudad y dirección son requeridos' });
-    }
-
-    const finalSlug = slug || nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
-    // Obtener tipo_id
-    const tipoResult = await query('SELECT id FROM tipos_establecimiento WHERE nombre ILIKE $1 LIMIT 1', [tipo]);
-    if (tipoResult.rows.length === 0) {
-      return res.status(400).json({ error: 'Tipo no válido' });
-    }
-
-    // Obtener ciudad_id
-    const ciudadResult = await query('SELECT id FROM ciudades WHERE nombre ILIKE $1 LIMIT 1', [ciudad]);
-    if (ciudadResult.rows.length === 0) {
-      return res.status(400).json({ error: 'Ciudad no válida' });
-    }
-
-    const result = await query(
-      `INSERT INTO establecimientos (nombre, slug, tipo_id, ciudad_id, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, genero_musical, latitud, longitud)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 4.533, -75.681)
-       RETURNING id, nombre, slug, activo, verificado, destacado, genero_musical`,
-      [nombre, finalSlug, tipoResult.rows[0].id, ciudadResult.rows[0].id, direccion, descripcion || '', telefono || '', whatsapp || '', instagram || '', activo !== false, verificado || false, destacado || false, genero_musical || null]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error creando establecimiento:', error);
-    if (error.code === '23505') {
-      return res.status(400).json({ error: 'Ya existe un establecimiento con ese slug' });
-    }
-    res.status(500).json({ error: 'Error al crear establecimiento' });
-  }
-});
-
-// =====================================================
-// ACTUALIZAR ESTABLECIMIENTO (Admin)
-// =====================================================
-router.put('/:id', verificarToken, async (req, res) => {
-  try {
-    if (!['admin', 'superadmin'].includes(req.usuario.rol)) {
-      return res.status(403).json({ error: 'No tienes permisos' });
-    }
-
-    const { id } = req.params;
-    const { nombre, slug, tipo, ciudad, direccion, descripcion, telefono, whatsapp, instagram, activo, verificado, destacado, imagen_principal, latitud, longitud, genero_musical } = req.body;
-
-    // Obtener tipo_id si se envió tipo
-    let tipoId = null;
-    if (tipo) {
-      const tipoResult = await query('SELECT id FROM tipos_establecimiento WHERE nombre ILIKE $1 LIMIT 1', [tipo]);
-      if (tipoResult.rows.length > 0) tipoId = tipoResult.rows[0].id;
-    }
-
-    // Obtener ciudad_id si se envió ciudad
-    let ciudadId = null;
-    if (ciudad) {
-      const ciudadResult = await query('SELECT id FROM ciudades WHERE nombre ILIKE $1 LIMIT 1', [ciudad]);
-      if (ciudadResult.rows.length > 0) ciudadId = ciudadResult.rows[0].id;
-    }
-
-    const result = await query(
-      `UPDATE establecimientos SET
-        nombre = COALESCE($1, nombre),
-        slug = COALESCE($2, slug),
-        tipo_id = COALESCE($3, tipo_id),
-        ciudad_id = COALESCE($4, ciudad_id),
-        direccion = COALESCE($5, direccion),
-        descripcion = COALESCE($6, descripcion),
-        telefono = COALESCE($7, telefono),
-        whatsapp = COALESCE($8, whatsapp),
-        instagram = COALESCE($9, instagram),
-        activo = COALESCE($10, activo),
-        verificado = COALESCE($11, verificado),
-        destacado = COALESCE($12, destacado),
-        imagen_principal = COALESCE($13, imagen_principal),
-        latitud = COALESCE($14, latitud),
-        longitud = COALESCE($15, longitud),
-        genero_musical = COALESCE($16, genero_musical),
-        updated_at = NOW()
-       WHERE id = $17
-       RETURNING id, nombre, slug, activo, verificado, destacado, genero_musical`,
-      [nombre || null, slug || null, tipoId, ciudadId, direccion || null, descripcion || null, telefono || null, whatsapp || null, instagram || null, activo, verificado, destacado, imagen_principal || null, latitud || null, longitud || null, genero_musical || null, id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Establecimiento no encontrado' });
-    }
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error actualizando establecimiento:', error);
-    res.status(500).json({ error: 'Error al actualizar establecimiento' });
-  }
-});
-
-// =====================================================
-// ELIMINAR ESTABLECIMIENTO (Admin)
-// =====================================================
-router.delete('/:id', verificarToken, async (req, res) => {
-  try {
-    if (!['admin', 'superadmin'].includes(req.usuario.rol)) {
-      return res.status(403).json({ error: 'No tienes permisos' });
-    }
-
-    const { id } = req.params;
-    const result = await query('DELETE FROM establecimientos WHERE id = $1 RETURNING id, nombre', [id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Establecimiento no encontrado' });
-    }
-
-    res.json({ message: 'Establecimiento eliminado', ...result.rows[0] });
-  } catch (error) {
-    console.error('Error eliminando establecimiento:', error);
-    res.status(500).json({ error: 'Error al eliminar establecimiento' });
   }
 });
 

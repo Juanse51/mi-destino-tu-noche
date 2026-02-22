@@ -50,7 +50,6 @@ app.use(`${API_PREFIX}/upload`, require('./routes/upload'));
 app.use(`${API_PREFIX}/admin`, require('./routes/admin'));
 app.use(`${API_PREFIX}/categorias`, require('./routes/categorias'));
 app.use(`${API_PREFIX}/etiquetas`, require('./routes/etiquetas'));
-app.use(`${API_PREFIX}/cupones`, require('./routes/cupones'));
 
 // =====================================================
 // MANEJO DE ERRORES
