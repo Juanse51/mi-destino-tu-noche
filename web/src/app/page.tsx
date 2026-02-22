@@ -69,7 +69,7 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
           {/* Frase encima del logo */}
-          <div className="inline-block bg-primary/90 backdrop-blur px-8 py-4 rounded-xl mb-6"><p className="text-xl md:text-2xl text-white text-center leading-relaxed">¿Sabes <strong>que vas a hacer</strong> cuando caiga<br />la tarde y <strong>comience la noche</strong>?</p></div>
+          <div className="inline-block bg-primary/80 backdrop-blur px-6 py-3 rounded-lg mb-6"><p className="text-sm md:text-base text-white text-center leading-relaxed">¿Sabes <strong>qué vas a hacer</strong> cuando caiga la tarde<br />y <strong>comience la noche</strong>?</p></div>
 
           {/* Logo grande */}
           <div className="flex justify-center mb-4">
