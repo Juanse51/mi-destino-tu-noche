@@ -57,7 +57,7 @@ export default function HomePage() {
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920"
+            src="/hero-bg.jpg"
             alt="Hero background"
             fill
             className="object-cover"
@@ -69,8 +69,9 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
           {/* Frase encima del logo */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-6 max-w-2xl mx-auto">
-            ¿Sabes que vas a hacer cuando caiga la tarde y comience la noche?
+          <p className="text-xl md:text-2xl text-orange-400 mb-6 max-w-2xl mx-auto text-center">
+            ¿Sabes que vas a hacer cuando caiga la tarde
+            y comience la noche?
           </p>
 
           {/* Logo grande */}
