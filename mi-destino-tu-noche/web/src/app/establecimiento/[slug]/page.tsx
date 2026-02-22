@@ -203,7 +203,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
               <span>Llamar</span>
             </a>
             <a 
-              href={`https://wa.me/${est.whatsapp}`}
+              href={`https://wa.me/${est.whatsapp}?text=Hola%2C%20te%20hablo%20desde%20Mi%20Destino%20Tu%20Noche%2C%20quisiera%20hacer%20una%20reserva.`}
               target="_blank"
               className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 py-3 rounded-xl font-medium transition-colors"
             >

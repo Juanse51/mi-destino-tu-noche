@@ -3,74 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, MapPin, Star, ChevronRight, Utensils, Wine, Coffee, Music } from 'lucide-react'
+import { Search, MapPin, Star, ChevronRight, Utensils, Wine, Coffee, Music, Tent, PartyPopper, Sparkles, Users, Calendar } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
 
-// Datos de ejemplo (en producción vendrían del API)
-const establecimientosDestacados = [
-  {
-    id: '1',
-    nombre: 'Andrés Carne de Res',
-    slug: 'andres-carne-de-res',
-    imagen_principal: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-    tipo_nombre: 'Restaurante',
-    tipo_icono: '🍽️',
-    tipo_color: '#FF6B35',
-    ciudad_nombre: 'Bogotá',
-    valoracion_promedio: 4.8,
-    total_valoraciones: 1250,
-    rango_precios: 3,
-    descripcion_corta: 'El restaurante más emblemático de Colombia',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }, { nombre: 'Terraza', icono: '🌿' }]
-  },
-  {
-    id: '2',
-    nombre: 'Carmen',
-    slug: 'carmen-medellin',
-    imagen_principal: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800',
-    tipo_nombre: 'Restaurante',
-    tipo_icono: '🍽️',
-    tipo_color: '#FF6B35',
-    ciudad_nombre: 'Medellín',
-    valoracion_promedio: 4.9,
-    total_valoraciones: 890,
-    rango_precios: 4,
-    descripcion_corta: 'Alta cocina colombiana con toques internacionales',
-    etiquetas: [{ nombre: 'Romántico', icono: '💕' }, { nombre: 'Vista panorámica', icono: '🌄' }]
-  },
-  {
-    id: '3',
-    nombre: 'La Octava',
-    slug: 'la-octava',
-    imagen_principal: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800',
-    tipo_nombre: 'Bar',
-    tipo_icono: '🍺',
-    tipo_color: '#9B59B6',
-    ciudad_nombre: 'Cali',
-    valoracion_promedio: 4.6,
-    total_valoraciones: 567,
-    rango_precios: 2,
-    descripcion_corta: 'El mejor ambiente salsero de la ciudad',
-    etiquetas: [{ nombre: 'Música en vivo', icono: '🎵' }, { nombre: 'Baile', icono: '💃' }]
-  },
-  {
-    id: '4',
-    nombre: 'Café Velvet',
-    slug: 'cafe-velvet',
-    imagen_principal: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800',
-    tipo_nombre: 'Café',
-    tipo_icono: '☕',
-    tipo_color: '#8B4513',
-    ciudad_nombre: 'Armenia',
-    valoracion_promedio: 4.7,
-    total_valoraciones: 342,
-    rango_precios: 2,
-    descripcion_corta: 'Café de origen con vista al Quindío',
-    etiquetas: [{ nombre: 'WiFi', icono: '📶' }, { nombre: 'Terraza', icono: '🌿' }]
-  },
-]
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
 const categoriasEspeciales = [
   { nombre: 'Círculo Gastro', slug: 'circulo-gastro', icono: '⭐', color: '#FFD700', descripcion: 'Los mejores restaurantes', total: 150 },
@@ -79,24 +17,38 @@ const categoriasEspeciales = [
   { nombre: 'Tardeo', slug: 'tardeo', icono: '🌅', color: '#FF8C00', descripcion: 'Disfruta desde temprano', total: 120 },
 ]
 
-const ciudades = [
-  { nombre: 'Bogotá', slug: 'bogota', imagen: 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400', total: 850 },
-  { nombre: 'Medellín', slug: 'medellin', imagen: 'https://images.unsplash.com/photo-1599413987323-b2b8c0d7d9c8?w=400', total: 620 },
-  { nombre: 'Cali', slug: 'cali', imagen: 'https://images.unsplash.com/photo-1583531172005-523bb5ab6a6e?w=400', total: 480 },
-  { nombre: 'Cartagena', slug: 'cartagena', imagen: 'https://images.unsplash.com/photo-1583531172131-d35a1e9e1a96?w=400', total: 390 },
-  { nombre: 'Barranquilla', slug: 'barranquilla', imagen: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400', total: 280 },
-  { nombre: 'Pereira', slug: 'pereira', imagen: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', total: 190 },
-]
-
 const tipos = [
   { nombre: 'Restaurantes', icono: Utensils, color: '#FF6B35', slug: 'restaurante' },
   { nombre: 'Bares', icono: Wine, color: '#9B59B6', slug: 'bar' },
   { nombre: 'Cafés', icono: Coffee, color: '#8B4513', slug: 'cafe' },
   { nombre: 'Discotecas', icono: Music, color: '#E91E63', slug: 'discoteca' },
+  { nombre: 'Parques de diversiones', icono: Tent, color: '#4CAF50', slug: 'parque-diversiones' },
+  { nombre: 'Conciertos y festivales', icono: PartyPopper, color: '#FF9800', slug: 'conciertos-festivales' },
+  { nombre: 'Otros planes', icono: Sparkles, color: '#00BCD4', slug: 'otros-planes' },
 ]
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [ciudades, setCiudades] = useState<any[]>([])
+  const [destacados, setDestacados] = useState<any[]>([])
+
+  useEffect(() => {
+    // Cargar ciudades del API
+    fetch(`${API_URL}/ciudades`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) setCiudades(data)
+      })
+      .catch(() => {})
+
+    // Cargar destacados del API
+    fetch(`${API_URL}/establecimientos?limite=8&orden=recientes`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.establecimientos) setDestacados(data.establecimientos)
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="animate-fadeIn">
@@ -116,14 +68,32 @@ export default function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="text-gradient">Mi Destino</span>
-            <br />
-            <span className="text-white">Tu Noche</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            Descubre los mejores restaurantes, bares y cafés de Colombia
+          {/* Frase encima del logo */}
+          <p className="text-xl md:text-2xl text-gray-300 mb-6 max-w-2xl mx-auto">
+            ¿Sabes que vas a hacer cuando caiga la tarde y comience la noche?
           </p>
+
+          {/* Logo grande */}
+          <div className="flex justify-center mb-4">
+            <Image
+              src="https://xzvfwxlgrwzcpofdubmg.supabase.co/storage/v1/object/public/imagenes/logos/logo%20mi%20destino%20tu%20noche.png"
+              alt="Mi Destino Tu Noche"
+              width={400}
+              height={150}
+              className="w-[280px] md:w-[400px] h-auto"
+              priority
+            />
+          </div>
+
+          {/* By Asobares */}
+          <a 
+            href="https://asobares.org/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block text-gray-400 hover:text-primary transition-colors mb-8 text-sm md:text-base"
+          >
+            By Asobares Colombia
+          </a>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto">
@@ -148,17 +118,30 @@ export default function HomePage() {
           </div>
 
           {/* Quick Types */}
-          <div className="flex justify-center gap-4 mt-8 flex-wrap">
+          <div className="flex justify-center gap-3 mt-8 flex-wrap">
             {tipos.map((tipo) => (
               <Link
                 key={tipo.slug}
                 href={`/buscar?tipo=${tipo.slug}`}
-                className="flex items-center gap-2 px-5 py-2.5 bg-dark-lighter/80 backdrop-blur rounded-full hover:bg-dark-card transition-colors border border-gray-700/50"
+                className="flex items-center gap-2 px-4 py-2 bg-dark-lighter/80 backdrop-blur rounded-full hover:bg-dark-card transition-colors border border-gray-700/50"
               >
                 <tipo.icono className="w-4 h-4" style={{ color: tipo.color }} />
                 <span className="text-sm font-medium">{tipo.nombre}</span>
               </Link>
             ))}
+          </div>
+
+          {/* Botón grupo grande */}
+          <div className="mt-6">
+            <a
+              href="https://wa.me/573212304589?text=Hola%2C%20te%20hablo%20desde%20Mi%20Destino%20Tu%20Noche%2C%20tengo%20un%20grupo%20grande%20y%20necesito%20ayuda."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-colors"
+            >
+              <Users className="w-5 h-5" />
+              ¿Tienes un grupo grande? ¡Contáctanos!
+            </a>
           </div>
         </div>
 
@@ -170,49 +153,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categorías Especiales */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-3xl font-bold">Explora por Categoría</h2>
-              <p className="text-gray-400 mt-2">Encuentra exactamente lo que buscas</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categoriasEspeciales.map((cat) => (
-              <CategoriaCard key={cat.slug} categoria={cat} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Destacados */}
-      <section className="py-20 px-4 bg-dark-lighter/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-3xl font-bold">Destacados</h2>
-              <p className="text-gray-400 mt-2">Los lugares más populares</p>
-            </div>
-            <Link 
-              href="/buscar?destacados=true" 
-              className="flex items-center text-primary hover:text-primary-light transition-colors font-medium"
-            >
-              Ver todos <ChevronRight className="w-5 h-5 ml-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {establecimientosDestacados.map((est) => (
-              <EstablecimientoCard key={est.id} establecimiento={est} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Ciudades */}
+      {/* Ciudades - ANTES de categorías */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-10">
@@ -228,15 +169,86 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {ciudades.map((ciudad) => (
-              <CiudadCard key={ciudad.slug} ciudad={ciudad} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ciudades.map((ciudad: any) => (
+              <CiudadCard key={ciudad.slug || ciudad.id} ciudad={{
+                nombre: ciudad.nombre,
+                slug: ciudad.slug,
+                imagen: ciudad.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400',
+                total: ciudad.total_establecimientos || 0
+              }} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Descargar App */}
+      {/* Categorías Especiales */}
+      <section className="py-20 px-4 bg-dark-lighter/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold">Explora por categoría</h2>
+              <p className="text-gray-400 mt-2">Encuentra exactamente lo que buscas</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categoriasEspeciales.map((cat) => (
+              <CategoriaCard key={cat.slug} categoria={cat} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Banner Calendario de Eventos */}
+      <section className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <Link href="/eventos" className="block">
+            <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl overflow-hidden hover:scale-[1.01] transition-transform">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
+              </div>
+              <div className="relative z-10 p-10 md:p-14 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    Calendario de eventos y festivales
+                  </h2>
+                  <p className="text-white/80 text-lg">Descubre lo mejor que viene para ti</p>
+                </div>
+                <Calendar className="w-16 h-16 text-white/30 hidden md:block" />
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* Destacados */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold">Destacados</h2>
+              <p className="text-gray-400 mt-2">Los lugares más populares</p>
+            </div>
+            <Link 
+              href="/buscar?destacados=true" 
+              className="flex items-center text-primary hover:text-primary-light transition-colors font-medium"
+            >
+              Ver todos <ChevronRight className="w-5 h-5 ml-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {destacados.length > 0 ? destacados.map((est: any) => (
+              <EstablecimientoCard key={est.id} establecimiento={est} />
+            )) : (
+              <p className="text-gray-400 col-span-4">Cargando...</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Descargar App - Solo Android */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="relative bg-gradient-to-r from-primary to-primary-dark rounded-3xl overflow-hidden">
@@ -247,30 +259,22 @@ export default function HomePage() {
             
             <div className="relative z-10 p-12 md:p-16 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                📱 Descarga la App
+                📱 Descarga la app
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-xl mx-auto">
                 Lleva Mi Destino Tu Noche en tu bolsillo. Encuentra lugares cercanos, guarda favoritos y más.
               </p>
-              <div className="flex justify-center gap-4 flex-wrap">
+              <div className="flex justify-center">
                 <Link 
                   href="#"
-                  className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-6 py-3 rounded-xl transition-colors"
+                  className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-8 py-4 rounded-xl transition-colors"
                 >
-                  <span className="text-2xl">🤖</span>
+                  <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current text-green-400">
+                    <path d="M17.523 2.237a.625.625 0 0 0-.803.27l-1.39 2.545A10.08 10.08 0 0 0 12 4.38c-1.2 0-2.349.232-3.33.672L7.28 2.507a.625.625 0 1 0-1.073.534l1.39 2.545A7.482 7.482 0 0 0 4.5 11.25h15a7.482 7.482 0 0 0-3.097-5.664l1.39-2.545a.625.625 0 0 0-.27-.804zM8.25 9a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zm7.5 0a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM4.5 12h15v6.75a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3V12z"/>
+                  </svg>
                   <div className="text-left">
-                    <div className="text-xs text-white/70">Disponible en</div>
-                    <div className="font-semibold">Google Play</div>
-                  </div>
-                </Link>
-                <Link 
-                  href="#"
-                  className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-6 py-3 rounded-xl transition-colors"
-                >
-                  <span className="text-2xl">🍎</span>
-                  <div className="text-left">
-                    <div className="text-xs text-white/70">Disponible en</div>
-                    <div className="font-semibold">App Store</div>
+                    <div className="text-xs text-white/70">Descarga para</div>
+                    <div className="font-bold text-lg">Android</div>
                   </div>
                 </Link>
               </div>
@@ -284,11 +288,11 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary">2,000+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary">650+</div>
               <div className="text-gray-400 mt-2">Establecimientos</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary">16</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary">18</div>
               <div className="text-gray-400 mt-2">Ciudades</div>
             </div>
             <div>
