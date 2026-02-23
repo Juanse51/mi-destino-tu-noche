@@ -1,4 +1,4 @@
-// EstablecimientoScreen.tsx - Detalle de Establecimiento
+// EstablecimientoScreen.tsx - Detalle de Establecimiento con Sedes
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking, Share, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,9 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { establecimientosApi, favoritosApi } from '../api/client';
 import { useAuthStore } from '../store/authStore';
-
 const { width } = Dimensions.get('window');
-
 export default function EstablecimientoScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
@@ -16,23 +14,25 @@ export default function EstablecimientoScreen() {
   const { isAuthenticated } = useAuthStore();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'resenas'>('info');
-
   const { data: est, isLoading } = useQuery({
     queryKey: ['establecimiento', slug],
     queryFn: () => establecimientosApi.getBySlug(slug),
   });
-
   const toggleFavorito = useMutation({
     mutationFn: () => favoritosApi.toggle(est?.id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['establecimiento', slug] }),
   });
-
   const handleShare = async () => {
     if (!est) return;
     await Share.share({ message: '¡Mira ' + est.nombre + '! https://midestinotunoche.asobares.org/' + est.slug });
   };
   const handleCall = () => est?.telefono && Linking.openURL('tel:' + est.telefono);
-  const handleWhatsApp = () => est?.whatsapp && Linking.openURL('https://wa.me/57' + est.whatsapp);
+  const handleWhatsApp = () => {
+    if (est?.whatsapp) {
+      const num = est.whatsapp.startsWith('57') ? est.whatsapp : '57' + est.whatsapp;
+      Linking.openURL('https://wa.me/' + num + '?text=Hola%2C%20te%20hablo%20desde%20Mi%20Destino%20Tu%20Noche%2C%20quisiera%20hacer%20una%20reserva.');
+    }
+  };
   const handleMaps = () => {
     if (est?.direccion) {
       const query = encodeURIComponent(est.direccion + ', ' + (est.ciudad_nombre || 'Colombia'));
@@ -45,15 +45,11 @@ export default function EstablecimientoScreen() {
       Linking.openURL('https://www.instagram.com/' + ig);
     }
   };
-
   if (isLoading || !est) return <SafeAreaView style={styles.container}><View style={styles.loading}><Text style={styles.loadingText}>Cargando...</Text></View></SafeAreaView>;
-
   const logoImg = est.logo_url || est.imagen_principal;
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header - Logo centrado */}
         <View style={styles.imageContainer}>
           <View style={styles.headerBg} />
           <View style={styles.logoContainer}>
@@ -78,7 +74,6 @@ export default function EstablecimientoScreen() {
             </View>
           </View>
         </View>
-
         <View style={styles.mainInfo}>
           <Text style={styles.nombre}>{est.nombre}</Text>
           {est.tipo_comida_nombre ? <Text style={styles.tipoComida}>{est.tipo_comida_nombre}</Text> : null}
@@ -104,8 +99,6 @@ export default function EstablecimientoScreen() {
             </View>
           ) : null}
         </View>
-
-        {/* Action Buttons */}
         <View style={styles.actions}>
           {est.telefono ? (
             <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={handleCall}>
@@ -121,15 +114,11 @@ export default function EstablecimientoScreen() {
             <Text style={styles.actionText}>🧭 Ir</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Instagram button */}
         {est.instagram ? (
           <TouchableOpacity style={styles.instagramBtn} onPress={handleInstagram}>
             <Text style={styles.instagramText}>📷 Instagram</Text>
           </TouchableOpacity>
         ) : null}
-
-        {/* Tabs */}
         <View style={styles.tabs}>
           {(['info', 'menu', 'resenas'] as const).map((tab) => (
             <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
@@ -139,7 +128,6 @@ export default function EstablecimientoScreen() {
             </TouchableOpacity>
           ))}
         </View>
-
         <View style={styles.tabContent}>
           {activeTab === 'info' ? (
             <View>
@@ -168,6 +156,44 @@ export default function EstablecimientoScreen() {
                   </View>
                 ) : null}
               </View>
+              {/* SEDES - Si es sede principal */}
+              {est.sedes && est.sedes.length > 0 ? (
+                <View style={styles.sedesSection}>
+                  <Text style={styles.sedesTitle}>🏢 Sedes ({est.sedes.length})</Text>
+                  {est.sedes.map((sede: any) => (
+                    <TouchableOpacity key={sede.id} style={styles.sedeCard} onPress={() => navigation.push('Establecimiento', { slug: sede.slug })}>
+                      <View style={styles.sedeIconBox}><Text style={styles.sedeIcon}>📍</Text></View>
+                      <View style={styles.sedeInfo}>
+                        <Text style={styles.sedeNombre}>{sede.nombre}</Text>
+                        {sede.ciudad_nombre ? <Text style={styles.sedeCiudad}>{sede.ciudad_nombre}</Text> : null}
+                        {sede.direccion ? <Text style={styles.sedeDireccion}>{sede.direccion}</Text> : null}
+                        {sede.telefono ? <Text style={styles.sedeTelefono}>{sede.telefono}</Text> : null}
+                      </View>
+                      <Text style={styles.sedeArrow}>→</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : null}
+              {/* SEDES - Si es sede secundaria */}
+              {est.sede_principal ? (
+                <View style={styles.sedesSection}>
+                  <Text style={styles.sedesTitle}>🏢 Más sedes</Text>
+                  <TouchableOpacity style={styles.sedePrincipalLink} onPress={() => navigation.push('Establecimiento', { slug: est.sede_principal.slug })}>
+                    <Text style={styles.sedePrincipalText}>← Ver sede principal: {est.sede_principal.nombre}</Text>
+                  </TouchableOpacity>
+                  {est.otras_sedes && est.otras_sedes.length > 0 ? est.otras_sedes.map((sede: any) => (
+                    <TouchableOpacity key={sede.id} style={styles.sedeCard} onPress={() => navigation.push('Establecimiento', { slug: sede.slug })}>
+                      <View style={styles.sedeIconBox}><Text style={styles.sedeIcon}>📍</Text></View>
+                      <View style={styles.sedeInfo}>
+                        <Text style={styles.sedeNombre}>{sede.nombre}</Text>
+                        {sede.ciudad_nombre ? <Text style={styles.sedeCiudad}>{sede.ciudad_nombre}</Text> : null}
+                        {sede.direccion ? <Text style={styles.sedeDireccion}>{sede.direccion}</Text> : null}
+                      </View>
+                      <Text style={styles.sedeArrow}>→</Text>
+                    </TouchableOpacity>
+                  )) : null}
+                </View>
+              ) : null}
               {est.galeria && est.galeria.length > 0 ? (
                 <View style={styles.galeria}>
                   <Text style={styles.galeriaTitle}>Fotos</Text>
@@ -194,7 +220,6 @@ export default function EstablecimientoScreen() {
             </View>
           ) : null}
         </View>
-
         <TouchableOpacity style={styles.devBy} onPress={() => Linking.openURL('https://www.vamosarayar.com')}>
           <Text style={styles.devByText}>Desarrollado por Rayar!</Text>
         </TouchableOpacity>
@@ -203,17 +228,13 @@ export default function EstablecimientoScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0F0F1A' },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { color: '#FFF', fontSize: 16 },
   imageContainer: { height: 280, position: 'relative', backgroundColor: '#1A1A2E' },
   headerBg: { ...StyleSheet.absoluteFillObject, backgroundColor: '#1A1A2E' },
-  logoContainer: {
-    position: 'absolute', top: 60, left: 0, right: 0, bottom: 40,
-    justifyContent: 'center', alignItems: 'center',
-  },
+  logoContainer: { position: 'absolute', top: 60, left: 0, right: 0, bottom: 40, justifyContent: 'center', alignItems: 'center' },
   logoImage: { width: 180, height: 180, borderRadius: 20 },
   headerButtons: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 },
   headerRight: { flexDirection: 'row', gap: 8 },
@@ -243,10 +264,7 @@ const styles = StyleSheet.create({
   actionBtnWhatsApp: { backgroundColor: '#25D366' },
   actionBtnMaps: { backgroundColor: '#4285F4' },
   actionText: { fontSize: 13, fontWeight: 'bold', color: '#FFF' },
-  instagramBtn: {
-    marginHorizontal: 20, marginTop: 10, paddingVertical: 12,
-    backgroundColor: '#E1306C', borderRadius: 12, alignItems: 'center'
-  },
+  instagramBtn: { marginHorizontal: 20, marginTop: 10, paddingVertical: 12, backgroundColor: '#E1306C', borderRadius: 12, alignItems: 'center' },
   instagramText: { color: '#FFF', fontSize: 13, fontWeight: 'bold' },
   tabs: { flexDirection: 'row', marginTop: 20, borderBottomWidth: 1, borderBottomColor: '#1A1A2E' },
   tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
@@ -260,6 +278,20 @@ const styles = StyleSheet.create({
   infoIcon: { fontSize: 18, marginRight: 12 },
   infoLabel: { fontSize: 11, color: '#6B7280' },
   infoValue: { fontSize: 14, color: '#FFF', marginTop: 2 },
+  // Sedes
+  sedesSection: { marginTop: 24 },
+  sedesTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', marginBottom: 12 },
+  sedeCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1A1A2E', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: '#374151' },
+  sedeIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(0,115,255,0.15)', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  sedeIcon: { fontSize: 20 },
+  sedeInfo: { flex: 1 },
+  sedeNombre: { fontSize: 15, fontWeight: '600', color: '#FFF' },
+  sedeCiudad: { fontSize: 13, color: '#0073FF', marginTop: 2 },
+  sedeDireccion: { fontSize: 12, color: '#9CA3AF', marginTop: 2 },
+  sedeTelefono: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  sedeArrow: { fontSize: 18, color: '#0073FF', marginLeft: 8 },
+  sedePrincipalLink: { backgroundColor: 'rgba(0,115,255,0.1)', borderRadius: 12, padding: 14, marginBottom: 12 },
+  sedePrincipalText: { fontSize: 14, color: '#0073FF', fontWeight: '600' },
   galeria: { marginTop: 20 },
   galeriaTitle: { fontSize: 16, fontWeight: 'bold', color: '#FFF', marginBottom: 12 },
   galeriaImage: { width: 180, height: 130, borderRadius: 12, marginRight: 12 },

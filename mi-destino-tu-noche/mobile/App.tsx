@@ -26,6 +26,7 @@ import HistorialScreen from './src/screens/HistorialScreen';
 import CiudadScreen from './src/screens/CiudadScreen';
 import CategoriaScreen from './src/screens/CategoriaScreen';
 import MDTNScreen from './src/screens/MDTNScreen';
+import DJsScreen from './src/screens/DJsScreen';
 
 // Store
 import { useAuthStore } from './src/store/authStore';
@@ -144,6 +145,11 @@ export default function App() {
               <Stack.Screen
                 name="Ciudad"
                 component={CiudadScreen}
+                options={{ animation: 'slide_from_right' }}
+              />
+              <Stack.Screen
+                name="DJs"
+                component={DJsScreen}
                 options={{ animation: 'slide_from_right' }}
               />
               <Stack.Screen
