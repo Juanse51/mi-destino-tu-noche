@@ -212,7 +212,7 @@ export default function HomePage() {
       {/* Banner Calendario de Eventos */}
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <Link href="/eventos" className="block">
+          <Link href="/calendario" className="block">
             <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl overflow-hidden hover:scale-[1.01] transition-transform">
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
