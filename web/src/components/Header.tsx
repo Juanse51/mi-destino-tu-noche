@@ -43,8 +43,6 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/buscar" className="text-gray-300 hover:text-white transition-colors">
-              Explorar
             </Link>
             <Link href="/buscar?tipo=restaurante" className="text-gray-300 hover:text-white transition-colors">
               Restaurantes
@@ -100,7 +98,6 @@ export default function Header() {
         <div className="md:hidden bg-dark-lighter border-t border-gray-800">
           <nav className="flex flex-col p-4 gap-2">
             <Link href="/buscar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              🔍 Explorar
             </Link>
             <Link href="/buscar?tipo=restaurante" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
               🍽️ Restaurantes

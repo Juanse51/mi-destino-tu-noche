@@ -80,7 +80,7 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
           {/* Frase encima del logo */}
-          <p className="text-lg md:text-2xl text-orange-400 mb-6 max-w-2xl mx-auto text-center">¿Sabes <strong>qué vas a hacer</strong> cuando caiga <br /> la tarde y <strong>comience la noche</strong>?</p>
+          <p className="text-lg md:text-2xl text-orange-400 mt-10 mb-6 max-w-2xl mx-auto text-center">¿Sabes <strong>qué vas a hacer</strong> cuando caiga <br /> la tarde y <strong>comience la noche</strong>?</p>
 
           {/* Logo grande */}
           <div className="flex justify-center mb-4">
