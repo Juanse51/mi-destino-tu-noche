@@ -16,13 +16,13 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    // Demo: admin@demo.com / admin123
-    if (email === 'admin@demo.com' && password === 'admin123') {
+    // Demo: admin@midestinotunoche.com / Admin123!
+    if (email === 'admin@midestinotunoche.com' && password === 'Admin123!') {
       localStorage.setItem('admin_token', 'demo_token_123')
       localStorage.setItem('admin_user', JSON.stringify({ nombre: 'Administrador', email, rol: 'admin' }))
       router.push('/dashboard')
     } else {
-      setError('Credenciales incorrectas. Usa: admin@demo.com / admin123')
+      setError('Credenciales incorrectas')
     }
     setLoading(false)
   }
@@ -45,7 +45,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   className="input pl-10"
-                  placeholder="admin@demo.com"
+                  placeholder="admin@midestinotunoche.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -82,7 +82,7 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 bg-dark rounded-lg">
             <p className="text-sm text-gray-400 text-center">
-              <strong>Demo:</strong> admin@demo.com / admin123
+              
             </p>
           </div>
         </div>
