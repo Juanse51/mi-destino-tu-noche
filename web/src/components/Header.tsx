@@ -40,10 +40,8 @@ export default function Header() {
               className={`h-10 w-auto transition-opacity duration-300 ${showLogo ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
           </Link>
-
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            </Link>
             <Link href="/buscar?tipo=restaurante" className="text-gray-300 hover:text-white transition-colors">
               Restaurantes
             </Link>
