@@ -1,6 +1,6 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
-
 interface Categoria {
   nombre: string
   slug: string
@@ -8,28 +8,30 @@ interface Categoria {
   color: string
   descripcion: string
   total: number
+  logo?: string
 }
-
 export default function CategoriaCard({ categoria }: { categoria: Categoria }) {
-  const { nombre, slug, icono, color, descripcion, total } = categoria
-
+  const { nombre, slug, icono, color, descripcion, total, logo } = categoria
   return (
     <Link href={`/categoria/${slug}`} className="group">
       <div 
         className="relative p-6 rounded-2xl overflow-hidden card-hover h-full"
         style={{ backgroundColor: `${color}15` }}
       >
-        {/* Background decoration */}
         <div 
           className="absolute -right-4 -bottom-4 text-8xl opacity-10 group-hover:opacity-20 transition-opacity"
           style={{ color }}
         >
-          {icono}
+          {icono || '⭐'}
         </div>
-
-        {/* Content */}
         <div className="relative z-10">
-          <span className="text-4xl mb-4 block">{icono}</span>
+          {logo ? (
+            <div className="w-16 h-16 mb-4 rounded-full overflow-hidden bg-white flex items-center justify-center">
+              <Image src={logo} alt={nombre} width={60} height={60} className="object-contain" />
+            </div>
+          ) : (
+            <span className="text-4xl mb-4 block">{icono}</span>
+          )}
           <h3 
             className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform"
             style={{ color }}
