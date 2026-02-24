@@ -13,7 +13,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onren
 const categoriasEspeciales = [
   { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/logo-circulo-gastro.png" },
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
-  { nombre: "Transportes", slug: "transportes", icono: "🚗", color: "#3F51B5", descripcion: "Movilízate fácil", total: 0 },
+  { nombre: "Transportes", slug: "transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: 0 },
   { nombre: "Parques de Diversiones", slug: "parque-diversiones", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 0 },
 ]
 const tipos = [

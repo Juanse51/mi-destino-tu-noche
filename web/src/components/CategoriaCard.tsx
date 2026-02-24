@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+
 import { ChevronRight } from 'lucide-react'
 interface Categoria {
   nombre: string
@@ -27,7 +27,7 @@ export default function CategoriaCard({ categoria }: { categoria: Categoria }) {
         <div className="relative z-10">
           {logo ? (
             <div className="w-16 h-16 mb-4 rounded-full overflow-hidden bg-white flex items-center justify-center">
-              <Image src={logo} alt={nombre} width={60} height={60} className="object-contain" />
+              <img src={logo} alt={nombre} className="w-14 h-14 object-contain" />
             </div>
           ) : (
             <span className="text-4xl mb-4 block">{icono}</span>
