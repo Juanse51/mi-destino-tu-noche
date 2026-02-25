@@ -209,7 +209,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Banner Calendario de Eventos */}
+      {/* Banner Ruta Colombia Artesanal */}
+      <section className="py-6 px-4">
+        <div className="max-w-7xl mx-auto">
+          <a href="https://colombiaartesanal.com.co/rutas/" target="_blank" rel="noopener noreferrer" className="block">
+            <div className="relative bg-gradient-to-r from-amber-700 to-yellow-600 rounded-3xl overflow-hidden hover:scale-[1.01] transition-transform">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
+              </div>
+              <div className="relative z-10 p-10 md:p-14 flex items-center justify-between">
+                <div>
+                  <p className="text-white/70 text-sm font-medium mb-2">Descubre Colombia</p>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white">🧶 Ruta Colombia Artesanal</h3>
+                  <p className="text-white/80 mt-3 text-lg">Conoce las rutas artesanales del país</p>
+                </div>
+                <div className="text-6xl hidden md:block">🇨🇴</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+      {/* Banner Calendario de Eventos */
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <Link href="/calendario" className="block">
