@@ -21,7 +21,7 @@ const tipos = [
   { nombre: 'Bares', icono: Wine, color: '#9B59B6', slug: 'bar' },
   { nombre: 'Cafés', icono: Coffee, color: '#8B4513', slug: 'cafe' },
   { nombre: 'Discotecas', icono: Music, color: '#E91E63', slug: 'discoteca' },
-  { nombre: 'Parques de diversiones', icono: Tent, color: '#4CAF50', slug: 'parque-diversiones' },
+  { nombre: 'Parques de diversiones', icono: Tent, color: '#4CAF50', slug: 'parque-diversiones', href: '/parques' },
   { nombre: 'Conciertos y festivales', icono: PartyPopper, color: '#FF9800', slug: 'conciertos-festivales', href: '/calendario' },
   { nombre: 'Otros planes', icono: Sparkles, color: '#00BCD4', slug: 'otros-planes', href: '/otros-planes' },
 ]
