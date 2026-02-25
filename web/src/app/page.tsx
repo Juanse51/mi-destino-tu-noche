@@ -229,7 +229,7 @@ export default function HomePage() {
           </a>
         </div>
       </section>
-      {/* Banner Calendario de Eventos */
+      {/* Banner Calendario de Eventos */}
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <Link href="/calendario" className="block">
