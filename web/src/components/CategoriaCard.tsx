@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { ChevronRight } from 'lucide-react'
 interface Categoria {
+  href?: string
   nombre: string
   slug: string
   icono: string
@@ -11,9 +12,9 @@ interface Categoria {
   logo?: string
 }
 export default function CategoriaCard({ categoria }: { categoria: Categoria }) {
-  const { nombre, slug, icono, color, descripcion, total, logo } = categoria
+  const { nombre, slug, icono, color, descripcion, total, logo, href } = categoria
   return (
-    <Link href={`/categoria/${slug}`} className="group">
+    <Link href={href || `/categoria/${slug}`} className="group">
       <div 
         className="relative p-6 rounded-2xl overflow-hidden card-hover h-full"
         style={{ backgroundColor: `${color}15` }}
