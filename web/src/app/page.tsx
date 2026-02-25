@@ -13,7 +13,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onren
 const categoriasEspeciales = [
   { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
-  { nombre: "Transportes", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
+  { nombre: "Transporte", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
   { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35 },
   // { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
 ]
@@ -80,7 +80,7 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
           {/* Frase encima del logo */}
-          <p className="text-lg md:text-2xl text-orange-400 mt-10 mb-6 max-w-2xl mx-auto text-center">¿Sabes <strong>qué vas a hacer</strong> cuando caiga <br /> la tarde y <strong>comience la noche</strong>?</p>
+          <p className="text-lg md:text-2xl text-orange-400 mt-20 mb-6 max-w-2xl mx-auto text-center">¿Sabes <strong>que vas a hacer</strong> cuando<br />termine <strong>tu día</strong>?</p>
 
           {/* Logo grande */}
           <div className="flex justify-center mb-4">
@@ -149,7 +149,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-colors"
             >
               <Users className="w-5 h-5" />
-              ¿Tienes un grupo grande? ¡Contáctanos!
+              Grupo +15 pax aquí
             </a>
           </div>
         </div>
