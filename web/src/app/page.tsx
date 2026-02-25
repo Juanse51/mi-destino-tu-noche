@@ -13,8 +13,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onren
 const categoriasEspeciales = [
   { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
-  { nombre: "Transportes", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: 0 },
-  { nombre: "Parques de Diversiones", slug: "parque-diversiones", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 0 },
+  { nombre: "Transportes", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
+  { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
 ]
 const tipos = [
   { nombre: 'Restaurantes', icono: Utensils, color: '#FF6B35', slug: 'restaurante' },
@@ -22,8 +22,8 @@ const tipos = [
   { nombre: 'Cafés', icono: Coffee, color: '#8B4513', slug: 'cafe' },
   { nombre: 'Discotecas', icono: Music, color: '#E91E63', slug: 'discoteca' },
   { nombre: 'Parques de diversiones', icono: Tent, color: '#4CAF50', slug: 'parque-diversiones' },
-  { nombre: 'Conciertos y festivales', icono: PartyPopper, color: '#FF9800', slug: 'conciertos-festivales' },
-  { nombre: 'Otros planes', icono: Sparkles, color: '#00BCD4', slug: 'otros-planes' },
+  { nombre: 'Conciertos y festivales', icono: PartyPopper, color: '#FF9800', slug: 'conciertos-festivales', href: '/calendario' },
+  { nombre: 'Otros planes', icono: Sparkles, color: '#00BCD4', slug: 'otros-planes', href: '/otros-planes' },
 ]
 
 export default function HomePage() {
@@ -130,7 +130,7 @@ export default function HomePage() {
             {tipos.map((tipo) => (
               <Link
                 key={tipo.slug}
-                href={`/buscar?tipo=${tipo.slug}`}
+                href={tipo.href || `/buscar?tipo=${tipo.slug}`}
                 className="flex items-center gap-2 px-4 py-2 bg-dark-lighter/80 backdrop-blur rounded-full hover:bg-dark-card transition-colors border border-gray-700/50"
               >
                 <tipo.icono className="w-4 h-4" style={{ color: tipo.color }} />

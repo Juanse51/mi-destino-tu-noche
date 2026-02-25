@@ -41,7 +41,7 @@ export default function CategoriaCard({ categoria }: { categoria: Categoria }) {
           </h3>
           <p className="text-gray-400 text-sm mb-4">{descripcion}</p>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">{total} lugares</span>
+            <span className="text-sm text-gray-500">{total >= 0 ? `${total} lugares` : ""}</span>
             <ChevronRight 
               className="w-5 h-5 group-hover:translate-x-1 transition-transform" 
               style={{ color }} 
