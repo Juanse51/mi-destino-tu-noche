@@ -14,7 +14,7 @@ const categoriasEspeciales = [
   { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
   { nombre: "Transporte", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
-  { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35 },
+  { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35, logo: "/camara_diversidad.png" },
   // { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
 ]
 const tipos = [
@@ -285,6 +285,7 @@ export default function HomePage() {
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-3xl" />
             </div>
             <div className="relative z-10 p-12 md:p-16 text-center">
+              <img src="/logo_cluster_dj.png" alt="Cluster DJ" className="h-20 mx-auto mb-4 object-contain" />
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 🎧 ¿Tienes una fiesta?
               </h2>

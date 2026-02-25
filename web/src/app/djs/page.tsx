@@ -126,6 +126,7 @@ export default function DJsPage() {
             <ChevronLeft className="w-4 h-4" /> Volver al inicio
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <img src="/logo_cluster_dj.png" alt="Cluster DJ" className="h-24 mx-auto mb-6 object-contain" />
             🎧 ¿Tienes una fiesta?
           </h1>
           <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">

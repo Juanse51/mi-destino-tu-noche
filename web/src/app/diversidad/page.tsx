@@ -74,6 +74,7 @@ export default function CamaraDiversidadPage() {
         </div>
         <div className="relative z-10 max-w-5xl mx-auto text-center">
           <Link href="/" className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors text-sm">← Volver al inicio</Link>
+          <img src="/camara_diversidad.png" alt="Cámara de la Diversidad" className="h-24 mx-auto mb-4 object-contain" />
           <h1 className="text-4xl md:text-5xl font-bold mb-4">🏳️‍🌈 Cámara de la Diversidad</h1>
           <p className="text-xl text-white/70 max-w-2xl mx-auto">Empresas afiliadas a la Cámara de la Diversidad en Bogotá. Espacios inclusivos y amigables con la comunidad LGBTIQ+.</p>
           <div className="max-w-lg mx-auto mt-8">
