@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Image, FlatList, Dimensions, RefreshControl, Linking
+  Image, Dimensions, RefreshControl, Linking
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -22,6 +22,7 @@ const categoriasHome = [
   { id: 'circulo-gastro', nombre: 'Círculo Gastro', icono: '', color: '#FFD700', slug: 'circulo-gastro', logo: 'https://midestinotunoche.asobares.org/circulo-gastro.png' },
   { id: 'camara-diversidad', nombre: 'Cámara de la Diversidad', icono: '🏳️‍🌈', color: '#FF69B4', slug: 'camara-diversidad', navigate: 'Diversidad' },
   { id: 'transportes', nombre: 'Transportes', icono: '🚌', color: '#3F51B5', slug: 'transportes', navigate: 'Transportes' },
+  { id: 'parques', nombre: 'Parques de Diversiones', icono: '🎢', color: '#4CAF50', slug: 'parques', navigate: 'Parques' },
 ];
 
 function InitialsAvatar({ nombre, size = 60 }: { nombre: string; size?: number }) {
@@ -130,7 +131,7 @@ export default function HomeScreen() {
 
         {/* Calendario */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.calendarioBanner}><Text style={styles.calendarioTitle}>📅 Calendario de eventos y festivales</Text><Text style={styles.calendarioSubtitle}>Descubre lo mejor que viene para ti</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.calendarioBanner} onPress={() => navigation.navigate('Calendario')}><Text style={styles.calendarioTitle}>📅 Calendario de eventos y festivales</Text><Text style={styles.calendarioSubtitle}>Descubre lo mejor que viene para ti</Text></TouchableOpacity>
         </View>
 
         {/* DJs */}
@@ -142,23 +143,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 5. Destacados - con InitialsAvatar fallback */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Destacados</Text><TouchableOpacity onPress={() => navigation.navigate('Buscar', { destacados: true })}><Text style={styles.seeAll}>Ver más</Text></TouchableOpacity></View>
-          <FlatList data={destacadosArray} horizontal showsHorizontalScrollIndicator={false} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} renderItem={({ item }) => (
-            <TouchableOpacity style={styles.establecimientoCard} onPress={() => navigation.navigate('Establecimiento', { slug: item.slug })} activeOpacity={0.9}>
-              {item.imagen_principal ? (<Image source={{ uri: item.imagen_principal }} style={styles.establecimientoImage} />) : (<View style={[styles.establecimientoImage, { backgroundColor: '#1A1A2E', justifyContent: 'center', alignItems: 'center' }]}><InitialsAvatar nombre={item.nombre} size={80} /></View>)}
-              <View style={styles.establecimientoOverlay} />
-              <View style={[styles.tipoBadge, { backgroundColor: item.tipo_color || '#0073FF' }]}><Text style={styles.tipoIcon}>{item.tipo_icono}</Text><Text style={styles.tipoText}>{item.tipo_nombre}</Text></View>
-              {item.verificado && (<View style={styles.verificadoBadge}><Text style={styles.verificadoIcon}>✓</Text></View>)}
-              <View style={styles.establecimientoInfo}>
-                <Text style={styles.establecimientoNombre} numberOfLines={1}>{item.nombre}</Text>
-                <Text style={styles.establecimientoTipo}>{item.tipo_comida_nombre || item.ciudad_nombre}</Text>
-                <View style={styles.establecimientoMeta}><View style={styles.ratingBadge}><Text style={styles.ratingStar}>⭐</Text><Text style={styles.ratingText}>{item.valoracion_promedio ? Number(item.valoracion_promedio).toFixed(1) : 'Nuevo'}</Text></View><Text style={styles.establecimientoPrecio}>{'$'.repeat(item.rango_precios || 2)}<Text style={styles.establecimientoPrecioInactive}>{'$'.repeat(4 - (item.rango_precios || 2))}</Text></Text></View>
-              </View>
-            </TouchableOpacity>
-          )} />
-        </View>
+        {/* Destacados - oculto */}
 
         {/* Cerca de ti */}
         {cercanos && Array.isArray(cercanos) && cercanos.length > 0 && (

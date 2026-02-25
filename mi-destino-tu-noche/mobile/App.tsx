@@ -30,6 +30,8 @@ import DJsScreen from './src/screens/DJsScreen';
 import CiudadesScreen from './src/screens/CiudadesScreen';
 import DiversidadScreen from './src/screens/DiversidadScreen';
 import TransportesScreen from './src/screens/TransportesScreen';
+import ParquesScreen from './src/screens/ParquesScreen';
+import CalendarioScreen from './src/screens/CalendarioScreen';
 
 // Store
 import { useAuthStore } from './src/store/authStore';
@@ -108,6 +110,8 @@ export default function App() {
               <Stack.Screen name="Categoria" component={CategoriaScreen} options={{ animation: 'slide_from_right' }} />
               <Stack.Screen name="Diversidad" component={DiversidadScreen} options={{ animation: 'slide_from_right' }} />
               <Stack.Screen name="Transportes" component={TransportesScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Parques" component={ParquesScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Calendario" component={CalendarioScreen} options={{ animation: 'slide_from_right' }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>
