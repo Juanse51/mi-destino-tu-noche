@@ -337,8 +337,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-20 px-4 bg-dark-lighter/30">
+      {/* Stats - hidden temporarily */}
+      <section className="py-20 px-4 bg-dark-lighter/30 hidden">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
