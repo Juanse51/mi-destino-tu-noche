@@ -15,7 +15,7 @@ const categoriasEspeciales = [
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
   { nombre: "Transportes", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
   { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35 },
-  { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
+  // { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
 ]
 const tipos = [
   { nombre: 'Restaurantes', icono: Utensils, color: '#FF6B35', slug: 'restaurante' },

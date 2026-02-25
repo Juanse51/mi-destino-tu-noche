@@ -39,6 +39,15 @@ export default function QueEsMDTN() {
             <p className="text-gray-300 text-lg leading-relaxed">
               Mi Destino Tu Noche es una iniciativa de <strong>Asobares Colombia</strong> que busca impulsar y visibilizar la industria gastronómica y de entretenimiento nocturno en todo el país. Somos la guía definitiva para descubrir los mejores establecimientos, desde restaurantes de alta cocina hasta los bares más auténticos de cada ciudad.
             </p>
+            <div className="mt-8 aspect-video rounded-xl overflow-hidden">
+              <iframe
+                src="https://www.youtube.com/embed/39-8t00QLAI"
+                title="Mi Destino Tu Noche"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
