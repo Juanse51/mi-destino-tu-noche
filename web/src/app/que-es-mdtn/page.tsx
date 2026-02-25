@@ -71,7 +71,7 @@ export default function QueEsMDTN() {
           <div className="bg-dark-lighter rounded-2xl p-8 md:p-12">
             <h2 className="text-2xl font-bold mb-4">¿Qué es Asobares?</h2>
             <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              La Asociación Colombiana de la Industria de la Vida Nocturna y Gastronómica (Asobares) es el gremio que agrupa y representa a los establecimientos nocturnos y gastronómicos de Colombia. Trabaja por la formalización, el bienestar y el desarrollo del sector, promoviendo prácticas responsables y la cultura del entretenimiento seguro.
+              Somos la Asociación de Bares y Restaurantes de Colombia ASOBARES, con 20 años de existencia, miembros exclusivos en el país de la Nightlife Internacional Association y Nightlife Iberoamérica, Asobares es el gremio que agrupa y representa a los establecimientos nocturnos y gastronómicos de Colombia. Trabaja por la formalización, el bienestar y el desarrollo del sector, promoviendo prácticas responsables y la cultura del entretenimiento seguro.
             </p>
             <div className="flex justify-center">
               <a href="https://asobares.org/" target="_blank" rel="noopener noreferrer">
