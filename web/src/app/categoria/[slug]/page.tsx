@@ -55,7 +55,15 @@ export default function CategoriaPage({ params }: { params: { slug: string } }) 
           Volver al inicio
         </Link>
 
-        <div 
+        {params.slug === 'circulo-gastro' ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <img src="/circulo-gastro.png" alt="Círculo Gastro" className="w-40 h-40 object-contain mb-4" />
+            <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ color: '#FFD700' }}>Círculo Gastro</h1>
+            <p className="text-gray-400 text-lg">Los mejores restaurantes seleccionados por su excelencia gastronómica</p>
+            <p className="text-gray-500 mt-2">{establecimientos.length} establecimientos</p>
+          </div>
+        ) : (
+          <div 
           className="rounded-2xl p-8 md:p-12 relative overflow-hidden"
           style={{ backgroundColor: `${categoriaInfo.color}15` }}
         >
@@ -84,6 +92,7 @@ export default function CategoriaPage({ params }: { params: { slug: string } }) 
           </div>
         </div>
       </div>
+        )}
 
       {/* Search */}
       <div className="max-w-7xl mx-auto px-4 mb-8">
