@@ -60,21 +60,21 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 hover:bg-dark-lighter rounded-lg transition-colors"
+              className="p-2 hover:bg-dark-lighter rounded-lg transition-colors hidden"
             >
               <Search className="w-5 h-5" />
             </button>
 
             <Link
               href="/favoritos"
-              className="p-2 hover:bg-dark-lighter rounded-lg transition-colors hidden sm:block"
+              className="p-2 hover:bg-dark-lighter rounded-lg transition-colors hidden"
             >
               <Heart className="w-5 h-5" />
             </Link>
 
             <Link
               href="/login"
-              className="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary-dark px-4 py-2 rounded-lg font-medium transition-colors"
+              className="hidden items-center gap-2 bg-primary hover:bg-primary-dark px-4 py-2 rounded-lg font-medium transition-colors"
             >
               <User className="w-4 h-4" />
               <span>Ingresar</span>
