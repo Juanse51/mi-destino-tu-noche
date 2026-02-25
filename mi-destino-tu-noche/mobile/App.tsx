@@ -27,6 +27,9 @@ import CiudadScreen from './src/screens/CiudadScreen';
 import CategoriaScreen from './src/screens/CategoriaScreen';
 import MDTNScreen from './src/screens/MDTNScreen';
 import DJsScreen from './src/screens/DJsScreen';
+import CiudadesScreen from './src/screens/CiudadesScreen';
+import DiversidadScreen from './src/screens/DiversidadScreen';
+import TransportesScreen from './src/screens/TransportesScreen';
 
 // Store
 import { useAuthStore } from './src/store/authStore';
@@ -35,7 +38,6 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
 
-// Tab Bar Icon Component
 function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return (
     <View style={[styles.tabIcon, focused && styles.tabIconFocused]}>
@@ -44,7 +46,7 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   );
 }
 
-// Bottom Tab Navigator
+// 7. Bottom Tab: Inicio, Buscar, MDTN, Ciudades (reemplaza Favoritos), Perfil oculto
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -60,16 +62,12 @@ function MainTabs() {
       <Tab.Screen
         name="Inicio"
         component={HomeScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
-        }}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} /> }}
       />
       <Tab.Screen
         name="Buscar"
         component={SearchScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🔍" focused={focused} />,
-        }}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🔍" focused={focused} /> }}
       />
       <Tab.Screen
         name="MDTN"
@@ -80,18 +78,9 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="Favoritos"
-        component={FavoritesScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="❤️" focused={focused} />,
-        }}
-      />
-      <Tab.Screen
-        name="Perfil"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
-        }}
+        name="Ciudades"
+        component={CiudadesScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏙️" focused={focused} /> }}
       />
     </Tab.Navigator>
   );
@@ -99,10 +88,7 @@ function MainTabs() {
 
 export default function App() {
   const { loadStoredAuth } = useAuthStore();
-
-  useEffect(() => {
-    loadStoredAuth();
-  }, []);
+  useEffect(() => { loadStoredAuth(); }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -110,53 +96,18 @@ export default function App() {
         <SafeAreaProvider>
           <NavigationContainer>
             <StatusBar style="light" />
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: '#0F0F1A' },
-              }}
-            >
+            <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0F0F1A' } }}>
               <Stack.Screen name="Main" component={MainTabs} />
-              <Stack.Screen 
-                name="Establecimiento" 
-                component={EstablecimientoScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
-              <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
-              />
-              <Stack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
-              />
-              <Stack.Screen
-                name="QuieroIr"
-                component={QuieroIrScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
-              <Stack.Screen
-                name="Historial"
-                component={HistorialScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
-              <Stack.Screen
-                name="Ciudad"
-                component={CiudadScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
-              <Stack.Screen
-                name="DJs"
-                component={DJsScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
-              <Stack.Screen
-                name="Categoria"
-                component={CategoriaScreen}
-                options={{ animation: 'slide_from_right' }}
-              />
+              <Stack.Screen name="Establecimiento" component={EstablecimientoScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Login" component={LoginScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="Register" component={RegisterScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="QuieroIr" component={QuieroIrScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Historial" component={HistorialScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Ciudad" component={CiudadScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="DJs" component={DJsScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Categoria" component={CategoriaScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Diversidad" component={DiversidadScreen} options={{ animation: 'slide_from_right' }} />
+              <Stack.Screen name="Transportes" component={TransportesScreen} options={{ animation: 'slide_from_right' }} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>
@@ -166,34 +117,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: '#1A1A2E',
-    borderTopWidth: 0,
-    height: 70,
-    paddingTop: 8,
-    paddingBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    marginTop: 4,
-  },
-  tabIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabIconFocused: {
-    backgroundColor: 'rgba(0, 115, 255, 0.15)',
-  },
-  tabEmoji: {
-    fontSize: 22,
-  },
+  tabBar: { backgroundColor: '#1A1A2E', borderTopWidth: 0, height: 70, paddingTop: 8, paddingBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10 },
+  tabLabel: { fontSize: 11, fontWeight: '600', marginTop: 4 },
+  tabIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  tabIconFocused: { backgroundColor: 'rgba(0, 115, 255, 0.15)' },
+  tabEmoji: { fontSize: 22 },
 });

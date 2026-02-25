@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WebView } from 'react-native-webview';
 
 export default function MDTNScreen() {
   return (
@@ -21,16 +20,6 @@ export default function MDTNScreen() {
           La plataforma de Asobares que conecta a los colombianos con los mejores restaurantes, bares, cafés y discotecas del país.
         </Text>
 
-        {/* Video incrustado */}
-        <View style={styles.videoContainer}>
-          <WebView
-            source={{ uri: 'https://www.youtube.com/embed/YxOfBiwGP54' }}
-            style={styles.video}
-            allowsFullscreenVideo={true}
-            javaScriptEnabled={true}
-          />
-        </View>
-
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Nuestra Misión</Text>
           <Text style={styles.cardText}>
@@ -38,22 +27,16 @@ export default function MDTNScreen() {
           </Text>
         </View>
 
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statEmoji}>🗺️</Text>
-            <Text style={styles.statNumber}>18</Text>
-            <Text style={styles.statLabel}>Ciudades</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statEmoji}>✅</Text>
-            <Text style={styles.statNumber}>650+</Text>
-            <Text style={styles.statLabel}>Verificados</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statEmoji}>📱</Text>
-            <Text style={styles.statNumber}>App</Text>
-            <Text style={styles.statLabel}>iOS y Android</Text>
-          </View>
+        {/* 9. Botones de YouTube en vez de video incrustado */}
+        <View style={styles.videoBtns}>
+          <TouchableOpacity style={styles.youtubeBtn} onPress={() => Linking.openURL('https://www.youtube.com/watch?v=YxOfBiwGP54')}>
+            <Text style={styles.youtubeBtnEmoji}>▶️</Text>
+            <Text style={styles.youtubeBtnText}>Ver video Mi Destino Tu Noche</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.youtubeBtn, { backgroundColor: '#DC2626' }]} onPress={() => Linking.openURL('https://www.youtube.com/watch?v=39-8t00QLAI')}>
+            <Text style={styles.youtubeBtnEmoji}>▶️</Text>
+            <Text style={styles.youtubeBtnText}>Ver video Asobares Colombia</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.card}>
@@ -99,7 +82,6 @@ export default function MDTNScreen() {
         <TouchableOpacity style={styles.devBy} onPress={() => Linking.openURL('https://www.vamosarayar.com')}>
           <Text style={styles.devByText}>Desarrollado por Rayar!</Text>
         </TouchableOpacity>
-
         <View style={{ height: 30 }} />
       </ScrollView>
     </SafeAreaView>
@@ -112,20 +94,20 @@ const styles = StyleSheet.create({
   logo: { height: 50, width: 200 },
   title: { fontSize: 24, fontWeight: 'bold', color: '#FFF', textAlign: 'center', paddingHorizontal: 20, marginTop: 16 },
   subtitle: { fontSize: 15, color: '#9CA3AF', textAlign: 'center', paddingHorizontal: 30, marginTop: 10, lineHeight: 22 },
-  videoContainer: { marginHorizontal: 20, marginTop: 24, height: 210, borderRadius: 16, overflow: 'hidden' },
-  video: { flex: 1, backgroundColor: '#000' },
   card: { backgroundColor: '#1A1A2E', borderRadius: 16, padding: 20, marginHorizontal: 20, marginTop: 24 },
   cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', marginBottom: 10 },
   cardText: { fontSize: 14, color: '#D1D5DB', lineHeight: 22 },
   asobaresLogo: { height: 50, width: 200, alignSelf: 'center', marginTop: 20 },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 24, paddingHorizontal: 20 },
-  stat: { alignItems: 'center' },
-  statEmoji: { fontSize: 28 },
-  statNumber: { fontSize: 22, fontWeight: 'bold', color: '#FFF', marginTop: 4 },
-  statLabel: { fontSize: 12, color: '#9CA3AF', marginTop: 2 },
-  contactCard: { 
-    backgroundColor: '#0073FF', borderRadius: 16, padding: 20, 
-    marginHorizontal: 20, marginTop: 24, alignItems: 'center' 
+  videoBtns: { marginHorizontal: 20, marginTop: 20, gap: 12 },
+  youtubeBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#FF0000', paddingVertical: 14, borderRadius: 16, gap: 8,
+  },
+  youtubeBtnEmoji: { fontSize: 18 },
+  youtubeBtnText: { color: '#FFF', fontSize: 15, fontWeight: '600' },
+  contactCard: {
+    backgroundColor: '#0073FF', borderRadius: 16, padding: 20,
+    marginHorizontal: 20, marginTop: 24, alignItems: 'center'
   },
   contactTitle: { fontSize: 16, fontWeight: 'bold', color: '#FFF', textAlign: 'center', marginBottom: 16 },
   contactBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12, marginBottom: 10, width: '100%', alignItems: 'center' },
