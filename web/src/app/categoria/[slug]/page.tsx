@@ -91,8 +91,8 @@ export default function CategoriaPage({ params }: { params: { slug: string } }) 
             </p>
           </div>
         </div>
-      </div>
         )}
+      </div>
 
       {/* Search */}
       <div className="max-w-7xl mx-auto px-4 mb-8">
