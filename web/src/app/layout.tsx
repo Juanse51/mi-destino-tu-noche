@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
@@ -24,7 +25,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${inter.className} bg-dark text-white min-h-screen`}>
+      
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-CFMWVBRDEF" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CFMWVBRDEF');
+          `}
+        </Script>
+        <body className={`${inter.className} bg-dark text-white min-h-screen`}>
         <Header />
         <main className="min-h-screen">
           {children}
