@@ -74,7 +74,7 @@ export default function Header() {
 
             <Link
               href="/login"
-              className="hidden items-center gap-2 bg-primary hover:bg-primary-dark px-4 py-2 rounded-lg font-medium transition-colors"
+              className="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary-dark px-4 py-2 rounded-lg font-medium transition-colors"
             >
               <User className="w-4 h-4" />
               <span>Ingresar</span>
