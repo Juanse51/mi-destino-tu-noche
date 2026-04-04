@@ -467,70 +467,67 @@ export default function EstablecimientosPage() {
                 </label>
               </div>
 
-              {/* Sedes */}
-              <div className="pt-2 border-t border-gray-800">
-                <label className="block text-sm text-gray-400 mb-3 font-medium">Tipo de establecimiento</label>
-                <div className="flex gap-3 mb-3">
+              <div style={{paddingTop:'8px', borderTop:'1px solid #374151', marginTop:'8px'}}>
+                <p style={{fontSize:'14px', color:'#9CA3AF', marginBottom:'12px', fontWeight:'500'}}>Tipo de establecimiento</p>
+                <div style={{display:'flex', gap:'12px', marginBottom:'12px'}}>
                   <button
                     type="button"
-                    onClick={() => setForm({...form, sede_principal_id: ''})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                      !form.sede_principal_id
-                        ? 'bg-primary border-primary text-white'
-                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
-                    }`}
+                    onClick={() => { setForm({...form, sede_principal_id: ''}); setSedeSearch('') }}
+                    style={{
+                      flex:1, padding:'10px', borderRadius:'12px', fontSize:'14px', fontWeight:'500',
+                      border: !form.sede_principal_id ? 'none' : '1px solid #374151',
+                      background: !form.sede_principal_id ? '#FF6B35' : 'transparent',
+                      color: !form.sede_principal_id ? 'white' : '#9CA3AF',
+                      cursor:'pointer'
+                    }}
                   >
                     🏠 Sede principal
                   </button>
                   <button
                     type="button"
                     onClick={() => setForm({...form, sede_principal_id: 'selecting'})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                      form.sede_principal_id
-                        ? 'bg-primary border-primary text-white'
-                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
-                    }`}
+                    style={{
+                      flex:1, padding:'10px', borderRadius:'12px', fontSize:'14px', fontWeight:'500',
+                      border: form.sede_principal_id ? 'none' : '1px solid #374151',
+                      background: form.sede_principal_id ? '#FF6B35' : 'transparent',
+                      color: form.sede_principal_id ? 'white' : '#9CA3AF',
+                      cursor:'pointer'
+                    }}
                   >
                     🔗 Sede de otra
                   </button>
                 </div>
-                {form.sede_principal_id !== '' && (
+                {(form.sede_principal_id === 'selecting' || (form.sede_principal_id && form.sede_principal_id !== 'selecting')) && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-2">¿Sede de cuál establecimiento?</label>
+                    <p style={{fontSize:'13px', color:'#9CA3AF', marginBottom:'8px'}}>¿Sede de cuál establecimiento?</p>
                     <input
                       type="text"
                       className="input"
-                      placeholder="Buscar por nombre del establecimiento principal..."
+                      placeholder="Buscar por nombre..."
                       value={sedeSearch}
                       onChange={e => setSedeSearch(e.target.value)}
                     />
-                    {sedeSearch.length > 2 && (
-                      <div className="mt-2 bg-dark rounded-xl border border-gray-700 max-h-40 overflow-y-auto">
+                    {sedeSearch.length > 1 && (
+                      <div style={{marginTop:'8px', background:'#0f0f23', borderRadius:'12px', border:'1px solid #374151', maxHeight:'160px', overflowY:'auto'}}>
                         {establecimientos
-                          .filter(e => 
-                            e.nombre.toLowerCase().includes(sedeSearch.toLowerCase()) &&
-                            e.id !== editingEst?.id
-                          )
+                          .filter(e => e.nombre.toLowerCase().includes(sedeSearch.toLowerCase()) && e.id !== editingEst?.id)
                           .slice(0, 8)
                           .map(e => (
                             <button
                               key={e.id}
                               type="button"
-                              onClick={() => {
-                                setForm(f => ({...f, sede_principal_id: e.id}))
-                                setSedeSearch(e.nombre)
-                              }}
-                              className="w-full text-left px-4 py-2.5 hover:bg-dark-lighter text-sm border-b border-gray-800 last:border-0"
+                              onClick={() => { setForm(f => ({...f, sede_principal_id: e.id})); setSedeSearch(e.nombre) }}
+                              style={{width:'100%', textAlign:'left', padding:'10px 16px', fontSize:'13px', borderBottom:'1px solid #1f2937', background:'transparent', color:'white', cursor:'pointer'}}
                             >
-                              <span className="font-medium">{e.nombre}</span>
-                              <span className="text-gray-400 ml-2">· {e.ciudad_nombre}</span>
+                              <span style={{fontWeight:'500'}}>{e.nombre}</span>
+                              <span style={{color:'#9CA3AF', marginLeft:'8px'}}>· {e.ciudad_nombre}</span>
                             </button>
                           ))
                         }
                       </div>
                     )}
                     {form.sede_principal_id && form.sede_principal_id !== 'selecting' && (
-                      <p className="text-xs text-green-400 mt-2">
+                      <p style={{fontSize:'12px', color:'#4ADE80', marginTop:'8px'}}>
                         ✅ Sede de: {establecimientos.find(e => e.id === form.sede_principal_id)?.nombre || sedeSearch}
                       </p>
                     )}
