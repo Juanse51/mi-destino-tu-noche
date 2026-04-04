@@ -87,30 +87,56 @@ export default function EstablecimientosPage() {
     setShowModal(true)
   }
 
-  const openEdit = (est: any) => {
+  const openEdit = async (est: any) => {
     setEditingEst(est)
-    // Buscar IDs a partir de nombres
-    const ciudadObj = CIUDADES.find(c => c.nombre === est.ciudad_nombre)
-    const tipoObj = TIPOS.find(t => t.nombre === est.tipo_nombre)
-    setForm({
-      nombre: est.nombre || '',
-      descripcion: est.descripcion || '',
-      tipo_id: tipoObj?.id || '',
-      ciudad_id: ciudadObj?.id || '',
-      direccion: est.direccion || '',
-      telefono: est.telefono || '',
-      whatsapp: est.whatsapp || '',
-      instagram: est.instagram || '',
-      email: est.email || '',
-      sitio_web: est.sitio_web || '',
-      imagen_principal: est.imagen_principal || '',
-      logo_url: est.logo_url || '',
-      rango_precios: est.rango_precios || 2,
-      activo: est.activo !== false,
-      verificado: est.verificado || false,
-      destacado: est.destacado || false,
-    })
     setSaveMsg('')
+    // Cargar datos completos del establecimiento
+    try {
+      const res = await fetch(`${API_URL}/establecimientos/${est.slug}`)
+      const full = await res.json()
+      const ciudadObj = CIUDADES.find(c => c.nombre === (full.ciudad_nombre || est.ciudad_nombre))
+      const tipoObj = TIPOS.find(t => t.nombre === (full.tipo_nombre || est.tipo_nombre))
+      setForm({
+        nombre: full.nombre || est.nombre || '',
+        descripcion: full.descripcion || '',
+        tipo_id: tipoObj?.id || '',
+        ciudad_id: ciudadObj?.id || '',
+        direccion: full.direccion || est.direccion || '',
+        telefono: full.telefono || est.telefono || '',
+        whatsapp: full.whatsapp || est.whatsapp || '',
+        instagram: full.instagram || '',
+        email: full.email || '',
+        sitio_web: full.sitio_web || '',
+        imagen_principal: full.imagen_principal || est.imagen_principal || '',
+        logo_url: full.logo_url || est.logo_url || '',
+        rango_precios: full.rango_precios || est.rango_precios || 2,
+        activo: full.activo !== false,
+        verificado: full.verificado || false,
+        destacado: full.destacado || false,
+      })
+    } catch {
+      // Fallback a datos básicos
+      const ciudadObj = CIUDADES.find(c => c.nombre === est.ciudad_nombre)
+      const tipoObj = TIPOS.find(t => t.nombre === est.tipo_nombre)
+      setForm({
+        nombre: est.nombre || '',
+        descripcion: '',
+        tipo_id: tipoObj?.id || '',
+        ciudad_id: ciudadObj?.id || '',
+        direccion: est.direccion || '',
+        telefono: est.telefono || '',
+        whatsapp: est.whatsapp || '',
+        instagram: '',
+        email: '',
+        sitio_web: '',
+        imagen_principal: est.imagen_principal || '',
+        logo_url: est.logo_url || '',
+        rango_precios: est.rango_precios || 2,
+        activo: est.activo !== false,
+        verificado: est.verificado || false,
+        destacado: est.destacado || false,
+      })
+    }
     setShowModal(true)
   }
 
