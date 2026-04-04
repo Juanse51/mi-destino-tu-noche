@@ -279,7 +279,7 @@ export default function EstablecimientosPage() {
                   <td className="py-3">
                     <div className="flex items-center gap-3">
                       {est.logo_url || est.imagen_principal ? (
-                        <img src={est.logo_url || est.imagen_principal} alt={est.nombre} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                        <img src={est.logo_url || est.imagen_principal} alt={est.nombre} className="w-10 h-10 rounded-lg object-contain bg-dark p-0.5 flex-shrink-0" />
                       ) : (
                         <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-sm font-bold text-primary flex-shrink-0">
                           {est.nombre?.charAt(0)}

@@ -6,6 +6,7 @@ interface Establecimiento {
   nombre: string
   slug: string
   imagen_principal: string | null
+  logo_url?: string | null
   tipo_nombre: string
   tipo_icono: string
   tipo_color: string
@@ -19,45 +20,46 @@ interface Establecimiento {
 
 export default function EstablecimientoCard({ establecimiento }: { establecimiento: Establecimiento }) {
   const { 
-    nombre, slug, imagen_principal, tipo_nombre, tipo_icono, tipo_color,
-    ciudad_nombre, valoracion_promedio, total_valoraciones, rango_precios,
+    nombre, slug, imagen_principal, logo_url, tipo_nombre, tipo_icono, tipo_color,
+    ciudad_nombre, valoracion_promedio, rango_precios,
     descripcion_corta, etiquetas
   } = establecimiento
 
   const rating = Number(valoracion_promedio) || 0
   const defaultImage = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
-  
-  // Detectar si es un logo/PNG (de Supabase) vs una foto real
-  const isLogo = imagen_principal && (
-    imagen_principal.includes('.png') || 
-    imagen_principal.includes('supabase')
-  )
-  const hasImage = !!imagen_principal
+
+  // Detectar si imagen_principal es realmente un logo (png de supabase sin foto real)
+  const fotoHero = imagen_principal && !imagen_principal.includes('logo') 
+    ? imagen_principal 
+    : null
+  const logo = logo_url || (imagen_principal?.includes('logo') ? imagen_principal : null)
 
   return (
     <Link href={`/establecimiento/${slug}`} className="group">
       <div className="bg-dark-lighter rounded-2xl overflow-hidden card-hover">
-        {/* Image */}
-        <div className={`relative h-48 overflow-hidden ${isLogo ? 'bg-[#1a1a2e]' : ''}`}>
-          {isLogo ? (
-            /* Logo: mostrar centrado con fondo oscuro */
-            <div className="w-full h-full flex items-center justify-center bg-[#1a1a2e] p-3">
-              <img
-                src={imagen_principal}
-                alt={nombre}
-                className="max-w-[95%] max-h-[95%] object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg"
-              />
+        {/* Hero image con logo centrado */}
+        <div className="relative h-48 overflow-hidden bg-[#1a1a2e]">
+          {/* Foto de fondo */}
+          <img
+            src={fotoHero || defaultImage}
+            alt={nombre}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/20 to-transparent" />
+
+          {/* Logo centrado encima de la foto */}
+          {logo && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-white/20 bg-dark/80 backdrop-blur-sm shadow-xl">
+                <img
+                  src={logo}
+                  alt={`Logo ${nombre}`}
+                  className="w-full h-full object-contain p-1"
+                />
+              </div>
             </div>
-          ) : (
-            /* Foto real o default */
-            <img
-              src={imagen_principal || defaultImage}
-              alt={nombre}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent pointer-events-none" />
-          
+
           {/* Type badge */}
           <div 
             className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
@@ -96,14 +98,10 @@ export default function EstablecimientoCard({ establecimiento }: { establecimien
             </p>
           )}
 
-          {/* Tags */}
           {etiquetas && etiquetas.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {etiquetas.slice(0, 3).map((tag, i) => (
-                <span 
-                  key={i} 
-                  className="text-xs px-2 py-1 bg-dark rounded-md text-gray-400"
-                >
+                <span key={i} className="text-xs px-2 py-1 bg-dark rounded-md text-gray-400">
                   {tag.icono} {tag.nombre}
                 </span>
               ))}
