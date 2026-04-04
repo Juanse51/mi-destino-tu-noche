@@ -31,6 +31,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [ciudades, setCiudades] = useState<any[]>([])
   const [destacados, setDestacados] = useState<any[]>([])
+  const [todosEst, setTodosEst] = useState<any[]>([])
   const [cadenas, setCadenas] = useState<any[]>([])
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
 
@@ -51,53 +52,51 @@ export default function HomePage() {
     })
   }
 
+  const getTop10 = (items: any[], loc: {lat: number, lng: number} | null) => {
+    if (!loc) return items.slice(0, 10)
+    return sortByDistance(items, loc.lat, loc.lng).slice(0, 10)
+  }
+
+  // Obtener ubicación del usuario
   useEffect(() => {
-    // Obtener ubicación del usuario
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
         () => {}
       )
     }
-    // Cargar ciudades del API
+  }, [])
+
+  // Cargar datos
+  useEffect(() => {
     fetch(`${API_URL}/ciudades`)
       .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setCiudades(data)
-      })
+      .then(data => { if (Array.isArray(data)) setCiudades(data) })
       .catch(() => {})
 
-    // Cargar cadenas (sedes principales)
     Promise.all([
       fetch(`${API_URL}/establecimientos/bogota-beer-company`).then(r=>r.json()),
       fetch(`${API_URL}/establecimientos/la-plaza-de-andres-el-retiro`).then(r=>r.json()),
       fetch(`${API_URL}/establecimientos/storia-d-amore-cali`).then(r=>r.json()),
       fetch(`${API_URL}/establecimientos/full-80s-cll-118`).then(r=>r.json()),
-    ]).then(results => {
-      setCadenas(results.filter(r => r && r.id));
-    }).catch(() => {})
+    ]).then(results => setCadenas(results.filter(r => r && r.id))).catch(() => {})
 
-    // Cargar destacados: traer muchos y ordenar por distancia
-    fetch(`${API_URL}/establecimientos?limite=200&orden=recientes`)
+    fetch(`${API_URL}/establecimientos?limite=300`)
       .then(r => r.json())
       .then(data => {
         if (data?.establecimientos) {
-          setDestacados(data.establecimientos)
+          setTodosEst(data.establecimientos)
         }
       })
       .catch(() => {})
   }, [])
 
+  // Reordenar destacados cuando cambia ubicación o cuando llegan los datos
   useEffect(() => {
-    if (userLocation && destacados.length > 0) {
-      setDestacados(prev => {
-        const conCoordenadas = prev.filter((e: any) => e.latitud && e.longitud)
-        const sinCoordenadas = prev.filter((e: any) => !e.latitud || !e.longitud)
-        const ordenados = sortByDistance(conCoordenadas, userLocation.lat, userLocation.lng)
-        return [...ordenados, ...sinCoordenadas].slice(0, 8)
-      })
+    if (todosEst.length > 0) {
+      setDestacados(getTop10(todosEst, userLocation))
     }
-  }, [userLocation])
+  }, [userLocation, todosEst])
 
   return (
     <div className="animate-fadeIn">
