@@ -32,8 +32,33 @@ export default function HomePage() {
   const [ciudades, setCiudades] = useState<any[]>([])
   const [destacados, setDestacados] = useState<any[]>([])
   const [cadenas, setCadenas] = useState<any[]>([])
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+
+  const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLng = (lng2 - lng1) * Math.PI / 180
+    const a = Math.sin(dLat/2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  const sortByDistance = (items: any[], lat: number, lng: number) => {
+    return [...items].sort((a, b) => {
+      const da = (a.latitud && a.longitud) ? haversine(lat, lng, a.latitud, a.longitud) : 99999
+      const db = (b.latitud && b.longitud) ? haversine(lat, lng, b.latitud, b.longitud) : 99999
+      return da - db
+    })
+  }
 
   useEffect(() => {
+    // Obtener ubicación del usuario
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {}
+      )
+    }
     // Cargar ciudades del API
     fetch(`${API_URL}/ciudades`)
       .then(r => r.json())
@@ -56,10 +81,18 @@ export default function HomePage() {
     fetch(`${API_URL}/establecimientos?limite=8&orden=recientes`)
       .then(r => r.json())
       .then(data => {
-        if (data?.establecimientos) setDestacados(data.establecimientos)
+        if (data?.establecimientos) {
+          setDestacados(data.establecimientos)
+        }
       })
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (userLocation && destacados.length > 0) {
+      setDestacados(prev => sortByDistance(prev, userLocation.lat, userLocation.lng))
+    }
+  }, [userLocation])
 
   return (
     <div className="animate-fadeIn">

@@ -23,6 +23,16 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('')
   const [totalCount, setTotalCount] = useState(0)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+
+  const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLng = (lng2 - lng1) * Math.PI / 180
+    const a = Math.sin(dLat/2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
 
   // Fetch all establishments with pagination
   const fetchAllEstablecimientos = useCallback(async (slug: string) => {
@@ -62,6 +72,14 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
   }, [])
 
   useEffect(() => {
+    // Obtener ubicación del usuario
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {}
+      )
+    }
+
     const fetchData = async () => {
       try {
         // Fetch city details
@@ -83,12 +101,22 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
     fetchData()
   }, [params.slug, fetchAllEstablecimientos])
 
-  const establecimientosFiltrados = establecimientos.filter(est => {
+  const establecimientosFiltrados = (() => {
+    const filtrados = establecimientos.filter(est => {
     const matchSearch = est.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
       est.direccion?.toLowerCase().includes(searchQuery.toLowerCase())
     const matchTipo = !tipoFiltro || est.tipo_nombre?.toLowerCase() === tipoFiltro.toLowerCase()
-    return matchSearch && matchTipo
-  })
+      return matchSearch && matchTipo
+    })
+    if (userLocation) {
+      return [...filtrados].sort((a, b) => {
+        const da = (a.latitud && a.longitud) ? haversine(userLocation.lat, userLocation.lng, a.latitud, a.longitud) : 99999
+        const db = (b.latitud && b.longitud) ? haversine(userLocation.lat, userLocation.lng, b.latitud, b.longitud) : 99999
+        return da - db
+      })
+    }
+    return filtrados
+  })()
 
   // Get types with counts
   const tiposConConteo = Array.from(
