@@ -5,6 +5,23 @@ import { Search, Edit, Trash2, Eye, Filter, X, Loader2, Plus, Save } from 'lucid
 import { authFetch } from '@/lib/auth'
 
 const API_URL = 'https://mi-destino-api.onrender.com/api/v1'
+const SUPABASE_URL = 'https://xzvfwxlgrwzcpofdubmg.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6dmZ3eGxncnd6Y3BvZmR1Ym1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4OTA4NTQsImV4cCI6MjA4NTQ2Njg1NH0.3beG3KPwatPbivMYLSc8hFxnpLxbQ3fTuy4c0BHdjiA'
+
+async function uploadImage(file: File, folder: string): Promise<string | null> {
+  const ext = file.name.split('.').pop()
+  const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/imagenes/${filename}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': file.type,
+    },
+    body: file,
+  })
+  if (!res.ok) return null
+  return `${SUPABASE_URL}/storage/v1/object/public/imagenes/${filename}`
+}
 
 const CIUDADES = [
   { id: 'a458a476-df7d-4ecf-bf13-08dafa939854', nombre: 'Bogotá' },
@@ -55,6 +72,8 @@ export default function EstablecimientosPage() {
   const [editingEst, setEditingEst] = useState<any>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [uploadingImg, setUploadingImg] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
 
   useEffect(() => { fetchEstablecimientos() }, [])
@@ -362,12 +381,50 @@ export default function EstablecimientosPage() {
                   <input type="email" className="input" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-400 mb-2">URL Logo</label>
-                  <input type="text" className="input" placeholder="https://..." value={form.logo_url} onChange={e => setForm({...form, logo_url: e.target.value})} />
+                  <label className="block text-sm text-gray-400 mb-2">Logo</label>
+                  <div className="flex items-center gap-3">
+                    {form.logo_url && (
+                      <img src={form.logo_url} alt="logo" className="w-16 h-16 rounded-lg object-contain border border-gray-700 bg-dark" />
+                    )}
+                    <div className="flex-1">
+                      <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-600 rounded-xl cursor-pointer hover:border-primary transition-colors">
+                        {uploadingLogo ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
+                        <span className="text-sm">{uploadingLogo ? 'Subiendo...' : 'Subir logo'}</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          setUploadingLogo(true)
+                          const url = await uploadImage(file, 'logos')
+                          if (url) setForm(f => ({...f, logo_url: url}))
+                          setUploadingLogo(false)
+                        }} />
+                      </label>
+                      <input type="text" className="input mt-2 text-xs" placeholder="O pega una URL..." value={form.logo_url} onChange={e => setForm({...form, logo_url: e.target.value})} />
+                    </div>
+                  </div>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-400 mb-2">URL Imagen Principal</label>
-                  <input type="text" className="input" placeholder="https://..." value={form.imagen_principal} onChange={e => setForm({...form, imagen_principal: e.target.value})} />
+                  <label className="block text-sm text-gray-400 mb-2">Imagen Principal (hero/banner)</label>
+                  <div className="flex items-center gap-3">
+                    {form.imagen_principal && (
+                      <img src={form.imagen_principal} alt="banner" className="w-24 h-16 rounded-lg object-cover border border-gray-700" />
+                    )}
+                    <div className="flex-1">
+                      <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-600 rounded-xl cursor-pointer hover:border-primary transition-colors">
+                        {uploadingImg ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
+                        <span className="text-sm">{uploadingImg ? 'Subiendo...' : 'Subir imagen'}</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          setUploadingImg(true)
+                          const url = await uploadImage(file, 'establecimientos')
+                          if (url) setForm(f => ({...f, imagen_principal: url}))
+                          setUploadingImg(false)
+                        }} />
+                      </label>
+                      <input type="text" className="input mt-2 text-xs" placeholder="O pega una URL..." value={form.imagen_principal} onChange={e => setForm({...form, imagen_principal: e.target.value})} />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-2">Rango de Precios (1-4)</label>
