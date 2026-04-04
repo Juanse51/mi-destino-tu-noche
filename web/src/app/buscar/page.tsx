@@ -71,13 +71,49 @@ function BuscarContent() {
     fetchEstablecimientos()
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
 
-  const establecimientosFiltrados = searchQuery
-    ? establecimientos.filter(e =>
-        e.nombre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.direccion?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.ciudad_nombre?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : establecimientos
+  const norm = (s: string) => s?.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') || ''
+
+  const establecimientosFiltrados = (() => {
+    if (!searchQuery) return establecimientos
+
+    const q = norm(searchQuery)
+
+    // Detectar ciudad en la query: "restaurantes en bogotá"
+    const ciudadesKeys = ['bogota','medellin','cali','cartagena','armenia','pereira',
+      'barranquilla','santa marta','bucaramanga','villavicencio','pasto','cucuta','neiva','monteria']
+    const ciudadEnQuery = ciudadesKeys.find(c => q.includes(c))
+
+    // Detectar tipo en la query
+    const tiposKeys: Record<string,string> = {
+      'restaurante': 'restaurante', 'restaurantes': 'restaurante',
+      'bar': 'bar', 'bares': 'bar',
+      'cafe': 'café', 'cafes': 'café', 'café': 'café',
+      'discoteca': 'discoteca', 'discotecas': 'discoteca',
+    }
+    const tipoEnQuery = Object.keys(tiposKeys).find(t => q.includes(t))
+
+    // Quitar ciudad y tipo de la query para buscar solo el nombre
+    let nombreQuery = q
+    if (ciudadEnQuery) nombreQuery = nombreQuery.replace(ciudadEnQuery, '').replace(/\s+en\s+/, ' ').trim()
+    if (tipoEnQuery) nombreQuery = nombreQuery.replace(tipoEnQuery, '').trim()
+
+    return establecimientos.filter(e => {
+      const nombre = norm(e.nombre)
+      const ciudad = norm(e.ciudad_nombre)
+      const tipo = norm(e.tipo_nombre)
+      const dir = norm(e.direccion)
+
+      // Si detectó ciudad en query, filtrar por ella
+      if (ciudadEnQuery && !ciudad.includes(ciudadEnQuery)) return false
+      // Si detectó tipo en query, filtrar por él
+      if (tipoEnQuery && !tipo.includes(norm(tiposKeys[tipoEnQuery]))) return false
+      // Si quedó nombre, buscar por nombre o dirección
+      if (nombreQuery.length > 0) {
+        return nombre.includes(nombreQuery) || dir.includes(nombreQuery)
+      }
+      return true
+    })
+  })()
   const establecimientosVisibles = establecimientosFiltrados.slice(0, visibleCount)
 
   return (
