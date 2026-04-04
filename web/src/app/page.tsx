@@ -52,9 +52,42 @@ export default function HomePage() {
     })
   }
 
+  // Coordenadas del centro de cada ciudad colombiana
+  const CIUDAD_COORDS: Record<string, {lat: number, lng: number}> = {
+    'bogotá': { lat: 4.7110, lng: -74.0721 },
+    'bogota': { lat: 4.7110, lng: -74.0721 },
+    'medellín': { lat: 6.2442, lng: -75.5812 },
+    'medellin': { lat: 6.2442, lng: -75.5812 },
+    'cali': { lat: 3.4516, lng: -76.5320 },
+    'cartagena': { lat: 10.3910, lng: -75.4794 },
+    'barranquilla': { lat: 10.9685, lng: -74.7813 },
+    'santa marta': { lat: 11.2408, lng: -74.1990 },
+    'pereira': { lat: 4.8087, lng: -75.6906 },
+    'armenia': { lat: 4.5339, lng: -75.6811 },
+    'bucaramanga': { lat: 7.1193, lng: -73.1227 },
+    'villavicencio': { lat: 4.1420, lng: -73.6266 },
+    'pasto': { lat: 1.2136, lng: -77.2811 },
+    'zipaquirá': { lat: 5.0228, lng: -74.0061 },
+    'zipaquira': { lat: 5.0228, lng: -74.0061 },
+    'sumapaz': { lat: 4.1500, lng: -74.3500 },
+    'cúcuta': { lat: 7.8939, lng: -72.5078 },
+    'cucuta': { lat: 7.8939, lng: -72.5078 },
+  }
+
   const getTop10 = (items: any[], loc: {lat: number, lng: number} | null) => {
     if (!loc) return items.slice(0, 10)
-    return sortByDistance(items, loc.lat, loc.lng).slice(0, 10)
+    return [...items].sort((a, b) => {
+      // Usar coordenadas del establecimiento si existen, si no usar coordenadas de la ciudad
+      const coordsA = (a.latitud && a.longitud)
+        ? { lat: parseFloat(a.latitud), lng: parseFloat(a.longitud) }
+        : CIUDAD_COORDS[a.ciudad_nombre?.toLowerCase()] || null
+      const coordsB = (b.latitud && b.longitud)
+        ? { lat: parseFloat(b.latitud), lng: parseFloat(b.longitud) }
+        : CIUDAD_COORDS[b.ciudad_nombre?.toLowerCase()] || null
+      const da = coordsA ? haversine(loc.lat, loc.lng, coordsA.lat, coordsA.lng) : 99999
+      const db = coordsB ? haversine(loc.lat, loc.lng, coordsB.lat, coordsB.lng) : 99999
+      return da - db
+    }).slice(0, 8)
   }
 
   // Obtener ubicación del usuario
