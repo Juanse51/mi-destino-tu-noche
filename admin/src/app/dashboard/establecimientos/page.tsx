@@ -46,7 +46,7 @@ export default function EstablecimientosPage() {
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [tipoFilter, setTipoFilter] = useState('')
+  const [tipoFilter, setTipoFilter] = useState('')  // nombre del tipo
   const [ciudadFilter, setCiudadFilter] = useState('')
   const [estadoFilter, setEstadoFilter] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -135,8 +135,8 @@ export default function EstablecimientosPage() {
 
   const filteredData = establecimientos.filter(est => {
     const matchSearch = !search || est.nombre?.toLowerCase().includes(search.toLowerCase())
-    const matchTipo = !tipoFilter || est.tipo_id === tipoFilter
-    const matchCiudad = !ciudadFilter || est.ciudad_id === ciudadFilter
+    const matchTipo = !tipoFilter || est.tipo_nombre === tipoFilter
+    const matchCiudad = !ciudadFilter || est.ciudad_nombre === ciudadFilter
     const matchEstado = !estadoFilter ||
       (estadoFilter === 'activo' && est.activo) ||
       (estadoFilter === 'inactivo' && !est.activo)
@@ -175,14 +175,14 @@ export default function EstablecimientosPage() {
               <label className="block text-sm text-gray-400 mb-2">Ciudad</label>
               <select className="input" value={ciudadFilter} onChange={(e) => setCiudadFilter(e.target.value)}>
                 <option value="">Todas las ciudades</option>
-                {CIUDADES.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                {CIUDADES.map(c => <option key={c.id} value={c.nombre}>{c.nombre}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-2">Tipo</label>
               <select className="input" value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
                 <option value="">Todos los tipos</option>
-                {TIPOS.map(t => <option key={t.id} value={t.id}>{t.nombre}</option>)}
+                {TIPOS.map(t => <option key={t.id} value={t.nombre}>{t.nombre}</option>)}
               </select>
             </div>
             <div>
