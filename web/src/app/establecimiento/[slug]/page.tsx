@@ -31,23 +31,31 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
     setResenaLoading(true)
     setResenaError('')
     try {
+      const token = (session as any)?.backendToken
+      if (!token) {
+        setResenaError('Sesión no válida. Cierra sesión y vuelve a ingresar.')
+        setResenaLoading(false)
+        return
+      }
       const res = await fetch(`${API_URL}/valoraciones`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({
           establecimiento_id: est.id,
           puntuacion: resenaRating,
           comentario: resenaComentario,
-          usuario_nombre: session?.user?.name || 'Usuario',
-          usuario_email: session?.user?.email || '',
         })
       })
+      const data = await res.json()
       if (res.ok) {
         setResenaExito(true)
         setResenaRating(0)
         setResenaComentario('')
       } else {
-        setResenaError('No se pudo enviar la reseña. Intenta de nuevo.')
+        setResenaError(data.error || 'No se pudo enviar la reseña. Intenta de nuevo.')
       }
     } catch {
       setResenaError('Error de conexión. Intenta de nuevo.')
