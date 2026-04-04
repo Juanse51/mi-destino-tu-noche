@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, Mail, AlertCircle } from 'lucide-react'
@@ -15,14 +14,29 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
-    // Demo: admin@demo.com / admin123
-    if (email === 'admin@demo.com' && password === 'admin123') {
-      localStorage.setItem('admin_token', 'demo_token_123')
-      localStorage.setItem('admin_user', JSON.stringify({ nombre: 'Administrador', email, rol: 'admin' }))
-      router.push('/dashboard')
-    } else {
-      setError('Credenciales incorrectas. Usa: admin@demo.com / admin123')
+    try {
+      const res = await fetch('https://mi-destino-api.onrender.com/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (res.ok && data.accessToken) {
+        const user = data.usuario || data.user || {}
+        if (!['admin', 'superadmin'].includes(user.rol)) {
+          setError('No tienes permisos de administrador')
+          setLoading(false)
+          return
+        }
+        localStorage.setItem('admin_token', data.accessToken)
+        localStorage.setItem('admin_refresh_token', data.refreshToken || '')
+        localStorage.setItem('admin_user', JSON.stringify(user))
+        router.push('/dashboard')
+      } else {
+        setError(data.error || data.message || 'Credenciales incorrectas')
+      }
+    } catch {
+      setError('Error de conexión. Intenta de nuevo.')
     }
     setLoading(false)
   }
@@ -35,7 +49,6 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold">Mi Destino Tu Noche</h1>
           <p className="text-gray-400 mt-2">Panel de Administración</p>
         </div>
-
         <div className="card">
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -52,7 +65,6 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm text-gray-400 mb-2">Contraseña</label>
               <div className="relative">
@@ -67,20 +79,16 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
             {error && (
               <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-3 rounded-lg">
                 <AlertCircle className="w-4 h-4" />
                 {error}
               </div>
             )}
-
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Ingresando...' : 'Ingresar'}
             </button>
           </form>
-
-
         </div>
       </div>
     </div>
