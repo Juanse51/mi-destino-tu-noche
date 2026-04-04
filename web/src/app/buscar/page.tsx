@@ -56,7 +56,7 @@ function BuscarContent() {
           params.append('ciudad', ciudadSeleccionada.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
         }
-        params.append('limite', '300')
+        params.append('limite', '500')
 
         const res = await fetch(`${API_URL}/establecimientos?${params.toString()}`)
         if (res.ok) {
