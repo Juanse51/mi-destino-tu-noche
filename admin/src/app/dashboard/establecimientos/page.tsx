@@ -142,6 +142,20 @@ export default function EstablecimientosPage() {
         destacado: full.destacado || false,
         sede_principal_id: full.sede_principal_id || '',
       })
+      // Precargar nombre de sede principal si existe
+      if (full.sede_principal_id) {
+        const sedePrincipal = establecimientos.find(e => e.id === full.sede_principal_id)
+        if (sedePrincipal) setSedeSearch(sedePrincipal.nombre)
+        else {
+          // Buscar por API si no está en la lista
+          try {
+            const sr = await fetch(`${API_URL}/establecimientos?limite=1`)
+            // fallback: dejar vacío
+          } catch {}
+        }
+      } else {
+        setSedeSearch('')
+      }
     } catch {
       // Fallback a datos básicos
       const ciudadObj = CIUDADES.find(c => c.nombre === est.ciudad_nombre)
