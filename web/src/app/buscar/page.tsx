@@ -140,7 +140,17 @@ function BuscarContent() {
                 placeholder="Buscar por nombre..."
                 className="w-full bg-transparent outline-none text-white placeholder-gray-400"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setSearchQuery(val)
+                  // Si el usuario escribe una ciudad, poner dropdown en Todas
+                  const ciudadesKeys = ['bogota','bogotá','medellin','medellín','cali','cartagena',
+                    'armenia','pereira','barranquilla','santa marta','bucaramanga',
+                    'villavicencio','pasto','cucuta','cúcuta','neiva','monteria','montería']
+                  const valNorm = val.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                  const tieneCiudad = ciudadesKeys.some(c => valNorm.includes(c))
+                  if (tieneCiudad) setCiudadSeleccionada('Todas')
+                }}
                 onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
               />
               {searchQuery && (
