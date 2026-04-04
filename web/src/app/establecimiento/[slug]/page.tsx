@@ -191,14 +191,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
           <span>{est.tipo_nombre}</span>
         </div>
 
-        {/* Logo overlay */}
-        {logoImg && galeria.length > 0 && (
-          <div className="absolute bottom-4 right-4">
-            <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-white/20 bg-dark">
-              <Image src={logoImg} alt={est.nombre} width={80} height={80} className="object-contain w-full h-full" />
-            </div>
-          </div>
-        )}
+
       </div>
 
       {/* Content */}
@@ -206,16 +199,24 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
         <div className="bg-dark-lighter rounded-2xl p-6 md:p-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{est.nombre}</h1>
-              {est.tipo_comida_nombre && <p className="text-primary font-medium">{est.tipo_comida_nombre}</p>}
-              <div className="flex items-center gap-2 text-gray-400 mt-2">
-                <MapPin className="w-4 h-4" />
-                <span>{est.ciudad_nombre}{est.departamento_nombre ? ', ' + est.departamento_nombre : ''}</span>
-              </div>
-              {est.direccion && (
-                <p className="text-gray-400 text-sm mt-1">{est.direccion}</p>
+            <div className="flex items-start gap-4">
+              {/* Logo del establecimiento */}
+              {logoImg && (
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 border-gray-700 bg-dark flex-shrink-0">
+                  <Image src={logoImg} alt={est.nombre} width={80} height={80} className="object-contain w-full h-full" />
+                </div>
               )}
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">{est.nombre}</h1>
+                {est.tipo_comida_nombre && <p className="text-primary font-medium">{est.tipo_comida_nombre}</p>}
+                <div className="flex items-center gap-2 text-gray-400 mt-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>{est.ciudad_nombre}{est.departamento_nombre ? ', ' + est.departamento_nombre : ''}</span>
+                </div>
+                {est.direccion && (
+                  <p className="text-gray-400 text-sm mt-1">{est.direccion}</p>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-6">
