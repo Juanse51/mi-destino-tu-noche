@@ -115,6 +115,12 @@ export default function EstablecimientosPage() {
       const full = await res.json()
       const ciudadObj = CIUDADES.find(c => c.nombre === (full.ciudad_nombre || est.ciudad_nombre))
       const tipoObj = TIPOS.find(t => t.nombre === (full.tipo_nombre || est.tipo_nombre))
+      // Detectar si imagen_principal es realmente un logo
+      const imgPrincipal = full.imagen_principal || est.imagen_principal || ''
+      const logoUrl = full.logo_url || est.logo_url || ''
+      const esLogoEnImgPrincipal = imgPrincipal && !logoUrl && (
+        imgPrincipal.includes('.png') || imgPrincipal.includes('logo')
+      )
       setForm({
         nombre: full.nombre || est.nombre || '',
         descripcion: full.descripcion || '',
@@ -126,8 +132,8 @@ export default function EstablecimientosPage() {
         instagram: full.instagram || '',
         email: full.email || '',
         sitio_web: full.sitio_web || '',
-        imagen_principal: full.imagen_principal || est.imagen_principal || '',
-        logo_url: full.logo_url || est.logo_url || '',
+        imagen_principal: esLogoEnImgPrincipal ? '' : imgPrincipal,
+        logo_url: logoUrl || (esLogoEnImgPrincipal ? imgPrincipal : ''),
         rango_precios: full.rango_precios || est.rango_precios || 2,
         activo: full.activo !== false,
         verificado: full.verificado || false,
