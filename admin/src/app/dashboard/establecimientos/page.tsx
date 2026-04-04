@@ -57,6 +57,7 @@ const emptyForm = {
   telefono: '', whatsapp: '', instagram: '', email: '', sitio_web: '',
   imagen_principal: '', logo_url: '', rango_precios: 2,
   activo: true, verificado: false, destacado: false,
+  sede_principal_id: '',
 }
 
 export default function EstablecimientosPage() {
@@ -75,6 +76,7 @@ export default function EstablecimientosPage() {
   const [uploadingLogo, setUploadingLogo] = useState(false)
   const [uploadingImg, setUploadingImg] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
+  const [sedeSearch, setSedeSearch] = useState('')
 
   useEffect(() => { fetchEstablecimientos() }, [])
 
@@ -138,6 +140,7 @@ export default function EstablecimientosPage() {
         activo: full.activo !== false,
         verificado: full.verificado || false,
         destacado: full.destacado || false,
+        sede_principal_id: full.sede_principal_id || '',
       })
     } catch {
       // Fallback a datos básicos
@@ -160,6 +163,7 @@ export default function EstablecimientosPage() {
         activo: est.activo !== false,
         verificado: est.verificado || false,
         destacado: est.destacado || false,
+        sede_principal_id: '',
       })
     }
     setShowModal(true)
@@ -177,7 +181,13 @@ export default function EstablecimientosPage() {
         ? `${API_URL}/admin/establecimientos/${editingEst.id}`
         : `${API_URL}/admin/establecimientos`
       const method = editingEst ? 'PUT' : 'POST'
-      const res = await authFetch(url, { method, body: JSON.stringify(form) })
+      const body = {
+        ...form,
+        sede_principal_id: form.sede_principal_id && form.sede_principal_id !== 'selecting'
+          ? form.sede_principal_id
+          : null
+      }
+      const res = await authFetch(url, { method, body: JSON.stringify(body) })
       const data = await res.json()
       if (res.ok) {
         setSaveMsg('✅ Guardado exitosamente')
@@ -455,6 +465,77 @@ export default function EstablecimientosPage() {
                   <input type="checkbox" className="w-4 h-4 accent-primary" checked={form.destacado} onChange={e => setForm({...form, destacado: e.target.checked})} />
                   <span className="text-sm">Destacado</span>
                 </label>
+              </div>
+
+              {/* Sedes */}
+              <div className="pt-2 border-t border-gray-800">
+                <label className="block text-sm text-gray-400 mb-3 font-medium">Tipo de establecimiento</label>
+                <div className="flex gap-3 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setForm({...form, sede_principal_id: ''})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                      !form.sede_principal_id
+                        ? 'bg-primary border-primary text-white'
+                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                    }`}
+                  >
+                    🏠 Sede principal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm({...form, sede_principal_id: 'selecting'})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                      form.sede_principal_id
+                        ? 'bg-primary border-primary text-white'
+                        : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                    }`}
+                  >
+                    🔗 Sede de otra
+                  </button>
+                </div>
+                {form.sede_principal_id !== '' && (
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">¿Sede de cuál establecimiento?</label>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="Buscar por nombre del establecimiento principal..."
+                      value={sedeSearch}
+                      onChange={e => setSedeSearch(e.target.value)}
+                    />
+                    {sedeSearch.length > 2 && (
+                      <div className="mt-2 bg-dark rounded-xl border border-gray-700 max-h-40 overflow-y-auto">
+                        {establecimientos
+                          .filter(e => 
+                            e.nombre.toLowerCase().includes(sedeSearch.toLowerCase()) &&
+                            e.id !== editingEst?.id
+                          )
+                          .slice(0, 8)
+                          .map(e => (
+                            <button
+                              key={e.id}
+                              type="button"
+                              onClick={() => {
+                                setForm(f => ({...f, sede_principal_id: e.id}))
+                                setSedeSearch(e.nombre)
+                              }}
+                              className="w-full text-left px-4 py-2.5 hover:bg-dark-lighter text-sm border-b border-gray-800 last:border-0"
+                            >
+                              <span className="font-medium">{e.nombre}</span>
+                              <span className="text-gray-400 ml-2">· {e.ciudad_nombre}</span>
+                            </button>
+                          ))
+                        }
+                      </div>
+                    )}
+                    {form.sede_principal_id && form.sede_principal_id !== 'selecting' && (
+                      <p className="text-xs text-green-400 mt-2">
+                        ✅ Sede de: {establecimientos.find(e => e.id === form.sede_principal_id)?.nombre || sedeSearch}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               {saveMsg && <p className="text-sm">{saveMsg}</p>}
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
