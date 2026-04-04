@@ -33,10 +33,10 @@ export default function DashboardPage() {
     )
   }
 
-  const stats = data?.stats || {}
-  const porCiudad = data?.porCiudad || []
-  const porTipo = data?.porTipo || []
-  const actividad = data?.actividad || []
+  const stats = data?.estadisticas || {}
+  const porCiudad = data?.por_ciudad || []
+  const porTipo = data?.por_tipo || []
+  const actividad = data?.actividad_reciente || []
   const totalCiudad = porCiudad.reduce((s: number, c: any) => s + parseInt(c.total), 0)
 
   return (
