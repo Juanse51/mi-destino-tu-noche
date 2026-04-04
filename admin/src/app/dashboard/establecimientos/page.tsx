@@ -78,11 +78,14 @@ export default function EstablecimientosPage() {
 
   const openEdit = (est: any) => {
     setEditingEst(est)
+    // Buscar IDs a partir de nombres
+    const ciudadObj = CIUDADES.find(c => c.nombre === est.ciudad_nombre)
+    const tipoObj = TIPOS.find(t => t.nombre === est.tipo_nombre)
     setForm({
       nombre: est.nombre || '',
       descripcion: est.descripcion || '',
-      tipo_id: est.tipo_id || '',
-      ciudad_id: est.ciudad_id || '',
+      tipo_id: tipoObj?.id || '',
+      ciudad_id: ciudadObj?.id || '',
       direccion: est.direccion || '',
       telefono: est.telefono || '',
       whatsapp: est.whatsapp || '',
