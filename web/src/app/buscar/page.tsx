@@ -25,6 +25,58 @@ function BuscarContent() {
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+
+  const CIUDAD_COORDS: Record<string, {lat: number, lng: number}> = {
+    'bogotá': { lat: 4.7110, lng: -74.0721 }, 'bogota': { lat: 4.7110, lng: -74.0721 },
+    'medellín': { lat: 6.2442, lng: -75.5812 }, 'medellin': { lat: 6.2442, lng: -75.5812 },
+    'cali': { lat: 3.4516, lng: -76.5320 },
+    'cartagena': { lat: 10.3910, lng: -75.4794 },
+    'barranquilla': { lat: 10.9685, lng: -74.7813 },
+    'santa marta': { lat: 11.2408, lng: -74.1990 },
+    'pereira': { lat: 4.8087, lng: -75.6906 },
+    'armenia': { lat: 4.5339, lng: -75.6811 },
+    'bucaramanga': { lat: 7.1193, lng: -73.1227 },
+    'villavicencio': { lat: 4.1420, lng: -73.6266 },
+    'pasto': { lat: 1.2136, lng: -77.2811 },
+    'zipaquirá': { lat: 5.0228, lng: -74.0061 }, 'zipaquira': { lat: 5.0228, lng: -74.0061 },
+    'sumapaz': { lat: 4.1500, lng: -74.3500 },
+    'cúcuta': { lat: 7.8939, lng: -72.5078 }, 'cucuta': { lat: 7.8939, lng: -72.5078 },
+    'montería': { lat: 8.7575, lng: -75.8871 }, 'monteria': { lat: 8.7575, lng: -75.8871 },
+    'neiva': { lat: 2.9273, lng: -75.2819 },
+  }
+
+  const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLng = (lng2 - lng1) * Math.PI / 180
+    const a = Math.sin(dLat/2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  const sortByDistance = (items: any[], loc: {lat: number, lng: number}) => {
+    return [...items].sort((a, b) => {
+      const coordsA = (a.latitud && a.longitud)
+        ? { lat: parseFloat(a.latitud), lng: parseFloat(a.longitud) }
+        : CIUDAD_COORDS[a.ciudad_nombre?.toLowerCase()] || null
+      const coordsB = (b.latitud && b.longitud)
+        ? { lat: parseFloat(b.latitud), lng: parseFloat(b.longitud) }
+        : CIUDAD_COORDS[b.ciudad_nombre?.toLowerCase()] || null
+      const da = coordsA ? haversine(loc.lat, loc.lng, coordsA.lat, coordsA.lng) : 99999
+      const db = coordsB ? haversine(loc.lat, loc.lng, coordsB.lat, coordsB.lng) : 99999
+      return da - db
+    })
+  }
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {}
+      )
+    }
+  }, [])
 
   useEffect(() => {
     const fetchEstablecimientos = async () => {
@@ -34,12 +86,13 @@ function BuscarContent() {
         if (searchQuery) params.append('buscar', searchQuery)
         if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
         if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') params.append('ciudad', ciudadSeleccionada.toLowerCase())
-        params.append('limite', '20')
+        params.append('limite', '300')
         
         const res = await fetch(`${API_URL}/establecimientos?${params.toString()}`)
         if (res.ok) {
           const data = await res.json()
-          setEstablecimientos(data.establecimientos || [])
+          const items = data.establecimientos || []
+          setEstablecimientos(items)
         }
       } catch (err) {
         console.error('Error buscando:', err)
@@ -48,6 +101,11 @@ function BuscarContent() {
     }
     fetchEstablecimientos()
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
+
+  // Reordenar cuando cambia la ubicación
+  const establecimientosOrdenados = userLocation
+    ? sortByDistance(establecimientos, userLocation)
+    : establecimientos
 
   return (
     <div className="min-h-screen pt-20">
@@ -121,7 +179,7 @@ function BuscarContent() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <p className="text-gray-400">
-            {establecimientos.length} {establecimientos.length === 1 ? 'resultado' : 'resultados'} encontrados
+            {establecimientosOrdenados.length} {establecimientosOrdenados.length === 1 ? 'resultado' : 'resultados'} encontrados
           </p>
         </div>
         {loading ? (
@@ -131,7 +189,7 @@ function BuscarContent() {
           </div>
         ) : establecimientos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {establecimientos.map((est) => (
+            {establecimientosOrdenados.map((est) => (
               <EstablecimientoCard key={est.id} establecimiento={est} />
             ))}
           </div>
