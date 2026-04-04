@@ -17,6 +17,42 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
   const [activeTab, setActiveTab] = useState<'info' | 'cupones' | 'resenas'>('info')
+  const { data: session } = useSession()
+  const [resenaRating, setResenaRating] = useState(0)
+  const [resenaHover, setResenaHover] = useState(0)
+  const [resenaComentario, setResenaComentario] = useState('')
+  const [resenaLoading, setResenaLoading] = useState(false)
+  const [resenaExito, setResenaExito] = useState(false)
+  const [resenaError, setResenaError] = useState('')
+
+  const handleSubmitResena = async () => {
+    if (!resenaRating) { setResenaError('Selecciona una calificación'); return }
+    setResenaLoading(true)
+    setResenaError('')
+    try {
+      const res = await fetch(`${API_URL}/valoraciones`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          establecimiento_id: est.id,
+          puntuacion: resenaRating,
+          comentario: resenaComentario,
+          usuario_nombre: session?.user?.name || 'Usuario',
+          usuario_email: session?.user?.email || '',
+        })
+      })
+      if (res.ok) {
+        setResenaExito(true)
+        setResenaRating(0)
+        setResenaComentario('')
+      } else {
+        setResenaError('No se pudo enviar la reseña. Intenta de nuevo.')
+      }
+    } catch {
+      setResenaError('Error de conexión. Intenta de nuevo.')
+    }
+    setResenaLoading(false)
+  }
 
   useEffect(() => {
     fetch(`${API_URL}/establecimientos/${params.slug}`)
@@ -458,7 +494,73 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
           )}
 
           {activeTab === 'resenas' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Formulario de reseña */}
+              {session ? (
+                <div className="bg-dark p-5 rounded-xl border border-gray-700/50">
+                  <h3 className="text-lg font-semibold mb-4">Escribe tu reseña</h3>
+                  {resenaExito ? (
+                    <div className="text-center py-4">
+                      <div className="text-4xl mb-2">🎉</div>
+                      <p className="text-green-400 font-medium">¡Reseña enviada! Gracias por tu opinión.</p>
+                      <button onClick={() => setResenaExito(false)} className="mt-3 text-sm text-gray-400 hover:text-white underline">
+                        Escribir otra reseña
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Estrellas */}
+                      <div className="flex gap-2 mb-4">
+                        {[1,2,3,4,5].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => setResenaRating(star)}
+                            onMouseEnter={() => setResenaHover(star)}
+                            onMouseLeave={() => setResenaHover(0)}
+                          >
+                            <Star className={`w-8 h-8 transition-colors ${
+                              star <= (resenaHover || resenaRating)
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-gray-600'
+                            }`} />
+                          </button>
+                        ))}
+                        {resenaRating > 0 && (
+                          <span className="ml-2 text-sm text-gray-400 self-center">
+                            {['','Malo','Regular','Bueno','Muy bueno','Excelente'][resenaRating]}
+                          </span>
+                        )}
+                      </div>
+                      {/* Comentario */}
+                      <textarea
+                        value={resenaComentario}
+                        onChange={e => setResenaComentario(e.target.value)}
+                        placeholder="Cuéntanos tu experiencia (opcional)..."
+                        rows={3}
+                        className="w-full bg-dark-lighter rounded-xl px-4 py-3 text-white placeholder-gray-500 border border-gray-700/50 focus:border-primary/50 outline-none resize-none mb-3"
+                      />
+                      {resenaError && (
+                        <p className="text-red-400 text-sm mb-3">{resenaError}</p>
+                      )}
+                      <button
+                        onClick={handleSubmitResena}
+                        disabled={resenaLoading}
+                        className="bg-primary hover:bg-primary-dark px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50"
+                      >
+                        {resenaLoading ? 'Enviando...' : 'Publicar reseña'}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-dark p-5 rounded-xl border border-gray-700/50 text-center">
+                  <p className="text-gray-400 mb-3">Inicia sesión para dejar una reseña</p>
+                  <a href="/login" className="inline-block bg-primary hover:bg-primary-dark px-6 py-2.5 rounded-xl font-medium transition-colors">
+                    Iniciar sesión
+                  </a>
+                </div>
+              )}
+              {/* Lista de reseñas */}
               {est.valoraciones_recientes && est.valoraciones_recientes.length > 0 ? (
                 est.valoraciones_recientes.map((val: any, i: number) => (
                   <div key={i} className="bg-dark p-4 rounded-xl">
@@ -474,9 +576,9 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
                       </div>
                       <div className="flex">
                         {[...Array(5)].map((_, j) => (
-                          <Star 
-                            key={j} 
-                            className={`w-4 h-4 ${j < val.puntuacion ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
+                          <Star
+                            key={j}
+                            className={`w-4 h-4 ${j < val.puntuacion ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
                           />
                         ))}
                       </div>
@@ -485,9 +587,9 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
                   </div>
                 ))
               ) : (
-                <div className="text-center py-12">
+                <div className="text-center py-8">
                   <div className="text-5xl mb-4">📝</div>
-                  <p className="text-gray-400">Sin reseñas aún</p>
+                  <p className="text-gray-400">Sin reseñas aún. ¡Sé el primero!</p>
                 </div>
               )}
             </div>
