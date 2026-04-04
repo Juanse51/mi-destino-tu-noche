@@ -516,7 +516,15 @@ export default function EstablecimientosPage() {
                             <button
                               key={e.id}
                               type="button"
-                              onClick={() => { setForm(f => ({...f, sede_principal_id: e.id})); setSedeSearch(e.nombre) }}
+                              onClick={() => {
+                                setForm(f => ({
+                                  ...f,
+                                  sede_principal_id: e.id,
+                                  logo_url: e.logo_url || e.imagen_principal || f.logo_url,
+                                  imagen_principal: e.imagen_principal || f.imagen_principal,
+                                }))
+                                setSedeSearch(e.nombre)
+                              }}
                               style={{width:'100%', textAlign:'left', padding:'10px 16px', fontSize:'13px', borderBottom:'1px solid #1f2937', background:'transparent', color:'white', cursor:'pointer'}}
                             >
                               <span style={{fontWeight:'500'}}>{e.nombre}</span>
