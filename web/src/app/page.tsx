@@ -185,6 +185,7 @@ export default function HomePage() {
                   className="w-full bg-transparent outline-none text-white placeholder-gray-400 py-3"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery) window.location.href = `/buscar?q=${encodeURIComponent(searchQuery)}` }}
                 />
               </div>
               <Link 

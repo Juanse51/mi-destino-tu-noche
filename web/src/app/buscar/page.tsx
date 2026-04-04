@@ -71,7 +71,14 @@ function BuscarContent() {
     fetchEstablecimientos()
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
 
-  const establecimientosVisibles = establecimientos.slice(0, visibleCount)
+  const establecimientosFiltrados = searchQuery
+    ? establecimientos.filter(e =>
+        e.nombre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.direccion?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.ciudad_nombre?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : establecimientos
+  const establecimientosVisibles = establecimientosFiltrados.slice(0, visibleCount)
 
   return (
     <div className="min-h-screen pt-20">
@@ -89,6 +96,7 @@ function BuscarContent() {
                   setSearchQuery(e.target.value)
                   if (e.target.value) setCiudadSeleccionada('Todas')
                 }}
+                onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
               />
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(''); setCiudadSeleccionada('Bogotá') }}>
@@ -150,7 +158,7 @@ function BuscarContent() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-gray-400">
-            {establecimientos.length} {establecimientos.length === 1 ? 'resultado' : 'resultados'} encontrados
+            {establecimientosFiltrados.length} {establecimientosFiltrados.length === 1 ? 'resultado' : 'resultados'} encontrados
             {ciudadDetectada && ciudadSeleccionada !== 'Todas' && (
               <span className="ml-2 text-primary text-sm">📍 {ciudadSeleccionada}</span>
             )}
@@ -177,13 +185,13 @@ function BuscarContent() {
                 <EstablecimientoCard key={est.id} establecimiento={est} />
               ))}
             </div>
-            {visibleCount < establecimientos.length && (
+            {visibleCount < establecimientosFiltrados.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => setVisibleCount(v => v + 20)}
                   className="bg-dark-lighter hover:bg-dark-card border border-gray-700 px-8 py-3 rounded-xl font-medium transition-colors"
                 >
-                  Ver más ({establecimientos.length - visibleCount} restantes)
+                  Ver más ({establecimientosFiltrados.length - visibleCount} restantes)
                 </button>
               </div>
             )}
