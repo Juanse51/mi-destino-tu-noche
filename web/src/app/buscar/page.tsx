@@ -25,6 +25,7 @@ function BuscarContent() {
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [visibleCount, setVisibleCount] = useState(20)
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
 
   const CIUDAD_COORDS: Record<string, {lat: number, lng: number}> = {
@@ -70,11 +71,25 @@ function BuscarContent() {
   }
 
   useEffect(() => {
+    // Intentar GPS primero, luego fallback por IP
+    const getLocationByIP = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/')
+        const data = await res.json()
+        if (data.latitude && data.longitude) {
+          setUserLocation({ lat: data.latitude, lng: data.longitude })
+        }
+      } catch {}
+    }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => {}
+        () => getLocationByIP(),
+        { timeout: 5000 }
       )
+    } else {
+      getLocationByIP()
     }
   }, [])
 
@@ -100,12 +115,14 @@ function BuscarContent() {
       setLoading(false)
     }
     fetchEstablecimientos()
+    setVisibleCount(20)
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
 
   // Reordenar cuando cambia la ubicación
   const establecimientosOrdenados = userLocation
     ? sortByDistance(establecimientos, userLocation)
     : establecimientos
+  const establecimientosVisibles = establecimientosOrdenados.slice(0, visibleCount)
 
   return (
     <div className="min-h-screen pt-20">
@@ -179,7 +196,7 @@ function BuscarContent() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <p className="text-gray-400">
-            {establecimientosOrdenados.length} {establecimientosOrdenados.length === 1 ? 'resultado' : 'resultados'} encontrados
+            {establecimientosOrdenados.length} {establecimientosOrdenados.length === 1 ? 'resultado' : 'resultados'} encontrados{userLocation ? ' · Ordenados por cercanía 📍' : ''}
           </p>
         </div>
         {loading ? (
@@ -189,7 +206,7 @@ function BuscarContent() {
           </div>
         ) : establecimientos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {establecimientosOrdenados.map((est) => (
+            {establecimientosVisibles.map((est) => (
               <EstablecimientoCard key={est.id} establecimiento={est} />
             ))}
           </div>
@@ -198,6 +215,17 @@ function BuscarContent() {
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold mb-2">No se encontraron resultados</h3>
             <p className="text-gray-400">Intenta con otros términos o filtros</p>
+          </div>
+        )}
+        {/* Botón Ver más */}
+        {establecimientosVisibles.length < establecimientosOrdenados.length && (
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setVisibleCount(v => v + 20)}
+              className="bg-dark-lighter hover:bg-dark-card border border-gray-700 px-8 py-3 rounded-xl font-medium transition-colors"
+            >
+              Ver más ({establecimientosOrdenados.length - establecimientosVisibles.length} restantes)
+            </button>
           </div>
         )}
       </div>
