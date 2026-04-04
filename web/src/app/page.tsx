@@ -77,8 +77,8 @@ export default function HomePage() {
       setCadenas(results.filter(r => r && r.id));
     }).catch(() => {})
 
-    // Cargar destacados del API
-    fetch(`${API_URL}/establecimientos?limite=8&orden=recientes`)
+    // Cargar destacados: traer muchos y ordenar por distancia
+    fetch(`${API_URL}/establecimientos?limite=200&orden=recientes`)
       .then(r => r.json())
       .then(data => {
         if (data?.establecimientos) {
@@ -90,7 +90,12 @@ export default function HomePage() {
 
   useEffect(() => {
     if (userLocation && destacados.length > 0) {
-      setDestacados(prev => sortByDistance(prev, userLocation.lat, userLocation.lng))
+      setDestacados(prev => {
+        const conCoordenadas = prev.filter((e: any) => e.latitud && e.longitud)
+        const sinCoordenadas = prev.filter((e: any) => !e.latitud || !e.longitud)
+        const ordenados = sortByDistance(conCoordenadas, userLocation.lat, userLocation.lng)
+        return [...ordenados, ...sinCoordenadas].slice(0, 8)
+      })
     }
   }, [userLocation])
 
