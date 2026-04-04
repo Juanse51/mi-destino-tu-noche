@@ -18,9 +18,10 @@ const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia
 
 function BuscarContent() {
   const searchParams = useSearchParams()
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
+  const initialQuery = searchParams.get('q') || ''
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [tipoSeleccionado, setTipoSeleccionado] = useState(searchParams.get('tipo') || '')
-  const [ciudadSeleccionada, setCiudadSeleccionada] = useState('Bogotá')
+  const [ciudadSeleccionada, setCiudadSeleccionada] = useState(searchParams.get('q') ? 'Todas' : 'Bogotá')
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -84,10 +85,13 @@ function BuscarContent() {
                 placeholder="Buscar por nombre..."
                 className="w-full bg-transparent outline-none text-white placeholder-gray-400"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  if (e.target.value) setCiudadSeleccionada('Todas')
+                }}
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')}>
+                <button onClick={() => { setSearchQuery(''); setCiudadSeleccionada('Bogotá') }}>
                   <X className="w-4 h-4 text-gray-400" />
                 </button>
               )}
