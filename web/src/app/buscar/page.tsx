@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Search, SlidersHorizontal, X } from 'lucide-react'
@@ -15,7 +14,7 @@ const tipos = [
   { nombre: 'Discotecas', slug: 'discoteca', icono: '🎉' },
 ]
 
-const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira']
+const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira', 'Santa Marta', 'Barranquilla', 'Bucaramanga', 'Pasto', 'Villavicencio']
 
 function BuscarContent() {
   const searchParams = useSearchParams()
@@ -25,89 +24,43 @@ function BuscarContent() {
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [ciudadDetectada, setCiudadDetectada] = useState('')
   const [visibleCount, setVisibleCount] = useState(20)
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
 
-  const CIUDAD_COORDS: Record<string, {lat: number, lng: number}> = {
-    'bogotá': { lat: 4.7110, lng: -74.0721 }, 'bogota': { lat: 4.7110, lng: -74.0721 },
-    'medellín': { lat: 6.2442, lng: -75.5812 }, 'medellin': { lat: 6.2442, lng: -75.5812 },
-    'cali': { lat: 3.4516, lng: -76.5320 },
-    'cartagena': { lat: 10.3910, lng: -75.4794 },
-    'barranquilla': { lat: 10.9685, lng: -74.7813 },
-    'santa marta': { lat: 11.2408, lng: -74.1990 },
-    'pereira': { lat: 4.8087, lng: -75.6906 },
-    'armenia': { lat: 4.5339, lng: -75.6811 },
-    'bucaramanga': { lat: 7.1193, lng: -73.1227 },
-    'villavicencio': { lat: 4.1420, lng: -73.6266 },
-    'pasto': { lat: 1.2136, lng: -77.2811 },
-    'zipaquirá': { lat: 5.0228, lng: -74.0061 }, 'zipaquira': { lat: 5.0228, lng: -74.0061 },
-    'sumapaz': { lat: 4.1500, lng: -74.3500 },
-    'cúcuta': { lat: 7.8939, lng: -72.5078 }, 'cucuta': { lat: 7.8939, lng: -72.5078 },
-    'montería': { lat: 8.7575, lng: -75.8871 }, 'monteria': { lat: 8.7575, lng: -75.8871 },
-    'neiva': { lat: 2.9273, lng: -75.2819 },
-  }
-
-  const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
-    const R = 6371
-    const dLat = (lat2 - lat1) * Math.PI / 180
-    const dLng = (lng2 - lng1) * Math.PI / 180
-    const a = Math.sin(dLat/2) ** 2 +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) ** 2
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  }
-
-  const sortByDistance = (items: any[], loc: {lat: number, lng: number}) => {
-    return [...items].sort((a, b) => {
-      const coordsA = (a.latitud && a.longitud)
-        ? { lat: parseFloat(a.latitud), lng: parseFloat(a.longitud) }
-        : CIUDAD_COORDS[a.ciudad_nombre?.toLowerCase()] || null
-      const coordsB = (b.latitud && b.longitud)
-        ? { lat: parseFloat(b.latitud), lng: parseFloat(b.longitud) }
-        : CIUDAD_COORDS[b.ciudad_nombre?.toLowerCase()] || null
-      const da = coordsA ? haversine(loc.lat, loc.lng, coordsA.lat, coordsA.lng) : 99999
-      const db = coordsB ? haversine(loc.lat, loc.lng, coordsB.lat, coordsB.lng) : 99999
-      return da - db
-    })
-  }
-
+  // Detectar ciudad por IP al cargar
   useEffect(() => {
-    // Intentar GPS primero, luego fallback por IP
-    const getLocationByIP = async () => {
+    const detectarCiudad = async () => {
       try {
         const res = await fetch('https://ipapi.co/json/')
         const data = await res.json()
-        if (data.latitude && data.longitude) {
-          setUserLocation({ lat: data.latitude, lng: data.longitude })
+        if (data.city) {
+          setCiudadDetectada(data.city)
+          setCiudadSeleccionada(data.city)
         }
       } catch {}
     }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => getLocationByIP(),
-        { timeout: 5000 }
-      )
-    } else {
-      getLocationByIP()
-    }
+    detectarCiudad()
   }, [])
 
+  // Cargar establecimientos cuando cambian filtros
   useEffect(() => {
     const fetchEstablecimientos = async () => {
       setLoading(true)
+      setVisibleCount(20)
       try {
         const params = new URLSearchParams()
         if (searchQuery) params.append('buscar', searchQuery)
         if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
-        if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') params.append('ciudad', ciudadSeleccionada.toLowerCase())
+        if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') {
+          params.append('ciudad', ciudadSeleccionada.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+        }
         params.append('limite', '300')
-        
+
         const res = await fetch(`${API_URL}/establecimientos?${params.toString()}`)
         if (res.ok) {
           const data = await res.json()
-          const items = data.establecimientos || []
-          setEstablecimientos(items)
+          setEstablecimientos(data.establecimientos || [])
         }
       } catch (err) {
         console.error('Error buscando:', err)
@@ -115,14 +68,9 @@ function BuscarContent() {
       setLoading(false)
     }
     fetchEstablecimientos()
-    setVisibleCount(20)
   }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
 
-  // Reordenar cuando cambia la ubicación
-  const establecimientosOrdenados = userLocation
-    ? sortByDistance(establecimientos, userLocation)
-    : establecimientos
-  const establecimientosVisibles = establecimientosOrdenados.slice(0, visibleCount)
+  const establecimientosVisibles = establecimientos.slice(0, visibleCount)
 
   return (
     <div className="min-h-screen pt-20">
@@ -154,6 +102,7 @@ function BuscarContent() {
               <span className="hidden sm:inline">Filtros</span>
             </button>
           </div>
+
           {showFilters && (
             <div className="mt-4 pt-4 border-t border-gray-800">
               <div className="flex flex-wrap gap-4">
@@ -193,39 +142,53 @@ function BuscarContent() {
           )}
         </div>
       </div>
+
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <p className="text-gray-400">
-            {establecimientosOrdenados.length} {establecimientosOrdenados.length === 1 ? 'resultado' : 'resultados'} encontrados{userLocation ? ' · Ordenados por cercanía 📍' : ''}
+            {establecimientos.length} {establecimientos.length === 1 ? 'resultado' : 'resultados'} encontrados
+            {ciudadDetectada && ciudadSeleccionada !== 'Todas' && (
+              <span className="ml-2 text-primary text-sm">📍 {ciudadSeleccionada}</span>
+            )}
           </p>
+          {ciudadDetectada && (
+            <button
+              onClick={() => setCiudadSeleccionada('Todas')}
+              className="text-sm text-gray-400 hover:text-white underline"
+            >
+              Ver todas las ciudades
+            </button>
+          )}
         </div>
+
         {loading ? (
           <div className="text-center py-20">
-            <div className="text-4xl mb-4 animate-spin">⏳</div>
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-400">Buscando...</p>
           </div>
-        ) : establecimientos.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {establecimientosVisibles.map((est) => (
-              <EstablecimientoCard key={est.id} establecimiento={est} />
-            ))}
-          </div>
+        ) : establecimientosVisibles.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {establecimientosVisibles.map((est) => (
+                <EstablecimientoCard key={est.id} establecimiento={est} />
+              ))}
+            </div>
+            {visibleCount < establecimientos.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setVisibleCount(v => v + 20)}
+                  className="bg-dark-lighter hover:bg-dark-card border border-gray-700 px-8 py-3 rounded-xl font-medium transition-colors"
+                >
+                  Ver más ({establecimientos.length - visibleCount} restantes)
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold mb-2">No se encontraron resultados</h3>
             <p className="text-gray-400">Intenta con otros términos o filtros</p>
-          </div>
-        )}
-        {/* Botón Ver más */}
-        {establecimientosVisibles.length < establecimientosOrdenados.length && (
-          <div className="text-center mt-8">
-            <button
-              onClick={() => setVisibleCount(v => v + 20)}
-              className="bg-dark-lighter hover:bg-dark-card border border-gray-700 px-8 py-3 rounded-xl font-medium transition-colors"
-            >
-              Ver más ({establecimientosOrdenados.length - establecimientosVisibles.length} restantes)
-            </button>
           </div>
         )}
       </div>
