@@ -299,7 +299,8 @@ router.put('/establecimientos/:id', async (req, res) => {
       imagen_principal, imagen_portada, logo_url,
       horarios, rango_precios,
       activo, verificado, destacado,
-      etiquetas_ids, categorias_especiales_ids, galeria
+      etiquetas_ids, categorias_especiales_ids, galeria,
+      sede_principal_id
     } = req.body;
     
     await client.query(`
@@ -331,8 +332,9 @@ router.put('/establecimientos/:id', async (req, res) => {
         activo = COALESCE($25, activo),
         verificado = COALESCE($26, verificado),
         destacado = COALESCE($27, destacado),
+        sede_principal_id = $28,
         updated_at = NOW()
-      WHERE id = $28
+      WHERE id = $29
     `, [
       nombre, descripcion, descripcion_corta, tipo_id, tipo_comida_id,
       ciudad_id, direccion, direccion_adicional, barrio, latitud, longitud,
@@ -341,6 +343,7 @@ router.put('/establecimientos/:id', async (req, res) => {
       imagen_principal, imagen_portada, logo_url,
       horarios ? JSON.stringify(horarios) : null, rango_precios,
       activo, verificado, destacado,
+      sede_principal_id || null,
       id
     ]);
     
