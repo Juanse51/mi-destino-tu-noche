@@ -20,7 +20,7 @@ function BuscarContent() {
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
   const [tipoSeleccionado, setTipoSeleccionado] = useState(searchParams.get('tipo') || '')
-  const [ciudadSeleccionada, setCiudadSeleccionada] = useState('Todas')
+  const [ciudadSeleccionada, setCiudadSeleccionada] = useState('Bogotá')
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
