@@ -84,7 +84,19 @@ function BuscarContent() {
     <div className="min-h-screen pt-20">
       <div className="bg-dark-lighter border-b border-gray-800 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Selector de ciudad */}
+            <select
+              value={ciudadSeleccionada}
+              onChange={(e) => setCiudadSeleccionada(e.target.value)}
+              className="bg-dark border border-gray-700 rounded-xl px-3 py-3 text-white outline-none text-sm shrink-0 hover:border-gray-500 transition-colors"
+            >
+              <option value="Todas">🌎 Todas</option>
+              {ciudades.filter(c => c !== 'Todas').map((ciudad) => (
+                <option key={ciudad} value={ciudad}>📍 {ciudad}</option>
+              ))}
+            </select>
+            {/* Buscador */}
             <div className="flex-1 flex items-center bg-dark rounded-xl px-4 py-3 border border-gray-700">
               <Search className="w-5 h-5 text-gray-400 mr-3" />
               <input
@@ -92,18 +104,16 @@ function BuscarContent() {
                 placeholder="Buscar por nombre..."
                 className="w-full bg-transparent outline-none text-white placeholder-gray-400"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  if (e.target.value) setCiudadSeleccionada('Todas')
-                }}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
               />
               {searchQuery && (
-                <button onClick={() => { setSearchQuery(''); setCiudadSeleccionada('Bogotá') }}>
+                <button onClick={() => setSearchQuery('')}>
                   <X className="w-4 h-4 text-gray-400" />
                 </button>
               )}
             </div>
+            {/* Filtros */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-colors ${
@@ -137,18 +147,7 @@ function BuscarContent() {
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-400 mb-2 block">Ciudad</label>
-                  <select
-                    value={ciudadSeleccionada}
-                    onChange={(e) => setCiudadSeleccionada(e.target.value)}
-                    className="bg-dark border border-gray-700 rounded-xl px-4 py-2 text-white outline-none"
-                  >
-                    {ciudades.map((ciudad) => (
-                      <option key={ciudad} value={ciudad}>{ciudad}</option>
-                    ))}
-                  </select>
-                </div>
+
               </div>
             </div>
           )}
@@ -163,14 +162,7 @@ function BuscarContent() {
               <span className="ml-2 text-primary text-sm">📍 {ciudadSeleccionada}</span>
             )}
           </p>
-          {ciudadDetectada && (
-            <button
-              onClick={() => setCiudadSeleccionada('Todas')}
-              className="text-sm text-gray-400 hover:text-white underline"
-            >
-              Ver todas las ciudades
-            </button>
-          )}
+
         </div>
 
         {loading ? (
