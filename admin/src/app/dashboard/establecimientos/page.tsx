@@ -62,9 +62,20 @@ export default function EstablecimientosPage() {
   const fetchEstablecimientos = async () => {
     setLoading(true)
     try {
-      const res = await authFetch(`${API_URL}/admin/establecimientos?limite=500`)
-      const data = await res.json()
-      setEstablecimientos(data.establecimientos || data || [])
+      // Traer todos con paginación
+      let todos: any[] = []
+      let pagina = 1
+      let hayMas = true
+      while (hayMas) {
+        const res = await authFetch(`${API_URL}/admin/establecimientos?limite=200&pagina=${pagina}`)
+        const data = await res.json()
+        const items = data.establecimientos || []
+        todos = [...todos, ...items]
+        const total = data.paginacion?.total || 0
+        if (todos.length >= total || items.length === 0) hayMas = false
+        else pagina++
+      }
+      setEstablecimientos(todos)
     } catch (err) { console.error(err) }
     setLoading(false)
   }
@@ -138,7 +149,7 @@ export default function EstablecimientosPage() {
 
   const filteredData = establecimientos.filter(est => {
     const matchSearch = !search || est.nombre?.toLowerCase().includes(search.toLowerCase())
-    const matchTipo = !tipoFilter || est.tipo_nombre === tipoFilter
+    const matchTipo = !tipoFilter || (est.tipo_nombre || '').toLowerCase() === tipoFilter.toLowerCase()
     const matchCiudad = !ciudadFilter || est.ciudad_nombre === ciudadFilter
     const matchEstado = !estadoFilter ||
       (estadoFilter === 'activo' && est.activo) ||
