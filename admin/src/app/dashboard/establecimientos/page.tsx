@@ -311,6 +311,19 @@ export default function EstablecimientosPage() {
                   <td className="py-3 text-gray-300 text-sm">{est.tipo_nombre || '—'}</td>
                   <td className="py-3 text-sm">⭐ {est.valoracion_promedio ? Number(est.valoracion_promedio).toFixed(1) : '0.0'}</td>
                   <td className="py-3">
+                    <button
+                      onClick={() => openEdit(est)}
+                      className={`px-2 py-1 rounded text-xs font-medium transition-colors hover:opacity-80 ${
+                        est.sede_principal_id
+                          ? 'bg-purple-500/20 text-purple-400'
+                          : 'bg-blue-500/20 text-blue-400'
+                      }`}
+                      title="Clic para editar"
+                    >
+                      {est.sede_principal_id ? '🔗 Alterna' : '🏠 Principal'}
+                    </button>
+                  </td>
+                  <td className="py-3">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${est.activo ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                       {est.activo ? 'activo' : 'inactivo'}
                     </span>

@@ -119,9 +119,10 @@ router.get('/establecimientos', async (req, res) => {
     
     const result = await query(`
       SELECT 
-        e.id, e.nombre, e.slug, e.imagen_principal, e.direccion,
+        e.id, e.nombre, e.slug, e.imagen_principal, e.logo_url, e.direccion,
         e.telefono, e.whatsapp, e.activo, e.verificado, e.destacado,
         e.valoracion_promedio, e.total_valoraciones, e.total_visitas,
+        e.sede_principal_id,
         e.created_at, e.updated_at,
         te.nombre as tipo_nombre, te.icono as tipo_icono,
         c.nombre as ciudad_nombre
