@@ -50,6 +50,7 @@ const TIPOS = [
   { id: '372dab86-2540-407e-8549-effaff29a77a', nombre: 'Café' },
   { id: 'a9776e83-dcc2-464c-a579-45edcafe07e0', nombre: 'Discoteca' },
   { id: '4ca2f99b-f5f9-43ea-85db-23325c3840c6', nombre: 'Gastrobar' },
+  { id: '922b9fac-3a1a-47ec-8bf2-f5b37e2d31bc', nombre: 'Otros' },
 ]
 
 const emptyForm = {
