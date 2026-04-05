@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { BarChart2 } from 'lucide-react'
+import { BarChart2, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { 
   LayoutDashboard, Store, Users, Star, Image, MapPin, 
@@ -18,6 +18,7 @@ const menuItems = [
   { href: '/dashboard/ciudades', icon: MapPin, label: 'Ciudades' },
   { href: '/dashboard/categorias', icon: Tags, label: 'Categorías' },
   { href: '/dashboard/estadisticas', icon: BarChart2, label: 'Estadísticas' },
+  { href: '/dashboard/visitas', icon: TrendingUp, label: 'Visitas' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

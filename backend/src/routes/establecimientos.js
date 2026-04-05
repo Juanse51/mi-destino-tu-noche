@@ -594,3 +594,28 @@ router.get('/:slug', tokenOpcional, async (req, res) => {
 });
 
 module.exports = router;
+
+// Registrar click en botón de contacto
+router.post('/:slug/click', async (req, res) => {
+  try {
+    const { slug } = req.params
+    const { tipo_click } = req.body
+
+    if (!['whatsapp', 'llamar', 'instagram', 'como_llegar', 'sitio_web'].includes(tipo_click)) {
+      return res.status(400).json({ error: 'Tipo de click inválido' })
+    }
+
+    const est = await query('SELECT id FROM establecimientos WHERE slug = $1', [slug])
+    if (est.rows.length === 0) return res.status(404).json({ error: 'No encontrado' })
+
+    await query(
+      'INSERT INTO establecimiento_clicks (establecimiento_id, tipo_click) VALUES ($1, $2)',
+      [est.rows[0].id, tipo_click]
+    )
+
+    res.json({ ok: true })
+  } catch (error) {
+    console.error('Error registrando click:', error)
+    res.status(500).json({ error: 'Error al registrar click' })
+  }
+})

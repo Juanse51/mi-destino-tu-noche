@@ -899,3 +899,44 @@ router.get('/estadisticas', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener estadísticas' })
   }
 })
+
+// Stats de visitas y clicks por establecimiento
+router.get('/visitas', async (req, res) => {
+  try {
+    const { limite = 50, pagina = 1 } = req.query
+    const offset = (parseInt(pagina) - 1) * parseInt(limite)
+
+    const result = await query(`
+      SELECT 
+        e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+        c.nombre as ciudad_nombre,
+        te.nombre as tipo_nombre, te.icono as tipo_icono,
+        e.total_visitas,
+        COUNT(ec.id) FILTER (WHERE ec.tipo_click = 'whatsapp') as clicks_whatsapp,
+        COUNT(ec.id) FILTER (WHERE ec.tipo_click = 'llamar') as clicks_llamar,
+        COUNT(ec.id) FILTER (WHERE ec.tipo_click = 'instagram') as clicks_instagram,
+        COUNT(ec.id) FILTER (WHERE ec.tipo_click = 'como_llegar') as clicks_como_llegar,
+        COUNT(ec.id) FILTER (WHERE ec.tipo_click = 'sitio_web') as clicks_sitio_web,
+        COUNT(ec.id) as total_clicks
+      FROM establecimientos e
+      LEFT JOIN ciudades c ON c.id = e.ciudad_id
+      LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
+      LEFT JOIN establecimiento_clicks ec ON ec.establecimiento_id = e.id
+      WHERE e.activo = true
+      GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+               c.nombre, te.nombre, te.icono
+      ORDER BY e.total_visitas DESC
+      LIMIT $1 OFFSET $2
+    `, [parseInt(limite), offset])
+
+    const total = await query('SELECT COUNT(*) FROM establecimientos WHERE activo = true')
+
+    res.json({
+      establecimientos: result.rows,
+      total: parseInt(total.rows[0].count)
+    })
+  } catch (error) {
+    console.error('Error:', error)
+    res.status(500).json({ error: 'Error al obtener visitas' })
+  }
+})

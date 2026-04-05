@@ -106,6 +106,14 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
 
   const whatsappMsg = encodeURIComponent('Hola, te hablo desde Mi Destino Tu Noche, quisiera hacer una reserva.')
 
+  const trackClick = (tipo: string) => {
+    fetch(`${API_URL}/establecimientos/${est.slug}/click`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tipo_click: tipo })
+    }).catch(() => {})
+  }
+
   return (
     <div className="min-h-screen pt-16">
       {/* Header con logo centrado */}
@@ -265,6 +273,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
             {est.telefono && (
               <a 
                 href={`tel:${est.telefono}`}
+                onClick={() => trackClick('llamar')}
                 className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark py-3 rounded-xl font-medium transition-colors"
               >
                 <Phone className="w-5 h-5" />
@@ -275,6 +284,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
               <a 
                 href={`https://wa.me/${est.whatsapp}?text=${whatsappMsg}`}
                 target="_blank"
+                onClick={() => trackClick('whatsapp')}
                 className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 py-3 rounded-xl font-medium transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -293,6 +303,7 @@ export default function EstablecimientoPage({ params }: { params: { slug: string
               <a 
                 href={`https://instagram.com/${est.instagram.replace('@','')}`}
                 target="_blank"
+                onClick={() => trackClick('instagram')}
                 className="flex items-center justify-center gap-2 bg-pink-600 hover:bg-pink-700 py-3 rounded-xl font-medium transition-colors"
               >
                 <Instagram className="w-5 h-5" />

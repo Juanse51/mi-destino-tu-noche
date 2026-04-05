@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Loader2, TrendingUp, Users, Star, Eye, Building2, MapPin } from 'lucide-react'
+import { Loader2, TrendingUp, Users, Star, Eye, Building2, MapPin, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 import { authFetch } from '@/lib/auth'
 
 const API_URL = 'https://mi-destino-api.onrender.com/api/v1'
@@ -84,10 +85,15 @@ export default function EstadisticasPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top 10 por visitas */}
         <div className="card">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Top 10 más visitados
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Top 10 más visitados
+            </h2>
+            <Link href="/dashboard/visitas" className="text-primary text-sm flex items-center gap-1 hover:underline">
+              Ver todos <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
           <div className="space-y-3">
             {(data?.top_visitas || []).map((est: any, i: number) => (
               <div key={est.slug} className="flex items-center gap-3">
