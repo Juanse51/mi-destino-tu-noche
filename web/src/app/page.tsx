@@ -107,12 +107,22 @@ export default function HomePage() {
       .then(data => { if (Array.isArray(data)) setCiudades(data) })
       .catch(() => {})
 
-    Promise.all([
-      fetch(`${API_URL}/establecimientos/bogota-beer-company`).then(r=>r.json()),
-      fetch(`${API_URL}/establecimientos/la-plaza-de-andres-el-retiro`).then(r=>r.json()),
-      fetch(`${API_URL}/establecimientos/storia-d-amore-cali`).then(r=>r.json()),
-      fetch(`${API_URL}/establecimientos/full-80s-cll-118`).then(r=>r.json()),
-    ]).then(results => setCadenas(results.filter(r => r && r.id))).catch(() => {})
+    // Cargar cadenas dinámicamente: establecimientos con más sedes
+    fetch(`${API_URL}/establecimientos/cadenas?limite=6`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) setCadenas(data)
+        else if (data?.cadenas) setCadenas(data.cadenas)
+      })
+      .catch(() => {
+        // Fallback a hardcodeados
+        Promise.all([
+          fetch(`${API_URL}/establecimientos/bogota-beer-company`).then(r=>r.json()),
+          fetch(`${API_URL}/establecimientos/la-plaza-de-andres-el-retiro`).then(r=>r.json()),
+          fetch(`${API_URL}/establecimientos/storia-d-amore-cali`).then(r=>r.json()),
+          fetch(`${API_URL}/establecimientos/full-80s-cll-118`).then(r=>r.json()),
+        ]).then(results => setCadenas(results.filter(r => r && r.id))).catch(() => {})
+      })
 
     fetch(`${API_URL}/establecimientos?limite=300`)
       .then(r => r.json())
