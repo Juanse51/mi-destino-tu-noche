@@ -409,7 +409,7 @@ router.get('/cadenas', async (req, res) => {
   try {
     const { limite = 6 } = req.query
     const result = await query(`
-      SELECT 
+      SELECT DISTINCT ON (LOWER(e.nombre))
         e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
         c.nombre as ciudad_nombre,
         te.nombre as tipo_nombre, te.icono as tipo_icono, te.color as tipo_color,
@@ -422,7 +422,7 @@ router.get('/cadenas', async (req, res) => {
       GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
                c.nombre, te.nombre, te.icono, te.color
       HAVING COUNT(s.id) > 0
-      ORDER BY COUNT(s.id) DESC
+      ORDER BY LOWER(e.nombre), COUNT(s.id) DESC
       LIMIT $1
     `, [parseInt(limite)])
 

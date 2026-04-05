@@ -108,7 +108,7 @@ export default function HomePage() {
       .catch(() => {})
 
     // Cargar cadenas dinámicamente: establecimientos con más sedes
-    fetch(`${API_URL}/establecimientos/cadenas?limite=6`)
+    fetch(`${API_URL}/establecimientos/cadenas?limite=4`)
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) setCadenas(data)
