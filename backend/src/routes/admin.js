@@ -838,7 +838,6 @@ router.get('/estadisticas', async (req, res) => {
       WHERE c.activo = true
       GROUP BY c.id, c.nombre
       ORDER BY total_visitas DESC
-      LIMIT 10
     `)
 
     // Visitas por tipo
