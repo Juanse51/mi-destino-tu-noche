@@ -409,20 +409,23 @@ router.get('/cadenas', async (req, res) => {
   try {
     const { limite = 6 } = req.query
     const result = await query(`
-      SELECT DISTINCT ON (LOWER(e.nombre))
-        e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
-        c.nombre as ciudad_nombre,
-        te.nombre as tipo_nombre, te.icono as tipo_icono, te.color as tipo_color,
-        COUNT(s.id) as total_sedes
-      FROM establecimientos e
-      LEFT JOIN ciudades c ON c.id = e.ciudad_id
-      LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
-      LEFT JOIN establecimientos s ON s.sede_principal_id = e.id AND s.activo = true
-      WHERE e.activo = true AND e.sede_principal_id IS NULL
-      GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
-               c.nombre, te.nombre, te.icono, te.color
-      HAVING COUNT(s.id) > 0
-      ORDER BY LOWER(e.nombre), COUNT(s.id) DESC
+      SELECT * FROM (
+        SELECT DISTINCT ON (LOWER(e.nombre))
+          e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+          c.nombre as ciudad_nombre,
+          te.nombre as tipo_nombre, te.icono as tipo_icono, te.color as tipo_color,
+          COUNT(s.id) as total_sedes
+        FROM establecimientos e
+        LEFT JOIN ciudades c ON c.id = e.ciudad_id
+        LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
+        LEFT JOIN establecimientos s ON s.sede_principal_id = e.id AND s.activo = true
+        WHERE e.activo = true AND e.sede_principal_id IS NULL
+        GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+                 c.nombre, te.nombre, te.icono, te.color
+        HAVING COUNT(s.id) > 0
+        ORDER BY LOWER(e.nombre), COUNT(s.id) DESC
+      ) sub
+      ORDER BY total_sedes DESC
       LIMIT $1
     `, [parseInt(limite)])
 
