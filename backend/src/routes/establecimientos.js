@@ -403,6 +403,40 @@ router.get('/categoria/:slug', tokenOpcional, async (req, res) => {
 // =====================================================
 // OBTENER DETALLE POR SLUG
 // =====================================================
+
+// Cadenas: establecimientos con más sedes alternas
+router.get('/cadenas', async (req, res) => {
+  try {
+    const { limite = 6 } = req.query
+    const result = await query(`
+      SELECT 
+        e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+        c.nombre as ciudad_nombre,
+        te.nombre as tipo_nombre, te.icono as tipo_icono, te.color as tipo_color,
+        COUNT(s.id) as total_sedes
+      FROM establecimientos e
+      LEFT JOIN ciudades c ON c.id = e.ciudad_id
+      LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
+      LEFT JOIN establecimientos s ON s.sede_principal_id = e.id AND s.activo = true
+      WHERE e.activo = true AND e.sede_principal_id IS NULL
+      GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
+               c.nombre, te.nombre, te.icono, te.color
+      HAVING COUNT(s.id) > 0
+      ORDER BY COUNT(s.id) DESC
+      LIMIT $1
+    `, [parseInt(limite)])
+
+    res.json(result.rows.map(r => ({
+      ...r,
+      sedes: Array(parseInt(r.total_sedes)).fill({}),
+      total_sedes: parseInt(r.total_sedes)
+    })))
+  } catch (error) {
+    console.error('Error cadenas:', error)
+    res.status(500).json({ error: 'Error al obtener cadenas' })
+  }
+})
+
 router.get('/:slug', tokenOpcional, async (req, res) => {
   try {
     const { slug } = req.params;
@@ -620,35 +654,3 @@ router.post('/:slug/click', async (req, res) => {
   }
 })
 
-// Cadenas: establecimientos con más sedes alternas
-router.get('/cadenas', async (req, res) => {
-  try {
-    const { limite = 6 } = req.query
-    const result = await query(`
-      SELECT 
-        e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
-        c.nombre as ciudad_nombre,
-        te.nombre as tipo_nombre, te.icono as tipo_icono, te.color as tipo_color,
-        COUNT(s.id) as total_sedes
-      FROM establecimientos e
-      LEFT JOIN ciudades c ON c.id = e.ciudad_id
-      LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
-      LEFT JOIN establecimientos s ON s.sede_principal_id = e.id AND s.activo = true
-      WHERE e.activo = true AND e.sede_principal_id IS NULL
-      GROUP BY e.id, e.nombre, e.slug, e.logo_url, e.imagen_principal,
-               c.nombre, te.nombre, te.icono, te.color
-      HAVING COUNT(s.id) > 0
-      ORDER BY COUNT(s.id) DESC
-      LIMIT $1
-    `, [parseInt(limite)])
-
-    res.json(result.rows.map(r => ({
-      ...r,
-      sedes: Array(parseInt(r.total_sedes)).fill({}),
-      total_sedes: parseInt(r.total_sedes)
-    })))
-  } catch (error) {
-    console.error('Error cadenas:', error)
-    res.status(500).json({ error: 'Error al obtener cadenas' })
-  }
-})
