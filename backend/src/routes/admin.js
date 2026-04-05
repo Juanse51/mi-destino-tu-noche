@@ -809,3 +809,94 @@ router.post('/notificaciones/enviar', async (req, res) => {
 });
 
 module.exports = router;
+
+// Estadísticas completas
+router.get('/estadisticas', async (req, res) => {
+  try {
+    // Top establecimientos por visitas
+    const topVisitas = await query(`
+      SELECT e.nombre, e.slug, e.total_visitas, e.logo_url, e.imagen_principal,
+        c.nombre as ciudad_nombre, te.nombre as tipo_nombre, te.icono as tipo_icono
+      FROM establecimientos e
+      LEFT JOIN ciudades c ON c.id = e.ciudad_id
+      LEFT JOIN tipos_establecimiento te ON te.id = e.tipo_id
+      WHERE e.activo = true
+      ORDER BY e.total_visitas DESC
+      LIMIT 10
+    `)
+
+    // Total visitas plataforma
+    const totalVisitas = await query(`
+      SELECT SUM(total_visitas) as total FROM establecimientos WHERE activo = true
+    `)
+
+    // Visitas por ciudad
+    const visitasCiudad = await query(`
+      SELECT c.nombre, SUM(e.total_visitas) as total_visitas, COUNT(e.id) as establecimientos
+      FROM ciudades c
+      LEFT JOIN establecimientos e ON e.ciudad_id = c.id AND e.activo = true
+      WHERE c.activo = true
+      GROUP BY c.id, c.nombre
+      ORDER BY total_visitas DESC
+      LIMIT 10
+    `)
+
+    // Visitas por tipo
+    const visitasTipo = await query(`
+      SELECT te.nombre, te.icono, te.color, SUM(e.total_visitas) as total_visitas, COUNT(e.id) as establecimientos
+      FROM tipos_establecimiento te
+      LEFT JOIN establecimientos e ON e.tipo_id = te.id AND e.activo = true
+      WHERE te.activo = true
+      GROUP BY te.id, te.nombre, te.icono, te.color
+      ORDER BY total_visitas DESC
+    `)
+
+    // Usuarios por mes (últimos 6 meses)
+    const usuariosPorMes = await query(`
+      SELECT TO_CHAR(created_at, 'Mon YYYY') as mes,
+             DATE_TRUNC('month', created_at) as fecha,
+             COUNT(*) as total
+      FROM usuarios
+      WHERE created_at > NOW() - INTERVAL '6 months'
+      GROUP BY mes, fecha
+      ORDER BY fecha ASC
+    `)
+
+    // Valoraciones por mes
+    const valoracionesPorMes = await query(`
+      SELECT TO_CHAR(created_at, 'Mon YYYY') as mes,
+             DATE_TRUNC('month', created_at) as fecha,
+             COUNT(*) as total
+      FROM valoraciones
+      WHERE created_at > NOW() - INTERVAL '6 months'
+      GROUP BY mes, fecha
+      ORDER BY fecha ASC
+    `)
+
+    // Establecimientos verificados vs no verificados
+    const verificados = await query(`
+      SELECT 
+        COUNT(*) FILTER (WHERE verificado = true) as verificados,
+        COUNT(*) FILTER (WHERE verificado = false) as no_verificados,
+        COUNT(*) FILTER (WHERE activo = true) as activos,
+        COUNT(*) FILTER (WHERE activo = false) as inactivos,
+        COUNT(*) FILTER (WHERE destacado = true) as destacados,
+        COUNT(*) FILTER (WHERE sede_principal_id IS NOT NULL) as sedes_alternas,
+        COUNT(*) FILTER (WHERE sede_principal_id IS NULL) as sedes_principales
+      FROM establecimientos
+    `)
+
+    res.json({
+      top_visitas: topVisitas.rows,
+      total_visitas: totalVisitas.rows[0].total || 0,
+      visitas_ciudad: visitasCiudad.rows,
+      visitas_tipo: visitasTipo.rows,
+      usuarios_por_mes: usuariosPorMes.rows,
+      valoraciones_por_mes: valoracionesPorMes.rows,
+      resumen: verificados.rows[0],
+    })
+  } catch (error) {
+    console.error('Error estadísticas:', error)
+    res.status(500).json({ error: 'Error al obtener estadísticas' })
+  }
+})
