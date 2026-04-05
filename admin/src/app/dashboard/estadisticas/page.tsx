@@ -36,7 +36,7 @@ export default function EstadisticasPage() {
 
   const stats = dashboard?.estadisticas || {}
   const resumen = data?.resumen || {}
-  const totalVisitas = parseInt(data?.total_visitas || 0)
+  const totalVisitas = parseInt(String(data?.total_visitas || '0'))
 
   return (
     <div className="space-y-6">
@@ -48,10 +48,10 @@ export default function EstadisticasPage() {
       {/* KPIs principales */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total visitas', value: parseInt(totalVisitas).toLocaleString(), icon: Eye, color: 'bg-blue-500', sub: 'en todos los establecimientos' },
-          { label: 'Establecimientos', value: parseInt(stats.total_establecimientos || 0).toLocaleString(), icon: Building2, color: 'bg-orange-500', sub: `${resumen.activos} activos` },
-          { label: 'Usuarios', value: parseInt(stats.total_usuarios || 0).toLocaleString(), icon: Users, color: 'bg-green-500', sub: `+${stats.usuarios_nuevos} este mes` },
-          { label: 'Valoraciones', value: parseInt(stats.total_valoraciones || 0).toLocaleString(), icon: Star, color: 'bg-yellow-500', sub: `Promedio ⭐ ${parseFloat(stats.valoracion_promedio || 0).toFixed(1)}` },
+          { label: 'Total visitas', value: totalVisitas.toLocaleString(), icon: Eye, color: 'bg-blue-500', sub: 'en todos los establecimientos' },
+          { label: 'Establecimientos', value: parseInt(String(stats.total_establecimientos || 0)).toLocaleString(), icon: Building2, color: 'bg-orange-500', sub: `${resumen.activos} activos` },
+          { label: 'Usuarios', value: parseInt(String(stats.total_usuarios || 0)).toLocaleString(), icon: Users, color: 'bg-green-500', sub: `+${stats.usuarios_nuevos} este mes` },
+          { label: 'Valoraciones', value: parseInt(String(stats.total_valoraciones || 0)).toLocaleString(), icon: Star, color: 'bg-yellow-500', sub: `Promedio ⭐ ${parseFloat(stats.valoracion_promedio || 0).toFixed(1)}` },
         ].map((kpi) => (
           <div key={kpi.label} className="card flex items-center gap-4">
             <div className={`p-3 rounded-lg ${kpi.color} flex-shrink-0`}>
