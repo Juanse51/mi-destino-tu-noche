@@ -170,6 +170,7 @@ router.get('/', tokenOpcional, async (req, res) => {
         e.slug,
         e.descripcion_corta,
         e.imagen_principal,
+        e.logo_url,
         e.direccion,
         e.barrio,
         e.rango_precios,
