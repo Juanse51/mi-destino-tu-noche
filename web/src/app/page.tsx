@@ -373,7 +373,7 @@ export default function HomePage() {
               <p className="text-xl text-white/90 mb-4 max-w-2xl mx-auto">
                 Nosotros tenemos el DJ. Conoce los mejores DJs de Colombia.
               </p>
-              <Link href="/djs" className="inline-flex items-center gap-2 px-8 py-3 bg-white/20 hover:bg-white/30 text-white rounded-full font-semibold transition-colors mt-4">Conoce nuestros DJs →</Link>
+              <a href="https://www.clusterdj.co/bolsa" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3 bg-white/20 hover:bg-white/30 text-white rounded-full font-semibold transition-colors mt-4">Conoce nuestros DJs →</a>
             </div>
           </div>
         </div>
