@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, MapPin, Star, ChevronRight, Utensils, Wine, Coffee, Music, Tent, PartyPopper, Sparkles, Users, Calendar } from 'lucide-react'
+import { Search, ChevronRight, Users, Calendar } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
@@ -16,15 +16,6 @@ const categoriasEspeciales = [
   { nombre: "Transporte", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
   { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35, logo: "/camara_diversidad.png" },
   // { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
-]
-const tipos = [
-  { nombre: 'Restaurantes', icono: Utensils, color: '#FF6B35', slug: 'restaurante' },
-  { nombre: 'Bares', icono: Wine, color: '#9B59B6', slug: 'bar' },
-  { nombre: 'Cafés', icono: Coffee, color: '#8B4513', slug: 'cafe' },
-  { nombre: 'Discotecas', icono: Music, color: '#E91E63', slug: 'discoteca' },
-  { nombre: 'Parques de diversiones', icono: Tent, color: '#4CAF50', slug: 'parque-diversiones', href: '/parques' },
-  { nombre: 'Conciertos y festivales', icono: PartyPopper, color: '#FF9800', slug: 'conciertos-festivales', href: '/calendario' },
-  { nombre: 'Otros planes', icono: Sparkles, color: '#00BCD4', slug: 'otros-planes', href: '/otros-planes' },
 ]
 
 export default function HomePage() {
@@ -205,20 +196,6 @@ export default function HomePage() {
                 Buscar
               </Link>
             </div>
-          </div>
-
-          {/* Quick Types */}
-          <div className="flex justify-center gap-3 mt-8 flex-wrap">
-            {tipos.map((tipo) => (
-              <Link
-                key={tipo.slug}
-                href={tipo.href || `/buscar?tipo=${tipo.slug}`}
-                className="flex items-center gap-2 px-4 py-2 bg-dark-lighter/80 backdrop-blur rounded-full hover:bg-dark-card transition-colors border border-gray-700/50"
-              >
-                <tipo.icono className="w-4 h-4" style={{ color: tipo.color }} />
-                <span className="text-sm font-medium">{tipo.nombre}</span>
-              </Link>
-            ))}
           </div>
 
           {/* Botón grupo grande */}

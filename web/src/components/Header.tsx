@@ -43,17 +43,23 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/buscar?tipo=restaurante" className="text-gray-300 hover:text-white transition-colors">
-              Restaurantes
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/buscar?tipo=bar" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+              Bares y Cervecerías
             </Link>
-            <Link href="/buscar?tipo=bar" className="text-gray-300 hover:text-white transition-colors">
-              Bares
+            <Link href="/buscar?tipo=restaurante" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+              Gastrobares y Restaurantes
             </Link>
-            <Link href="/ciudades" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/buscar?tipo=discoteca" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+              Discotecas
+            </Link>
+            <Link href="/otros-planes" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+              Otros planes
+            </Link>
+            <Link href="/ciudades" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
               Ciudades
             </Link>
-            <Link href="/que-es-mdtn" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/que-es-mdtn" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
               ¿Qué es MDTN?
             </Link>
           </nav>
@@ -130,20 +136,26 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden bg-dark-lighter border-t border-gray-800">
           <nav className="flex flex-col p-4 gap-2">
-            <Link href="/buscar?tipo=restaurante" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              🍽️ Restaurantes
+            <Link href="/buscar?tipo=bar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Bares y Cervecerías
             </Link>
-            <Link href="/buscar?tipo=bar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              🍺 Bares
+            <Link href="/buscar?tipo=restaurante" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Gastrobares y Restaurantes
             </Link>
-            <Link href="/ciudades" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              🏙️ Ciudades
+            <Link href="/buscar?tipo=discoteca" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Discotecas
             </Link>
-            <Link href="/que-es-mdtn" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              ❓ ¿Qué es MDTN?
+            <Link href="/otros-planes" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Otros planes
             </Link>
-            <Link href="/favoritos" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-              ❤️ Favoritos
+            <Link href="/ciudades" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Ciudades
+            </Link>
+            <Link href="/que-es-mdtn" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              ¿Qué es MDTN?
+            </Link>
+            <Link href="/favoritos" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+              Favoritos
             </Link>
             <hr className="border-gray-700 my-2" />
             {session ? (
