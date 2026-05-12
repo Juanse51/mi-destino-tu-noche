@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, ChevronRight, Users, Calendar } from 'lucide-react'
+import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
@@ -32,11 +32,10 @@ const CIUDAD_IMAGENES: Record<string, string> = {
 }
 
 const categoriasEspeciales = [
-  { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
-  { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
-  { nombre: "Transporte", slug: "transportes", href: "/transportes", icono: "🚌", color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
-  { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", icono: "🏳️‍🌈", color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35, logo: "/camara_diversidad.png" },
-  // { nombre: "Parques de Diversiones", slug: "parques-de-diversiones", href: "/parques", icono: "🎢", color: "#4CAF50", descripcion: "Diversión garantizada", total: 9 },
+  { nombre: "Círculo Gastro", slug: "circulo-gastro", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
+  { nombre: "Tardeo", slug: "tardeo", IconoComponente: Sunset, color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
+  { nombre: "Transporte", slug: "transportes", href: "/transportes", IconoComponente: Bus, color: "#3F51B5", descripcion: "Movilízate fácil", total: -1 },
+  { nombre: "Cámara de la Diversidad", slug: "camara-diversidad", href: "/diversidad", IconoComponente: Heart, color: "#FF69B4", descripcion: "Espacios inclusivos LGBTIQ+", total: 35, logo: "/camara_diversidad.png" },
 ]
 
 export default function HomePage() {
