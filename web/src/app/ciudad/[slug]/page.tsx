@@ -7,6 +7,27 @@ import EstablecimientoCard from '@/components/EstablecimientoCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
+const CIUDAD_IMAGENES: Record<string, string> = {
+  'armenia':       '/ciudades/armenia.jpg',
+  'barranquilla':  '/ciudades/barranquilla.jpg',
+  'bogota':        '/ciudades/bogota.jpg',
+  'bucaramanga':   '/ciudades/bucaramanga.jpg',
+  'cali':          '/ciudades/cali.jpg',
+  'cartagena':     '/ciudades/cartagena.jpg',
+  'cucuta':        '/ciudades/cucuta.jpg',
+  'manizales':     '/ciudades/manizales.webp',
+  'medellin':      '/ciudades/medellin.webp',
+  'monteria':      '/ciudades/monteria.webp',
+  'neiva':         '/ciudades/neiva.jpg',
+  'pasto':         '/ciudades/pasto.jpg',
+  'pereira':       '/ciudades/pereira.webp',
+  'santa-marta':   '/ciudades/santa-marta.jpg',
+  'sumapaz':       '/ciudades/sumapaz.avif',
+  'valledupar':    '/ciudades/valledupar.jpg',
+  'villavicencio': '/ciudades/villavicencio.jpg',
+  'zipaquira':     '/ciudades/zipaquira.jpg',
+}
+
 const TIPO_CONFIG: Record<string, { icono: string; color: string }> = {
   'Restaurante': { icono: '🍽️', color: '#FF6B35' },
   'Bar': { icono: '🍺', color: '#3B82F6' },
@@ -154,7 +175,7 @@ export default function CiudadPage({ params }: { params: { slug: string } }) {
     )
   }
 
-  const ciudadImagen = ciudad.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=1920'
+  const ciudadImagen = CIUDAD_IMAGENES[ciudad.slug] || ciudad.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=1920'
 
   return (
     <div className="min-h-screen pt-16">
