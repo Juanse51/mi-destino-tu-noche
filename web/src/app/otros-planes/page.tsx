@@ -7,16 +7,25 @@ import EstablecimientoCard from '@/components/EstablecimientoCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
+const CIUDADES = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira', 'Santa Marta', 'Barranquilla', 'Bucaramanga', 'Manizales', 'Pasto', 'Villavicencio', 'Neiva', 'Montería', 'Valledupar', 'Cúcuta', 'Zipaquirá']
+
 export default function OtrosPlanesPage() {
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [ciudad, setCiudad] = useState('Todas')
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`${API_URL}/establecimientos?tipos=otros-planes,cafe&limite=500`)
+        const params = new URLSearchParams()
+        params.append('tipos', 'otros-planes,cafe')
+        params.append('limite', '500')
+        if (ciudad !== 'Todas') {
+          params.append('ciudad', ciudad.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''))
+        }
+        const res = await fetch(`${API_URL}/establecimientos?${params.toString()}`)
         if (res.ok) {
           const data = await res.json()
           setEstablecimientos(data.establecimientos || [])
@@ -25,7 +34,7 @@ export default function OtrosPlanesPage() {
       setLoading(false)
     }
     fetchData()
-  }, [])
+  }, [ciudad])
 
   const norm = (s: string) => s?.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') || ''
 
@@ -53,20 +62,33 @@ export default function OtrosPlanesPage() {
           <p className="text-xl text-white/70 max-w-2xl mx-auto">
             Cafés, cines y más opciones de entretenimiento en Colombia.
           </p>
-          <div className="max-w-lg mx-auto mt-8">
-            <div className="flex items-center bg-white/10 backdrop-blur rounded-xl p-2 border border-gray-700/50">
-              <Search className="w-5 h-5 text-gray-400 mx-3" />
-              <input
-                type="text"
-                placeholder="Buscar por nombre o ciudad..."
-                className="w-full bg-transparent outline-none text-white placeholder-gray-400 py-2"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
         </div>
       </section>
+
+      {/* Filtros */}
+      <div className="sticky top-16 z-40 bg-dark-lighter border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
+          <select
+            value={ciudad}
+            onChange={(e) => setCiudad(e.target.value)}
+            className="bg-dark border border-gray-700 rounded-xl px-3 py-3 text-white outline-none text-sm shrink-0 hover:border-gray-500 transition-colors"
+          >
+            {CIUDADES.map((c) => (
+              <option key={c} value={c}>{c === 'Todas' ? '🌎 Todas las ciudades' : `📍 ${c}`}</option>
+            ))}
+          </select>
+          <div className="flex-1 flex items-center bg-dark rounded-xl px-4 py-3 border border-gray-700">
+            <Search className="w-5 h-5 text-gray-400 mr-3 shrink-0" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              className="w-full bg-transparent outline-none text-white placeholder-gray-400"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Resultados */}
       <section className="py-16 px-4">
