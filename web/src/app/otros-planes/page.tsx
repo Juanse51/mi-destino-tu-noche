@@ -20,7 +20,7 @@ export default function OtrosPlanesPage() {
       setLoading(true)
       try {
         const params = new URLSearchParams()
-        params.append('tipos', 'otros-planes,cafe')
+        params.append('tipos', 'otros-planes,otros,cafe')
         params.append('limite', '500')
         if (ciudad !== 'Todas') {
           params.append('ciudad', ciudad.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''))
