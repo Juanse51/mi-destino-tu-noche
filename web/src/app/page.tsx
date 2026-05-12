@@ -293,24 +293,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categorías Especiales */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-3xl font-bold">Experiencias</h2>
-              <p className="text-gray-400 mt-2">Encuentra exactamente lo que buscas</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categoriasEspeciales.map((cat) => (
-              <CategoriaCard key={cat.slug} categoria={cat} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Banner Ruta Colombia Artesanal */}
       <section className="py-6 px-4">
         <div className="max-w-7xl mx-auto">
@@ -350,6 +332,24 @@ export default function HomePage() {
               </div>
             </div>
           </Link>
+        </div>
+      </section>
+
+      {/* Categorías Especiales */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-bold">Experiencias</h2>
+              <p className="text-gray-400 mt-2">Encuentra exactamente lo que buscas</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categoriasEspeciales.map((cat) => (
+              <CategoriaCard key={cat.slug} categoria={cat} />
+            ))}
+          </div>
         </div>
       </section>
 
