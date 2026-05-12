@@ -21,6 +21,7 @@ function BuscarContent() {
   const initialQuery = searchParams.get('q') || ''
   const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [tipoSeleccionado, setTipoSeleccionado] = useState(searchParams.get('tipo') || '')
+  const tiposParam = searchParams.get('tipos') || ''
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState(searchParams.get('q') ? 'Todas' : 'Bogotá')
   const [showFilters, setShowFilters] = useState(false)
   const [establecimientos, setEstablecimientos] = useState<any[]>([])
@@ -51,7 +52,8 @@ function BuscarContent() {
       try {
         const params = new URLSearchParams()
         if (searchQuery) params.append('buscar', searchQuery)
-        if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
+        if (tiposParam) params.append('tipos', tiposParam)
+        else if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
         if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') {
           params.append('ciudad', ciudadSeleccionada.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
@@ -69,7 +71,7 @@ function BuscarContent() {
       setLoading(false)
     }
     fetchEstablecimientos()
-  }, [searchQuery, tipoSeleccionado, ciudadSeleccionada])
+  }, [searchQuery, tipoSeleccionado, tiposParam, ciudadSeleccionada])
 
   const norm = (s: string) => s?.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') || ''
 

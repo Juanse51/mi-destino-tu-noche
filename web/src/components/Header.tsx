@@ -47,7 +47,7 @@ export default function Header() {
             <Link href="/buscar?tipo=bar" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Bares y Cervecerías
             </Link>
-            <Link href="/buscar?tipo=restaurante" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
+            <Link href="/buscar?tipos=restaurante,gastrobar" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Gastrobares y Restaurantes
             </Link>
             <Link href="/buscar?tipo=discoteca" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
@@ -139,7 +139,7 @@ export default function Header() {
             <Link href="/buscar?tipo=bar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
               Bares y Cervecerías
             </Link>
-            <Link href="/buscar?tipo=restaurante" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/buscar?tipos=restaurante,gastrobar" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>
               Gastrobares y Restaurantes
             </Link>
             <Link href="/buscar?tipo=discoteca" className="px-4 py-3 hover:bg-dark rounded-lg transition-colors text-white" onClick={() => setIsMenuOpen(false)}>

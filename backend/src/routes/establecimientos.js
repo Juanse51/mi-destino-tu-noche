@@ -50,7 +50,13 @@ router.get('/', tokenOpcional, async (req, res) => {
       paramIndex++;
     }
     
-    if (tipo) {
+    const { tipos } = req.query;
+    if (tipos) {
+      const tiposArray = tipos.split(',').map(t => t.trim()).filter(Boolean);
+      whereClause += ` AND te.slug = ANY($${paramIndex})`;
+      params.push(tiposArray);
+      paramIndex++;
+    } else if (tipo) {
       whereClause += ` AND te.slug = $${paramIndex}`;
       params.push(tipo);
       paramIndex++;
