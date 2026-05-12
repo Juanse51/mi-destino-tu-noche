@@ -7,6 +7,27 @@ import CiudadCard from '@/components/CiudadCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
+const CIUDAD_IMAGENES: Record<string, string> = {
+  'armenia':       '/ciudades/armenia.jpg',
+  'barranquilla':  '/ciudades/barranquilla.jpg',
+  'bogota':        '/ciudades/bogota.jpg',
+  'bucaramanga':   '/ciudades/bucaramanga.jpg',
+  'cali':          '/ciudades/cali.jpg',
+  'cartagena':     '/ciudades/cartagena.jpg',
+  'cucuta':        '/ciudades/cucuta.jpg',
+  'manizales':     '/ciudades/manizales.webp',
+  'medellin':      '/ciudades/medellin.webp',
+  'monteria':      '/ciudades/monteria.webp',
+  'neiva':         '/ciudades/neiva.jpg',
+  'pasto':         '/ciudades/pasto.jpg',
+  'pereira':       '/ciudades/pereira.webp',
+  'santa-marta':   '/ciudades/santa-marta.jpg',
+  'sumapaz':       '/ciudades/sumapaz.avif',
+  'valledupar':    '/ciudades/valledupar.jpg',
+  'villavicencio': '/ciudades/villavicencio.jpg',
+  'zipaquira':     '/ciudades/zipaquira.jpg',
+}
+
 export default function CiudadesPage() {
   const [ciudades, setCiudades] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -20,7 +41,7 @@ export default function CiudadesPage() {
           const data = await res.json()
           const ciudadesData = (data || []).map((c: any) => ({
             ...c,
-            imagen: c.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400',
+            imagen: CIUDAD_IMAGENES[c.slug] || c.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400',
             total: c.total_establecimientos || 0
           }))
           setCiudades(ciudadesData)
