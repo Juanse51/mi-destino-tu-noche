@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import NextAuthProvider from '@/components/SessionProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700', '800'] })
 
 export const metadata: Metadata = {
   title: 'Mi Destino Tu Noche | Restaurantes y Bares en Colombia',
@@ -35,7 +35,7 @@ export default function RootLayout({
           gtag('config', 'G-CFMWVBRDEF');
         `}
       </Script>
-      <body className={`${inter.className} bg-dark text-white min-h-screen`}>
+      <body className={`${poppins.className} bg-dark text-white min-h-screen`}>
         <NextAuthProvider>
           <Header />
           <main className="min-h-screen">

@@ -43,23 +43,23 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/buscar?tipo=bar" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+          <nav className="hidden md:flex items-center gap-6 font-medium">
+            <Link href="/buscar?tipo=bar" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Bares y Cervecerías
             </Link>
-            <Link href="/buscar?tipo=restaurante" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+            <Link href="/buscar?tipo=restaurante" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Gastrobares y Restaurantes
             </Link>
-            <Link href="/buscar?tipo=discoteca" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+            <Link href="/buscar?tipo=discoteca" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Discotecas
             </Link>
-            <Link href="/otros-planes" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+            <Link href="/otros-planes" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Otros planes
             </Link>
-            <Link href="/ciudades" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+            <Link href="/ciudades" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               Ciudades
             </Link>
-            <Link href="/que-es-mdtn" className="text-white hover:text-gray-300 transition-colors text-sm font-medium whitespace-nowrap">
+            <Link href="/que-es-mdtn" className="text-white hover:text-gray-300 transition-colors text-sm whitespace-nowrap">
               ¿Qué es MDTN?
             </Link>
           </nav>

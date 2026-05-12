@@ -249,12 +249,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categorías Especiales */}
+      {/* Cadenas */}
       <section className="py-20 px-4 bg-dark-lighter/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold">Las mejores cadenas de cafés, bares y restaurantes del país</h2>
+            <p className="text-gray-400 mt-2">Conoce las marcas con presencia en todo el territorio</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {cadenas.map((est) => (
+              <Link key={est.id} href={`/establecimiento/${est.slug}`} className="group">
+                <div className="bg-dark-lighter rounded-2xl p-6 text-center hover:bg-dark-card transition-colors border border-gray-800 hover:border-primary/50">
+                  {est.imagen_principal && (
+                    <img src={est.imagen_principal} alt={est.nombre} className="w-20 h-20 rounded-xl mx-auto mb-4 object-contain" />
+                  )}
+                  <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{est.nombre}</h3>
+                  <p className="text-sm text-gray-400 mt-1">{est.sedes?.length || 0} sedes</p>
+                  <p className="text-xs text-primary mt-2">Ver sedes →</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categorías Especiales */}
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h2 className="text-3xl font-bold">Explora por categoría</h2>
+              <h2 className="text-3xl font-bold">Experiencias</h2>
               <p className="text-gray-400 mt-2">Encuentra exactamente lo que buscas</p>
             </div>
           </div>
@@ -306,31 +330,6 @@ export default function HomePage() {
               </div>
             </div>
           </Link>
-        </div>
-      </section>
-
-
-      {/* Cadenas */}
-      <section className="py-20 px-4 bg-dark-lighter/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold">Las mejores cadenas de cafés, bares y restaurantes del país</h2>
-            <p className="text-gray-400 mt-2">Conoce las marcas con presencia en todo el territorio</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {cadenas.map((est) => (
-              <Link key={est.id} href={`/establecimiento/${est.slug}`} className="group">
-                <div className="bg-dark-lighter rounded-2xl p-6 text-center hover:bg-dark-card transition-colors border border-gray-800 hover:border-primary/50">
-                  {est.imagen_principal && (
-                    <img src={est.imagen_principal} alt={est.nombre} className="w-20 h-20 rounded-xl mx-auto mb-4 object-contain" />
-                  )}
-                  <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{est.nombre}</h3>
-                  <p className="text-sm text-gray-400 mt-1">{est.sedes?.length || 0} sedes</p>
-                  <p className="text-xs text-primary mt-2">Ver sedes →</p>
-                </div>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
