@@ -10,6 +10,27 @@ import CiudadCard from '@/components/CiudadCard'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
+const CIUDAD_IMAGENES: Record<string, string> = {
+  'armenia':       '/ciudades/armenia.jpg',
+  'barranquilla':  '/ciudades/barranquilla.jpg',
+  'bogota':        '/ciudades/bogota.jpg',
+  'bucaramanga':   '/ciudades/bucaramanga.jpg',
+  'cali':          '/ciudades/cali.jpg',
+  'cartagena':     '/ciudades/cartagena.jpg',
+  'cucuta':        '/ciudades/cucuta.jpg',
+  'manizales':     '/ciudades/manizales.webp',
+  'medellin':      '/ciudades/medellin.webp',
+  'monteria':      '/ciudades/monteria.webp',
+  'neiva':         '/ciudades/neiva.jpg',
+  'pasto':         '/ciudades/pasto.jpg',
+  'pereira':       '/ciudades/pereira.webp',
+  'santa-marta':   '/ciudades/santa-marta.jpg',
+  'sumapaz':       '/ciudades/sumapaz.avif',
+  'valledupar':    '/ciudades/valledupar.jpg',
+  'villavicencio': '/ciudades/villavicencio.jpg',
+  'zipaquira':     '/ciudades/zipaquira.jpg',
+}
+
 const categoriasEspeciales = [
   { nombre: "Círculo Gastro", slug: "circulo-gastro", icono: "", color: "#FFD700", descripcion: "Los mejores restaurantes", total: 9, logo: "/circulo-gastro.png" },
   { nombre: "Tardeo", slug: "tardeo", icono: "🌅", color: "#FF8C00", descripcion: "Disfruta desde temprano", total: 120 },
@@ -241,7 +262,7 @@ export default function HomePage() {
               <CiudadCard key={ciudad.slug || ciudad.id} ciudad={{
                 nombre: ciudad.nombre,
                 slug: ciudad.slug,
-                imagen: ciudad.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400',
+                imagen: CIUDAD_IMAGENES[ciudad.slug] || ciudad.imagen_url || 'https://images.unsplash.com/photo-1536086845232-47c1b118f3f4?w=400',
                 total: ciudad.total_establecimientos || 0
               }} />
             ))}
