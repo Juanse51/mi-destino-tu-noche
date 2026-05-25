@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart } from 'lucide-react'
+import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart, Trophy, MapPin, ExternalLink } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
@@ -370,6 +370,73 @@ export default function HomePage() {
                 Nosotros tenemos el DJ. Conoce los mejores DJs de Colombia.
               </p>
               <a href="https://www.clusterdj.co/bolsa" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3 bg-white/20 hover:bg-white/30 text-white rounded-full font-semibold transition-colors mt-4">Conoce nuestros DJs →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Banner Mundial 2026 */}
+      <section className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #003087 0%, #00205C 40%, #8B0000 75%, #CE1126 100%)' }}>
+            {/* Franja amarilla superior */}
+            <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: '#FCD116' }} />
+            {/* Franja amarilla inferior */}
+            <div className="absolute bottom-0 left-0 right-0 h-1.5" style={{ backgroundColor: '#FCD116' }} />
+
+            {/* Decoración de fondo */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-500 rounded-full blur-3xl" />
+            </div>
+
+            {/* Patrón de red de fútbol sutil */}
+            <div className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px)',
+              }}
+            />
+
+            <div className="relative z-10 p-10 md:p-14">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+                {/* Icono */}
+                <div className="shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center border-2" style={{ backgroundColor: '#FCD11620', borderColor: '#FCD11650' }}>
+                  <Trophy className="w-10 h-10" style={{ color: '#FCD116' }} />
+                </div>
+
+                {/* Texto */}
+                <div className="flex-1">
+                  <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: '#FCD116' }}>
+                    FIFA World Cup 2026
+                  </p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">
+                    Siente el gol y vive la fiesta más grande del fútbol en esta casa
+                  </h2>
+                  <p className="text-white/75 text-base leading-relaxed max-w-2xl">
+                    Bogotá está lista para vibrar con cada gol, cada abrazo y cada emoción compartida.
+                    Durante junio y julio la ciudad vivirá una activación económica que beneficiará
+                    a todos los ciudadanos y visitantes. Bogotá se transformará en una gran cancha
+                    cultural donde, además, podrás disfrutar del mejor fútbol.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6">
+                    <div className="flex items-center gap-2 text-white/60 text-sm">
+                      <MapPin className="w-4 h-4 shrink-0" style={{ color: '#FCD116' }} />
+                      <span>Bogotá, Colombia — Junio y Julio 2026</span>
+                    </div>
+                    <a
+                      href="https://bogota.gov.co/2026/mundial/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all hover:opacity-90"
+                      style={{ backgroundColor: '#FCD116', color: '#003087' }}
+                    >
+                      Conoce los lugares
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
