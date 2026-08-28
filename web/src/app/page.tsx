@@ -220,6 +220,9 @@ export default function HomePage() {
 
           {/* Botón grupo grande */}
           <div className="mt-6">
+            <p className="text-gray-300 mb-3 text-sm md:text-base">
+              ¿Eres agencia de viajes?
+            </p>
             <a
               href="https://wa.me/573212304589?text=Hola%2C%20te%20hablo%20desde%20Mi%20Destino%20Tu%20Noche%2C%20tengo%20un%20grupo%20grande%20y%20necesito%20ayuda."
               target="_blank"
