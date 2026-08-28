@@ -243,6 +243,37 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Banner Congreso Nacional de Agencias de Viajes y Turismo */}
+      <section className="pt-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-3xl overflow-hidden bg-white shadow-xl">
+            <div className="flex flex-col md:flex-row items-center">
+              {/* Logo del evento */}
+              <div className="w-full md:w-1/2 shrink-0">
+                <Image
+                  src="/congreso_nacional_agencias.jpg"
+                  alt="30° Congreso Nacional de Agencias de Viajes y Turismo - Barranquilla 2026"
+                  width={1224}
+                  height={384}
+                  className="w-full h-auto"
+                />
+              </div>
+
+              {/* Texto */}
+              <div className="w-full md:w-1/2 p-8 md:p-10 text-center md:text-left">
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#1B4DB1' }}>
+                  27 y 28 de agosto 2026 · Barranquilla
+                </p>
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold leading-snug" style={{ color: '#0B2C7A' }}>
+                  Asobares presente en el Congreso Nacional de Agencias de Viajes
+                  y Turismo en Barranquilla 2026
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Ciudades - ANTES de categorías */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
