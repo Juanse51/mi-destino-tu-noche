@@ -27,6 +27,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
+        display: ['var(--font-bebas)', 'Impact', 'sans-serif'],
       },
     },
   },

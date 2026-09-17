@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart, Trophy, MapPin, ExternalLink } from 'lucide-react'
+import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart, Trophy, MapPin, ExternalLink, ArrowRight } from 'lucide-react'
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
@@ -243,31 +243,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Banner Congreso Nacional de Agencias de Viajes y Turismo */}
+      {/* Banner Expobar 2026 */}
       <section className="pt-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl overflow-hidden bg-white shadow-xl">
-            <div className="flex flex-col md:flex-row items-center">
-              {/* Logo del evento */}
-              <div className="w-full md:w-1/2 shrink-0">
-                <Image
-                  src="/congreso_nacional_agencias.jpg"
-                  alt="30° Congreso Nacional de Agencias de Viajes y Turismo - Barranquilla 2026"
-                  width={1224}
-                  height={384}
-                  className="w-full h-auto"
-                />
+          <div
+            className="relative rounded-3xl overflow-hidden border border-white/10"
+            style={{ background: 'linear-gradient(135deg, #0A0A0D 0%, #15151B 55%, #221B10 100%)' }}
+          >
+            {/* Brillo dorado */}
+            <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-15" style={{ backgroundColor: '#E9B863' }} />
+
+            <div className="relative z-10 p-8 md:p-10 lg:p-12 flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12">
+              {/* Logo + frase */}
+              <div className="flex-1">
+                <a href="https://feriaexpobar.com/" target="_blank" rel="noopener noreferrer" className="inline-block mb-6">
+                  <Image
+                    src="/expobar_logo.png"
+                    alt="Expobar Colombia 2026"
+                    width={1118}
+                    height={325}
+                    className="h-14 md:h-16 w-auto"
+                  />
+                </a>
+                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/60 mb-3">
+                  <span className="w-1 h-4 rounded-full" style={{ backgroundColor: '#E9B863' }} />
+                  Organiza Asobares Colombia
+                </p>
+                <h2 className="font-display text-4xl md:text-5xl uppercase leading-[0.95] text-white">
+                  La cadena turística tiene una expo donde{' '}
+                  <span style={{ color: '#F2C77E' }}>nos encontraremos todos</span>
+                </h2>
               </div>
 
-              {/* Texto */}
-              <div className="w-full md:w-1/2 p-8 md:p-10 text-center md:text-left">
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#1B4DB1' }}>
-                  27 y 28 de agosto 2026 · Barranquilla
+              {/* Save the date */}
+              <div className="w-full lg:w-[26rem] shrink-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ color: '#F2C77E' }}>
+                  Save the date
                 </p>
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold leading-snug" style={{ color: '#0B2C7A' }}>
-                  Asobares presente en el Congreso Nacional de Agencias de Viajes
-                  y Turismo en Barranquilla 2026
-                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-4 py-3" style={{ borderLeftColor: '#E9B863' }}>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">Bogotá</p>
+                    <p className="font-display text-3xl leading-tight text-white">1 · 2 Dic</p>
+                    <p className="text-xs italic text-white/50">Kinder</p>
+                  </div>
+                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-4 py-3" style={{ borderLeftColor: '#E9B863' }}>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">Armenia</p>
+                    <p className="font-display text-3xl leading-tight text-white">3 Dic</p>
+                    <p className="text-xs italic text-white/50">Quindío</p>
+                  </div>
+                </div>
+                <a
+                  href="https://feriaexpobar.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold uppercase tracking-wider shadow-lg transition hover:brightness-110"
+                  style={{ background: 'linear-gradient(180deg, #F5CE88 0%, #D99A4A 100%)', color: '#1A1206' }}
+                >
+                  Quiero ser parte
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>
