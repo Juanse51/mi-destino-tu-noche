@@ -276,20 +276,25 @@ export default function HomePage() {
               </div>
 
               {/* Save the date */}
-              <div className="w-full lg:w-[26rem] shrink-0">
+              <div className="w-full lg:w-[30rem] shrink-0">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ color: '#F2C77E' }}>
-                  Save the date
+                  Save the date · Marzo 2027
                 </p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-4 py-3" style={{ borderLeftColor: '#E9B863' }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
+                  <div className="col-span-2 sm:col-span-1 rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-3 py-3" style={{ borderLeftColor: '#E9B863' }}>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">Bogotá</p>
-                    <p className="font-display text-3xl leading-tight text-white">1 · 2 Dic</p>
+                    <p className="font-display text-2xl leading-tight text-white whitespace-nowrap">2 · 3 Mar</p>
                     <p className="text-xs italic text-white/50">Kinder</p>
                   </div>
-                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-4 py-3" style={{ borderLeftColor: '#E9B863' }}>
+                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-3 py-3" style={{ borderLeftColor: '#E9B863' }}>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">Armenia</p>
-                    <p className="font-display text-3xl leading-tight text-white">3 Dic</p>
-                    <p className="text-xs italic text-white/50">Quindío</p>
+                    <p className="font-display text-2xl leading-tight text-white whitespace-nowrap">4 Mar</p>
+                    <p className="text-xs italic text-white/50">Principal</p>
+                  </div>
+                  <div className="rounded-xl bg-white/5 border border-white/10 border-l-[3px] px-3 py-3" style={{ borderLeftColor: '#E9B863' }}>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">Pereira</p>
+                    <p className="font-display text-2xl leading-tight text-white whitespace-nowrap">5 Mar</p>
+                    <p className="text-xs italic text-white/50">Cierre</p>
                   </div>
                 </div>
                 <a
