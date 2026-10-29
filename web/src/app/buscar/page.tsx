@@ -16,6 +16,41 @@ const tipos = [
 
 const ciudades = ['Todas', 'Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Armenia', 'Pereira', 'Santa Marta', 'Barranquilla', 'Bucaramanga', 'Pasto', 'Villavicencio']
 
+const norm = (s: string) => s?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') || ''
+
+// 'Santa Marta' -> 'santa-marta' (la API filtra por slug, no por nombre)
+const slugCiudad = (c: string) => norm(c).replace(/\s+/g, '-')
+
+const ciudadesKeys = ['bogota','medellin','cali','cartagena','armenia','pereira',
+  'barranquilla','santa marta','bucaramanga','villavicencio','pasto','cucuta','neiva','monteria']
+
+const tiposKeys: Record<string,string> = {
+  'restaurante': 'restaurante', 'restaurantes': 'restaurante',
+  'bar': 'bar', 'bares': 'bar',
+  'cafe': 'café', 'cafes': 'café', 'café': 'café',
+  'discoteca': 'discoteca', 'discotecas': 'discoteca',
+}
+
+// Si el usuario escribe "bar", tambien queremos los gastrobares:
+// la API filtra por slug exacto, asi que le mandamos la lista.
+const tiposApi: Record<string,string> = {
+  'restaurante': 'restaurante',
+  'bar': 'bar,gastrobar',
+  'café': 'cafe',
+  'discoteca': 'discoteca',
+}
+
+// Separa "restaurantes en bogota" en tipo + ciudad + lo que queda (el nombre)
+function parseQuery(raw: string) {
+  const q = norm(raw)
+  const ciudadEnQuery = ciudadesKeys.find(c => q.includes(c))
+  const tipoEnQuery = Object.keys(tiposKeys).find(t => q.includes(t))
+  let nombreQuery = q
+  if (ciudadEnQuery) nombreQuery = nombreQuery.replace(ciudadEnQuery, '').replace(/\s+en\s+/, ' ').trim()
+  if (tipoEnQuery) nombreQuery = nombreQuery.replace(tipoEnQuery, '').trim()
+  return { q, ciudadEnQuery, tipoEnQuery, nombreQuery }
+}
+
 function BuscarContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
@@ -29,20 +64,24 @@ function BuscarContent() {
   const [ciudadDetectada, setCiudadDetectada] = useState('')
   const [visibleCount, setVisibleCount] = useState(20)
 
-  // Detectar ciudad por IP al cargar
+  // Detectar ciudad por IP al cargar.
+  // Si el usuario llego buscando algo, NO le cambiamos la ciudad: la busqueda manda.
   useEffect(() => {
+    if (initialQuery) return
     const detectarCiudad = async () => {
       try {
         const res = await fetch('https://ipapi.co/json/')
         const data = await res.json()
-        if (data.city) {
-          setCiudadDetectada(data.city)
-          setCiudadSeleccionada(data.city)
+        // Solo si es una ciudad que realmente tenemos, si no quedaria en 0 resultados
+        const conocida = ciudades.find(c => norm(c) === norm(data?.city || ''))
+        if (conocida) {
+          setCiudadDetectada(conocida)
+          setCiudadSeleccionada(conocida)
         }
       } catch {}
     }
     detectarCiudad()
-  }, [])
+  }, [initialQuery])
 
   // Cargar establecimientos cuando cambian filtros
   useEffect(() => {
@@ -51,12 +90,17 @@ function BuscarContent() {
       setVisibleCount(20)
       try {
         const params = new URLSearchParams()
-        if (searchQuery) params.append('buscar', searchQuery)
+        const { ciudadEnQuery, tipoEnQuery, nombreQuery } = parseQuery(searchQuery)
+        // El parametro de la API es 'busqueda' y solo entiende el nombre,
+        // asi que le mandamos ciudad y tipo por separado.
+        if (nombreQuery) params.append('busqueda', nombreQuery)
         if (tiposParam) params.append('tipos', tiposParam)
+        else if (tipoEnQuery) params.append('tipos', tiposApi[tiposKeys[tipoEnQuery]])
         else if (tipoSeleccionado) params.append('tipo', tipoSeleccionado)
-        if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') {
-          params.append('ciudad', ciudadSeleccionada.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+        if (ciudadEnQuery) {
+          params.append('ciudad', slugCiudad(ciudadEnQuery))
+        } else if (ciudadSeleccionada && ciudadSeleccionada !== 'Todas') {
+          params.append('ciudad', slugCiudad(ciudadSeleccionada))
         }
         params.append('limite', '500')
 
@@ -73,31 +117,10 @@ function BuscarContent() {
     fetchEstablecimientos()
   }, [searchQuery, tipoSeleccionado, tiposParam, ciudadSeleccionada])
 
-  const norm = (s: string) => s?.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') || ''
-
   const establecimientosFiltrados = (() => {
     if (!searchQuery) return establecimientos
 
-    const q = norm(searchQuery)
-
-    // Detectar ciudad en la query: "restaurantes en bogotá"
-    const ciudadesKeys = ['bogota','medellin','cali','cartagena','armenia','pereira',
-      'barranquilla','santa marta','bucaramanga','villavicencio','pasto','cucuta','neiva','monteria']
-    const ciudadEnQuery = ciudadesKeys.find(c => q.includes(c))
-
-    // Detectar tipo en la query
-    const tiposKeys: Record<string,string> = {
-      'restaurante': 'restaurante', 'restaurantes': 'restaurante',
-      'bar': 'bar', 'bares': 'bar',
-      'cafe': 'café', 'cafes': 'café', 'café': 'café',
-      'discoteca': 'discoteca', 'discotecas': 'discoteca',
-    }
-    const tipoEnQuery = Object.keys(tiposKeys).find(t => q.includes(t))
-
-    // Quitar ciudad y tipo de la query para buscar solo el nombre
-    let nombreQuery = q
-    if (ciudadEnQuery) nombreQuery = nombreQuery.replace(ciudadEnQuery, '').replace(/\s+en\s+/, ' ').trim()
-    if (tipoEnQuery) nombreQuery = nombreQuery.replace(tipoEnQuery, '').trim()
+    const { ciudadEnQuery, tipoEnQuery, nombreQuery } = parseQuery(searchQuery)
 
     return establecimientos.filter(e => {
       const nombre = norm(e.nombre)
@@ -108,7 +131,7 @@ function BuscarContent() {
       // Si detectó ciudad en query, filtrar por ella
       if (ciudadEnQuery && !ciudad.includes(ciudadEnQuery)) return false
       // Si detectó tipo en query, filtrar por él
-      if (tipoEnQuery && !tipo.includes(norm(tiposKeys[tipoEnQuery]))) return false
+      if (tipoEnQuery && !tipo.includes(norm(tiposKeys[tipoEnQuery]))) return false  // 'gastrobar' contiene 'bar'
       // Si quedó nombre, buscar por nombre o dirección
       if (nombreQuery.length > 0) {
         return nombre.includes(nombreQuery) || dir.includes(nombreQuery)
