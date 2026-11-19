@@ -7,6 +7,7 @@ import { Search, ChevronRight, Users, Calendar, Sunset, Bus, Heart, Trophy, MapP
 import EstablecimientoCard from '@/components/EstablecimientoCard'
 import CategoriaCard from '@/components/CategoriaCard'
 import CiudadCard from '@/components/CiudadCard'
+import BarWeekBanner from '@/components/BarWeekBanner'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mi-destino-api.onrender.com/api/v1'
 
@@ -241,6 +242,11 @@ export default function HomePage() {
             <div className="w-1 h-2 bg-white/50 rounded-full" />
           </div>
         </div>
+      </section>
+
+      {/* Banner Bar Week × Círculo Gastro */}
+      <section className="pt-12">
+        <BarWeekBanner />
       </section>
 
       {/* Banner Expobar 2026 */}
